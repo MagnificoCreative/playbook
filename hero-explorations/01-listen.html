@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Listen Hero Options</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@500&family=Inter:wght@300;400;500&display=swap">
+<style>
+:root {
+  --pink: #ff0074;
+  --teal-950: #07171b;
+  --teal-900: #002a32;
+  --slate-100: #d5def0;
+  --canvas: #f6f6f6;
+  --n300: #c7c7c7;
+  --n700: #474646;
+  --f-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --f-label: "IBM Plex Sans", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --pad: clamp(24px, 5.2vw, 72px);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+* { box-sizing: border-box; margin: 0; }
+body { background: var(--canvas); color: var(--teal-950); font-family: var(--f-sans); -webkit-font-smoothing: antialiased; }
+.wrap { max-width: 1280px; margin: 0 auto; padding: 56px max(16px, 3vw) 96px; }
+.eyebrow { font-family: var(--f-label); font-weight: 500; font-size: 12px; letter-spacing: .16em; text-transform: uppercase; line-height: 1; }
+.top { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; flex-wrap: wrap; margin-bottom: 48px; }
+.top .eyebrow { color: var(--pink); margin-bottom: 20px; }
+.top h1 { font-size: clamp(32px, 4vw, 56px); font-weight: 300; line-height: 1.1; letter-spacing: -0.005em; }
+.top p { margin-top: 16px; color: var(--n700); font-size: 18px; line-height: 1.5; max-width: 52ch; }
+.controls { display: flex; gap: 8px; }
+.controls button {
+  font: 500 12px/1 var(--f-label); letter-spacing: .16em; text-transform: uppercase;
+  border: 1px solid rgba(7,23,27,.15); background: #fff; color: var(--teal-950);
+  padding: 12px 16px; border-radius: 999px; cursor: pointer;
+}
+.controls button[aria-pressed="true"] { background: var(--teal-900); color: var(--slate-100); border-color: var(--teal-900); }
+
+.option { margin-top: 64px; }
+.option:first-of-type { margin-top: 0; }
+.frame {
+  position: relative; overflow: hidden; border-radius: 8px;
+  background: var(--teal-900); color: var(--slate-100);
+  aspect-ratio: 16 / 9; min-height: 420px;
+  display: flex; align-items: center; padding: var(--pad);
+}
+.copy { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 22px; max-width: 58%; transition: opacity .4s var(--ease-out); }
+.copy .eyebrow { color: var(--n300); }
+.copy .eyebrow .sep { opacity: .5; margin: 0 .4em; }
+.copy h2 { font-size: clamp(36px, 5.2vw, 76px); line-height: 1; font-weight: 500; letter-spacing: -0.01em; }
+.copy p { font-size: clamp(16px, 1.5vw, 22px); line-height: 1.44; font-weight: 300; color: var(--n300); max-width: 40ch; }
+body.art-only .copy { opacity: 0; }
+
+.art { position: absolute; right: -14%; top: 50%; width: 68%; aspect-ratio: 1; transform: translateY(-50%); pointer-events: none; }
+body.art-only .art { right: 50%; transform: translate(50%, -50%); width: 60%; }
+.art { transition: right .6s var(--ease-out), transform .6s var(--ease-out), width .6s var(--ease-out); }
+.art svg { width: 100%; height: 100%; overflow: visible; display: block; }
+.line { fill: none; stroke: var(--slate-100); stroke-width: 1.5; stroke-linecap: round; }
+.guide { fill: none; stroke: var(--slate-100); stroke-opacity: .05; stroke-width: 1; }
+.ball { fill: var(--pink); }
+.ear { fill: none; stroke: var(--pink); stroke-width: 2.5; stroke-linecap: round; }
+
+.caption { display: grid; grid-template-columns: 72px minmax(0, 1fr); gap: 16px; margin-top: 24px; max-width: 760px; }
+.caption .letter { font: 500 12px/1 var(--f-label); letter-spacing: .16em; color: var(--pink); padding-top: 8px; }
+.caption h3 { font-size: 24px; font-weight: 400; line-height: 1.3; }
+.caption p { margin-top: 6px; color: var(--n700); font-size: 17px; line-height: 1.5; }
+
+@media (max-width: 767px) {
+  .frame { aspect-ratio: auto; min-height: 520px; align-items: flex-end; }
+  .copy { max-width: 100%; }
+  .art { right: -40%; width: 120%; top: 34%; opacity: .75; }
+  body.art-only .art { right: 50%; width: 110%; top: 50%; opacity: 1; }
+  .caption { grid-template-columns: 1fr; gap: 8px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <p class="eyebrow">Hero motion · Chapter 01 · Listen</p>
+      <h1>Four ways the red ball can listen</h1>
+      <p>Same rule for all four: sound comes in, nothing goes out. The ball stays in the center and receives.</p>
+    </div>
+    <div class="controls">
+      <button type="button" id="artOnly" aria-pressed="false">Hide text</button>
+      <button type="button" id="pause" aria-pressed="false">Pause</button>
+    </div>
+  </header>
+
+  <section class="option" data-scene="voicesBreath">
+    <div class="frame">
+      <div class="art" aria-hidden="true"><svg viewBox="0 0 600 600"></svg></div>
+      <div class="copy">
+        <p class="eyebrow">Listen<span class="sep">|</span>Step 1</p>
+        <h2>Listen Before You Design</h2>
+        <p>Start with people and their workarounds. Interviews reveal the habits, incentives and gaps behind fragmented information.</p>
+      </div>
+    </div>
+    <div class="caption">
+      <span class="letter">B + A</span>
+      <div><h3>Many voices, taken in</h3><p>B's lines arrive from every direction, each at its own pace. The ball stays still in the center and, like in A, swells a little as each voice lands, a breath in, then settles.</p></div>
+    </div>
+  </section>
+
+  <section class="option" data-scene="rings">
+    <div class="frame">
+      <div class="art" aria-hidden="true"><svg viewBox="0 0 600 600"></svg></div>
+      <div class="copy">
+        <p class="eyebrow">Listen<span class="sep">|</span>Step 1</p>
+        <h2>Listen Before You Design</h2>
+        <p>Start with people and their workarounds. Interviews reveal the habits, incentives and gaps behind fragmented information.</p>
+      </div>
+    </div>
+    <div class="caption">
+      <span class="letter">A</span>
+      <div><h3>Taking it in</h3><p>Today's rings, reversed. They travel inward and pick up speed as they're drawn in. Each one lands in the ball, which swells a little, like a breath in. Closest to what's on the page now.</p></div>
+    </div>
+  </section>
+
+  <section class="option" data-scene="voices">
+    <div class="frame">
+      <div class="art" aria-hidden="true"><svg viewBox="0 0 600 600"></svg></div>
+      <div class="copy">
+        <p class="eyebrow">Listen<span class="sep">|</span>Step 1</p>
+        <h2>Listen Before You Design</h2>
+        <p>Start with people and their workarounds. Interviews reveal the habits, incentives and gaps behind fragmented information.</p>
+      </div>
+    </div>
+    <div class="caption">
+      <span class="letter">B</span>
+      <div><h3>Many voices</h3><p>Short lines arrive from every direction, each at its own pace, like different people in different interviews. The ball leans toward each voice as it lands, then settles.</p></div>
+    </div>
+  </section>
+
+  <section class="option" data-scene="waves">
+    <div class="frame">
+      <div class="art" aria-hidden="true"><svg viewBox="0 0 600 600"></svg></div>
+      <div class="copy">
+        <p class="eyebrow">Listen<span class="sep">|</span>Step 1</p>
+        <h2>Listen Before You Design</h2>
+        <p>Start with people and their workarounds. Interviews reveal the habits, incentives and gaps behind fragmented information.</p>
+      </div>
+    </div>
+    <div class="caption">
+      <span class="letter">C</span>
+      <div><h3>Noise into clarity</h3><p>Tangled waveforms come in from both sides. As they get closer they calm down and gather into one line that ends in the ball. Lots of messy input, one clear understanding.</p></div>
+    </div>
+  </section>
+
+  <section class="option" data-scene="ear">
+    <div class="frame">
+      <div class="art" aria-hidden="true"><svg viewBox="0 0 600 600"></svg></div>
+      <div class="copy">
+        <p class="eyebrow">Listen<span class="sep">|</span>Step 1</p>
+        <h2>Listen Before You Design</h2>
+        <p>Start with people and their workarounds. Interviews reveal the habits, incentives and gaps behind fragmented information.</p>
+      </div>
+    </div>
+    <div class="caption">
+      <span class="letter">D</span>
+      <div><h3>Turning toward</h3><p>The ball gets an ear: a thin arc that turns to face each voice before it arrives, then opens to take it in. Listening as something you choose to do, with attention.</p></div>
+    </div>
+  </section>
+</div>
+
+<script>
+(() => {
+  const NS = "http://www.w3.org/2000/svg";
+  const C = 300, BALL = 16, TAU = Math.PI * 2;
+  const el = (tag, attrs, parent) => {
+    const e = document.createElementNS(NS, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+  };
+  const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+  const smooth = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
+  const easeInOut = p => p < .5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
+  const rng = seed => () => (seed = (seed * 16807) % 2147483647, (seed - 1) / 2147483646);
+  const hash = n => { const x = Math.sin(n * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+  const arc = (r, a0, a1) => {
+    const x0 = C + r * Math.cos(a0), y0 = C + r * Math.sin(a0);
+    const x1 = C + r * Math.cos(a1), y1 = C + r * Math.sin(a1);
+    return `M${x0.toFixed(2)} ${y0.toFixed(2)}A${r} ${r} 0 ${a1 - a0 > Math.PI ? 1 : 0} 1 ${x1.toFixed(2)} ${y1.toFixed(2)}`;
+  };
+
+  /* A · Taking it in: rings contract toward the ball */
+  function rings(svg) {
+    const N = 5, P = 7.5;
+    const list = Array.from({ length: N }, () => el("circle", { cx: C, cy: C, class: "line" }, svg));
+    const ball = el("circle", { cx: C, cy: C, r: BALL, class: "ball" }, svg);
+    return t => {
+      let pulse = 0;
+      list.forEach((ring, i) => {
+        const p = (t / P + i / N) % 1;
+        const r = BALL + 282 * (1 - Math.pow(p, 1.7));
+        const o = 0.34 * smooth(0, .3, p) * (1 - smooth(.86, 1, p));
+        ring.setAttribute("r", r.toFixed(2));
+        ring.setAttribute("stroke-opacity", o.toFixed(3));
+        pulse = Math.max(pulse, p > .9 ? smooth(.9, 1, p) : Math.exp(-p * 22));
+      });
+      ball.setAttribute("r", (BALL * (1 + .16 * pulse)).toFixed(2));
+    };
+  }
+
+  /* B · Many voices: dashes travel in along rays from all around */
+  function voices(svg) {
+    const R = rng(7), N = 13;
+    const rays = Array.from({ length: N }, (_, i) => {
+      const a = (i / N) * TAU + (R() - .5) * .35;
+      el("line", { x1: C + 40 * Math.cos(a), y1: C + 40 * Math.sin(a), x2: C + 296 * Math.cos(a), y2: C + 296 * Math.sin(a), class: "guide" }, svg);
+      return { a, D: 2.6 + R() * 1.8, gap: 1.2 + R() * 3.4, off: R() * 8, len: 36 + R() * 60,
+               node: el("line", { class: "line" }, svg) };
+    });
+    const ball = el("circle", { cx: C, cy: C, r: BALL, class: "ball" }, svg);
+    return t => {
+      let lx = 0, ly = 0, pulse = 0;
+      rays.forEach(v => {
+        const L = v.D + v.gap, local = (t + v.off) % L;
+        const cos = Math.cos(v.a), sin = Math.sin(v.a);
+        if (local < v.D) {
+          const p = local / v.D;
+          const head = BALL + 2 + (288 - BALL) * (1 - p * p);
+          const tail = head + v.len * (1 - smooth(.7, 1, p));
+          v.node.setAttribute("x1", C + head * cos); v.node.setAttribute("y1", C + head * sin);
+          v.node.setAttribute("x2", C + tail * cos); v.node.setAttribute("y2", C + tail * sin);
+          v.node.setAttribute("stroke-opacity", (.5 * smooth(0, .25, p)).toFixed(3));
+        } else {
+          v.node.setAttribute("stroke-opacity", 0);
+          const k = Math.exp(-(local - v.D) * 5);
+          lx += cos * k; ly += sin * k; pulse = Math.max(pulse, k);
+        }
+      });
+      ball.setAttribute("cx", (C + lx * 3.5).toFixed(2));
+      ball.setAttribute("cy", (C + ly * 3.5).toFixed(2));
+      ball.setAttribute("r", (BALL * (1 + .1 * pulse)).toFixed(2));
+    };
+  }
+
+  /* B + A · Many voices, with A's ball: no lean, it swells as each voice lands */
+  function voicesBreath(svg) {
+    const R = rng(7), N = 13;
+    const rays = Array.from({ length: N }, (_, i) => {
+      const a = (i / N) * TAU + (R() - .5) * .35;
+      el("line", { x1: C + 40 * Math.cos(a), y1: C + 40 * Math.sin(a), x2: C + 296 * Math.cos(a), y2: C + 296 * Math.sin(a), class: "guide" }, svg);
+      return { a, D: 2.6 + R() * 1.8, gap: 1.2 + R() * 3.4, off: R() * 8, len: 36 + R() * 60,
+               node: el("line", { class: "line" }, svg) };
+    });
+    const gid = "glow" + Math.random().toString(36).slice(2, 7);
+    const g = el("radialGradient", { id: gid }, el("defs", {}, svg));
+    [[0, .55], [.35, .22], [1, 0]].forEach(([o, a]) => el("stop", { offset: o, "stop-color": "#ff0074", "stop-opacity": a }, g));
+    const glow = el("circle", { cx: C, cy: C, r: BALL * 3.2, fill: `url(#${gid})`, opacity: 0 }, svg);
+    const ball = el("circle", { cx: C, cy: C, r: BALL, class: "ball" }, svg);
+    const PRE = .6;   // swell starts as the voice closes in (A's last 10%)
+    return t => {
+      let pulse = 0;
+      rays.forEach(v => {
+        const L = v.D + v.gap, local = (t + v.off) % L;
+        const cos = Math.cos(v.a), sin = Math.sin(v.a);
+        if (local < v.D) {
+          const p = local / v.D;
+          const head = BALL + 2 + (288 - BALL) * (1 - p * p);
+          const tail = head + v.len * (1 - smooth(.7, 1, p));
+          v.node.setAttribute("x1", C + head * cos); v.node.setAttribute("y1", C + head * sin);
+          v.node.setAttribute("x2", C + tail * cos); v.node.setAttribute("y2", C + tail * sin);
+          v.node.setAttribute("stroke-opacity", (.5 * smooth(0, .25, p)).toFixed(3));
+          pulse = Math.max(pulse, smooth(v.D - PRE, v.D, local));
+        } else {
+          v.node.setAttribute("stroke-opacity", 0);
+          pulse = Math.max(pulse, Math.exp(-(local - v.D) * 2.9));   // A's release
+        }
+      });
+      ball.setAttribute("r", (BALL * (1 + .16 * pulse)).toFixed(2));
+      glow.setAttribute("opacity", (.4 * pulse).toFixed(3));
+      glow.setAttribute("r", (BALL * (2.6 + .8 * pulse)).toFixed(2));
+    };
+  }
+
+  /* C · Noise into clarity: waveforms calm as they converge */
+  function waves(svg, id) {
+    const defs = el("defs", {}, svg);
+    const grad = (gid, x1, x2) => {
+      const g = el("linearGradient", { id: gid, gradientUnits: "userSpaceOnUse", x1, y1: 0, x2, y2: 0 }, defs);
+      [[0, 0], [.35, .42], [1, .3]].forEach(([o, a]) => el("stop", { offset: o, "stop-color": "#d5def0", "stop-opacity": a }, g));
+    };
+    grad(id + "L", 20, C); grad(id + "R", 580, C);
+    const strands = [];
+    const mk = (side, off, lambda, amp, speed, phi) => strands.push({
+      side, off, lambda, amp, speed, phi,
+      node: el("path", { class: "line", stroke: `url(#${id + side})`, "stroke-width": 1.25 }, svg)
+    });
+    mk("L", -128, 74, 20, 1.3, 0);  mk("L", -56, 52, 14, 1.7, 1.2); mk("L", 22, 96, 24, 1.1, 2.1); mk("L", 92, 62, 16, 1.5, .4);
+    mk("R", -96, 88, 22, 1.2, .8);  mk("R", -30, 58, 15, 1.6, 2.6); mk("R", 48, 70, 19, 1.4, 1.7); mk("R", 124, 100, 24, 1.0, 3.0);
+    const ball = el("circle", { cx: C, cy: C, r: BALL, class: "ball" }, svg);
+    const end = C - BALL - 2;
+    return t => {
+      strands.forEach(s => {
+        let d = "";
+        for (let i = 0; i <= 90; i++) {
+          const dist = (i / 90) * end;              // distance travelled from the outer edge
+          const u = dist / C;                        // 0 at edge, ~1 at the ball
+          const calm = Math.pow(1 - u, 1.4);
+          const ph = TAU * dist / s.lambda - s.speed * TAU * t * .35 + s.phi;
+          const y = C + s.off * Math.pow(1 - smooth(0, 1, u), 1.2)
+                      + s.amp * calm * (Math.sin(ph) + .4 * Math.sin(2.7 * ph + s.phi) * calm);
+          const x = s.side === "L" ? dist : 600 - dist;
+          d += (i ? "L" : "M") + x.toFixed(1) + " " + y.toFixed(1);
+        }
+        s.node.setAttribute("d", d);
+      });
+      ball.setAttribute("r", (BALL * (1 + .05 * Math.sin(t * 1.3))).toFixed(2));
+    };
+  }
+
+  /* D · Turning toward: an ear arc faces each incoming voice */
+  function ear(svg) {
+    const T = 3.6, EAR_R = 32;
+    const angleAt = n => {
+      let a = hash(1) * TAU;
+      for (let i = 1; i <= n; i++) a += (0.6 + hash(i) * 0.4) * Math.PI * (hash(i + 99) > .5 ? 1 : -1);
+      return a;
+    };
+    const cache = new Map();
+    const ang = n => { if (!cache.has(n)) cache.set(n, angleAt(n)); return cache.get(n); };
+    const fronts = [0, 1, 2].map(() => el("path", { class: "line" }, svg));
+    const earArc = el("path", { class: "ear" }, svg);
+    const ball = el("circle", { cx: C, cy: C, r: BALL, class: "ball" }, svg);
+    return t => {
+      const n = Math.floor(t / T), p = (t / T) % 1;
+      const target = ang(n), prev = ang(n - 1);
+      // turn toward the new voice first
+      const facing = prev + (target - prev) * easeInOut(smooth(0, .3, p));
+      // the voice travels in, slow far away and faster as it nears
+      const q = smooth(.12, .82, p);
+      const R0 = 280 - 244 * q * q;
+      const fade = smooth(.12, .3, p);
+      fronts.forEach((f, j) => {
+        const r = R0 + j * 13;
+        const half = 0.24 - j * .03;
+        const vis = r > EAR_R + 4 && p < .84;
+        f.setAttribute("d", vis ? arc(r, target - half, target + half) : "");
+        f.setAttribute("stroke-opacity", vis ? ((.55 - j * .17) * fade).toFixed(3) : 0);
+      });
+      // ear opens on arrival, then relaxes
+      const open = smooth(.78, .86, p) * (1 - smooth(.88, 1, p));
+      const half = (0.55 + 0.55 * open);
+      earArc.setAttribute("d", arc(EAR_R, facing - half, facing + half));
+      ball.setAttribute("r", (BALL * (1 + .12 * open)).toFixed(2));
+    };
+  }
+
+  const builders = { voicesBreath, rings, voices, waves, ear };
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const scenes = [...document.querySelectorAll("[data-scene]")].map((sec, i) => {
+    const svg = sec.querySelector("svg");
+    return { draw: builders[sec.dataset.scene](svg, "s" + i), visible: false, sec };
+  });
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    const s = scenes.find(x => x.sec === e.target); if (s) s.visible = e.isIntersecting;
+  }));
+  scenes.forEach(s => { s.draw(2.2); io.observe(s.sec); });
+
+  let paused = reduce, clock = 2.2, last = performance.now();
+  const frame = now => {
+    const dt = Math.min(.05, (now - last) / 1000); last = now;
+    if (!paused) { clock += dt; scenes.forEach(s => s.visible && s.draw(clock)); }
+    requestAnimationFrame(frame);
+  };
+  requestAnimationFrame(frame);
+
+  const pauseBtn = document.getElementById("pause");
+  pauseBtn.setAttribute("aria-pressed", String(paused));
+  pauseBtn.textContent = paused ? "Play" : "Pause";
+  pauseBtn.addEventListener("click", () => {
+    paused = !paused;
+    pauseBtn.setAttribute("aria-pressed", String(paused));
+    pauseBtn.textContent = paused ? "Play" : "Pause";
+  });
+  const artBtn = document.getElementById("artOnly");
+  artBtn.addEventListener("click", () => {
+    const on = document.body.classList.toggle("art-only");
+    artBtn.setAttribute("aria-pressed", String(on));
+    artBtn.textContent = on ? "Show text" : "Hide text";
+  });
+})();
+</script>
+</body>
+</html>
