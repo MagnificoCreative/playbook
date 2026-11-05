@@ -1,0 +1,1249 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Listen Before You Design</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@500&family=Inter:ital,wght@0,300;0,400;0,500;1,300&display=swap">
+<style>
+/* Layout: sticky contents rail on the left; the chapter runs as a stack of full-height panels.
+   "How to apply it" pins and travels sideways, then vertical scrolling resumes. */
+:root {
+  /* Primitives (Energy Operations Playbook design system) */
+  --pink: #ff0074;
+  --pink-hover: #d1005f;
+  --pink-press: #ab004e;
+  --teal-950: #07171b;
+  --teal-900: #002a32;
+  --teal-800: #00424f;
+  --illo-teal: #015565;
+  --slate-100: #d5def0;
+  --white: #ffffff;
+  --canvas: #f6f6f6;
+  --n200: #dbdbdb;
+  --n300: #c7c7c7;
+  --n700: #474646;
+  --sky: #69b1ff;
+  --sky-wash: #e5f2ff;
+
+  /* Semantic */
+  --bg-canvas: var(--canvas);
+  --bg-surface: var(--white);
+  --bg-brand: var(--teal-900);
+  --text-primary: var(--teal-950);
+  --text-body: var(--n700);
+  --text-emphasis: var(--teal-900);
+  --text-muted: var(--n300);
+  --text-on-brand: var(--slate-100);
+  --border: var(--slate-100);
+  --hairline: rgba(7, 23, 27, 0.1);
+  --hairline-dark: rgba(213, 222, 240, 0.14);
+
+  /* Type */
+  --f-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --f-label: "IBM Plex Sans", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --t-display: clamp(44px, 6.6vw, 100px);
+  --t-h2: clamp(32px, 3.4vw, 48px);
+  --t-h4: clamp(24px, 2.2vw, 32px);
+  --t-lead: clamp(20px, 2.1vw, 32px);
+  --t-large: clamp(17px, 1.3vw, 20px);
+  --t-body: clamp(16px, 1.2vw, 18px);
+
+  /* Space */
+  --bar: 56px;
+  --rail: 320px;
+  --pad: clamp(24px, 5.2vw, 80px);
+  --gutter-l: max(16px, env(safe-area-inset-left, 0px));
+  --gutter-r: max(16px, env(safe-area-inset-right, 0px));
+  --radius: 8px;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+
+  color-scheme: light;
+}
+
+/* Lenis */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: hidden; }
+
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  background: var(--bg-canvas);
+  color: var(--text-primary);
+  font-family: var(--f-sans);
+  font-weight: 300;
+  font-size: var(--t-body);
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0 0 auto;
+  height: env(safe-area-inset-top, 0px);
+  z-index: 60;
+  background: var(--bg-canvas);
+}
+h1, h2, h3, p, ol, ul, figure, blockquote { margin: 0; }
+ol, ul { padding: 0; list-style: none; }
+h1, h2, h3 { text-wrap: balance; font-weight: 300; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--pink); outline-offset: 3px; border-radius: 4px; }
+
+.skip {
+  position: fixed; left: var(--gutter-l); top: 8px; z-index: 100;
+  background: var(--pink); color: var(--white); padding: 8px 16px; border-radius: 999px;
+  transform: translateY(-200%); transition: transform .2s var(--ease-out);
+}
+.skip:focus { transform: none; }
+
+.eyebrow {
+  font-family: var(--f-label);
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 1;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-body);
+}
+
+/* ───────── Top bar ───────── */
+.bar {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 50;
+  height: var(--bar);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-left: var(--gutter-l);
+  padding-right: var(--gutter-r);
+  background: color-mix(in srgb, var(--bg-canvas) 88%, transparent);
+  backdrop-filter: saturate(1.4) blur(12px);
+  -webkit-backdrop-filter: saturate(1.4) blur(12px);
+  border-bottom: 1px solid var(--hairline);
+}
+/* Logo: full lockup at the top; past the fold the wordmark folds away, leaving the M at the same size. */
+.bar-brand { display: flex; align-items: center; flex: none; border-radius: 4px; }
+.logo {
+  --logo-h: 22px;
+  display: block;
+  height: var(--logo-h);
+  width: calc(var(--logo-h) * 100 / 18.86);
+  overflow: hidden;
+  transition: width .7s var(--ease-out);
+}
+.logo svg { display: block; height: var(--logo-h); width: calc(var(--logo-h) * 100 / 18.86); overflow: visible; }
+.logo-word { transition: opacity .35s var(--ease-out), transform .7s var(--ease-out); }
+.bar.is-compact .logo { width: calc(var(--logo-h) * 21.63 / 18.86 + 1px); }
+.bar.is-compact .logo-word { opacity: 0; transform: translateX(-8px); }
+@media (prefers-reduced-motion: reduce) {
+  .logo, .logo-word { transition-duration: .01s; }
+}
+.bar-sep { width: 1px; height: 20px; background: var(--hairline); flex: none; }
+.bar-title { font-size: 14px; color: var(--text-body); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.bar-step { margin-left: auto; font-size: 13px; white-space: nowrap; color: var(--text-emphasis); }
+.bar-step b { color: var(--pink); font-weight: 500; }
+.bar-progress { position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; }
+.bar-progress span {
+  display: block; height: 100%; background: var(--pink);
+  transform: scaleX(0); transform-origin: 0 50%;
+}
+.menu-btn {
+  display: none;
+  align-items: center; gap: 10px;
+  height: 36px; padding: 0 14px 0 10px;
+  border-radius: 999px;
+  border: 1px solid var(--hairline);
+  font-size: 14px; font-weight: 400;
+}
+.menu-btn i { position: relative; width: 16px; height: 10px; }
+.menu-btn i::before, .menu-btn i::after {
+  content: ""; position: absolute; left: 0; right: 0; height: 1.5px; background: currentColor;
+  transition: transform .3s var(--ease-out), top .3s var(--ease-out);
+}
+.menu-btn i::before { top: 1px; }
+.menu-btn i::after { top: 7.5px; }
+.nav-open .menu-btn i::before { top: 4.25px; transform: rotate(45deg); }
+.nav-open .menu-btn i::after { top: 4.25px; transform: rotate(-45deg); }
+
+/* ───────── Shell ───────── */
+.shell {
+  display: grid;
+  grid-template-columns: var(--rail) minmax(0, 1fr);
+  padding-right: var(--gutter-r);
+}
+
+/* ───────── Contents rail ───────── */
+.rail {
+  position: sticky;
+  top: calc(var(--bar) + env(safe-area-inset-top, 0px));
+  height: calc(100svh - var(--bar) - env(safe-area-inset-top, 0px));
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 32px;
+  padding: 32px 24px 24px var(--gutter-l);
+  padding-left: max(24px, env(safe-area-inset-left, 0px));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+}
+.rail::-webkit-scrollbar { display: none; }
+.rail-title { font-size: 20px; font-weight: 500; margin-bottom: 20px; letter-spacing: -0.01em; }
+.toc { display: flex; flex-direction: column; gap: 2px; }
+.toc-link {
+  display: flex; align-items: baseline; gap: 10px;
+  padding: 12px;
+  border-radius: var(--radius);
+  font-size: 15px; line-height: 1.4; font-weight: 400;
+  color: var(--text-emphasis);
+  transition: background-color .25s var(--ease-out);
+}
+.toc-link:hover { background: rgba(7, 23, 27, 0.04); }
+.toc-num {
+  font-family: var(--f-label); font-weight: 500; font-size: 13px; letter-spacing: 0.16em;
+  flex: none; width: 24px;
+}
+.toc-item.is-current > .toc-link { background: var(--n200); font-weight: 500; }
+.toc-item.is-current > .toc-link .toc-num { color: var(--pink); }
+.toc-item.is-soon > .toc-link { color: color-mix(in srgb, var(--text-emphasis) 72%, transparent); }
+
+.subnav {
+  display: flex; flex-direction: column;
+  margin: 8px 0 10px 46px;
+  border-left: 1px solid var(--hairline);
+}
+.subnav a {
+  position: relative;
+  display: block;
+  padding: 7px 0 7px 16px;
+  font-size: 14px;
+  color: var(--text-body);
+  transition: color .25s var(--ease-out);
+}
+.subnav a::before {
+  content: ""; position: absolute; left: -1px; top: 6px; bottom: 6px; width: 2px;
+  background: var(--pink);
+  transform: scaleY(0); transition: transform .35s var(--ease-out);
+}
+.subnav a:hover { color: var(--text-primary); }
+.subnav a.is-active { color: var(--text-primary); font-weight: 400; }
+.subnav a.is-active::before { transform: scaleY(1); }
+
+.assess {
+  background: var(--bg-surface);
+  border-radius: var(--radius);
+  padding: 24px;
+  display: flex; flex-direction: column; gap: 12px;
+}
+.assess h2 { font-size: 17px; line-height: 1.4; font-weight: 500; color: var(--text-primary); }
+.assess p { font-size: 14px; line-height: 1.5; color: var(--text-body); }
+.btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  align-self: flex-start;
+  margin-top: 8px;
+  padding: 10px 20px;
+  border-radius: 999px;
+  background: var(--pink);
+  color: var(--white);
+  font-size: 15px; font-weight: 500; line-height: 24px;
+  transition: background-color .2s var(--ease-out);
+}
+.btn:hover { background: var(--pink-hover); }
+.btn:active { background: var(--pink-press); }
+.btn svg { width: 18px; height: 18px; transition: transform .3s var(--ease-out); }
+.btn:hover svg { transform: translateX(3px); }
+.scrim { display: none; }
+
+/* ───────── Sections ───────── */
+main { min-width: 0; }
+.sec {
+  min-height: calc(100svh - var(--bar));
+  display: flex;
+  padding-block: 12px;
+}
+.panel {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  border-radius: var(--radius);
+  padding: var(--pad);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.h2 { font-size: var(--t-h2); line-height: 1.17; font-weight: 300; color: var(--text-primary); letter-spacing: -0.005em; }
+
+/* Hero */
+.hero { background: var(--bg-brand); color: var(--text-on-brand); overflow: hidden; }
+.hero-inner { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 28px; max-width: 1240px; }
+.hero .eyebrow { color: var(--text-muted); font-size: clamp(14px, 1.2vw, 20px); }
+.hero .eyebrow .sep { opacity: .5; margin: 0 .4em; }
+.display {
+  font-size: var(--t-display);
+  line-height: 1;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--text-on-brand);
+}
+.display .w { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: .08em; margin-bottom: -.08em; }
+.display .w > span { display: inline-block; }
+.lead { font-size: var(--t-lead); line-height: 1.44; font-weight: 300; color: var(--text-muted); max-width: 44ch; }
+.hero-art {
+  position: absolute;
+  right: -14%;
+  top: 50%;
+  width: min(68vw, 860px);
+  aspect-ratio: 1;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+.hero-art svg { width: 100%; height: 100%; overflow: visible; }
+.hero-art .ring { fill: none; stroke: var(--slate-100); stroke-opacity: .13; stroke-width: 1.5; }
+.hero-art .core { fill: var(--pink); }
+@media (prefers-reduced-motion: no-preference) {
+  .hero-art .ring { animation: listen 4.8s var(--ease-out) infinite; }
+  .hero-art .ring:nth-of-type(2) { animation-delay: .25s; }
+  .hero-art .ring:nth-of-type(3) { animation-delay: .5s; }
+  .hero-art .ring:nth-of-type(4) { animation-delay: .75s; }
+  .hero-art .ring:nth-of-type(5) { animation-delay: 1s; }
+}
+@keyframes listen {
+  0%, 100% { stroke-opacity: .1; }
+  18% { stroke-opacity: .32; }
+  48% { stroke-opacity: .1; }
+}
+.cue {
+  position: absolute; z-index: 1;
+  left: var(--pad); bottom: clamp(20px, 4vh, 48px);
+  display: flex; align-items: center; gap: 14px;
+  font-family: var(--f-label); font-weight: 500; font-size: 13px; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--text-muted);
+}
+.cue i { position: relative; width: 1px; height: 40px; background: var(--hairline-dark); overflow: hidden; }
+.cue i::after {
+  content: ""; position: absolute; left: 0; top: 0; width: 1px; height: 40%; background: var(--pink);
+  animation: cue 2s var(--ease-out) infinite;
+}
+@keyframes cue { 0% { transform: translateY(-100%); } 100% { transform: translateY(260%); } }
+
+/* Start with people */
+.people { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 48px var(--pad); align-content: center; }
+.people-head { display: flex; flex-direction: column; gap: 24px; }
+.people-body { display: flex; flex-direction: column; gap: 32px; max-width: 760px; }
+.people-lead { font-size: var(--t-lead); line-height: 1.44; color: var(--text-primary); }
+.people-lead strong { font-weight: 400; }
+.people-text { font-size: var(--t-large); line-height: 1.5; color: var(--text-body); max-width: 60ch; }
+.people-body .word { transition: none; }
+
+/* How to apply */
+.howto { background: var(--bg-surface); justify-content: flex-start; gap: clamp(24px, 4vh, 48px); overflow: hidden; }
+.howto-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+.howto-head-l { display: flex; flex-direction: column; gap: 20px; }
+.meter { display: flex; align-items: center; gap: 20px; }
+.meter-count { font-family: var(--f-label); font-weight: 500; font-size: 14px; letter-spacing: .16em; color: var(--text-body); font-variant-numeric: tabular-nums; }
+.meter-count b { color: var(--pink); font-weight: 500; }
+.ticks { display: flex; gap: 6px; }
+.tick { position: relative; width: 28px; height: 24px; }
+.tick::before {
+  content: ""; position: absolute; left: 0; right: 0; top: 11px; height: 2px; border-radius: 2px;
+  background: var(--n200); transition: background-color .3s var(--ease-out);
+}
+.tick.is-active::before { background: var(--pink); }
+.tick-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.howto-viewport {
+  flex: 1;
+  min-height: 0;
+  margin-inline: calc(var(--pad) * -1);
+  padding-inline: var(--pad);
+  display: flex;
+}
+.howto-track {
+  display: flex;
+  gap: 24px;
+  will-change: transform;
+}
+.card {
+  flex: 0 0 auto;
+  width: clamp(560px, calc((100vw - var(--rail)) * 0.8), 1120px);
+  background: var(--bg-canvas);
+  border-radius: var(--radius);
+  padding: clamp(28px, 4.5vw, 80px);
+  container-type: inline-size;
+  display: flex;
+  --card: var(--bg-canvas);
+}
+.card-in {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
+  align-items: center;
+  gap: clamp(32px, 6cqi, 110px);
+}
+.card-copy { display: flex; flex-direction: column; gap: 20px; max-width: 34em; }
+.card-meta { display: flex; align-items: baseline; gap: 14px; }
+.card-num { font-family: var(--f-label); font-weight: 500; font-size: 16px; letter-spacing: .16em; color: var(--pink); }
+.card-label { font-size: 18px; line-height: 24px; font-weight: 500; color: var(--text-emphasis); }
+.card-title { font-size: var(--t-h4); line-height: 1.25; font-weight: 300; color: var(--text-primary); }
+.card-body { font-size: var(--t-body); line-height: 1.45; color: var(--text-body); }
+.card-art { display: flex; align-items: center; justify-content: center; min-width: 0; }
+.illo {
+  width: 100%;
+  max-width: 440px;
+  max-height: calc(100svh - var(--bar) - 330px);
+  min-height: 200px;
+  aspect-ratio: 459 / 461;
+  overflow: visible;
+}
+@container (max-width: 620px) {
+  .card-in { grid-template-columns: 1fr; align-content: center; gap: 24px; }
+  .card-art { order: -1; }
+  .illo { max-width: 300px; max-height: 34svh; min-height: 160px; }
+}
+
+/* Illustration paint */
+.illo .teal { fill: var(--illo-teal); }
+.illo .pink { fill: var(--pink); }
+.illo .cut { stroke: var(--card); stroke-width: 10; }
+.illo .line { fill: none; stroke: var(--illo-teal); stroke-width: 10; stroke-linecap: round; }
+.illo .pulse { fill: none; stroke: var(--pink); stroke-width: 2; opacity: 0; }
+.illo .card-fill { fill: var(--card); }
+.illo .ev-wash { fill: var(--sky-wash); }
+.illo .ev-inner { fill: none; stroke: var(--card); stroke-width: 8; }
+.illo .ev-ring { fill: none; stroke: var(--sky); stroke-width: 5; }
+.illo .ev-handle { stroke: var(--sky); stroke-width: 6; stroke-linecap: round; }
+.illo .ring-line { fill: none; stroke: var(--illo-teal); stroke-width: 10; }
+
+/* In the field */
+.field-panel { padding: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); overflow: hidden; }
+.field-main {
+  background: var(--bg-brand);
+  padding: var(--pad);
+  display: flex; flex-direction: column; justify-content: center; gap: clamp(40px, 8vh, 80px);
+}
+.field-main .eyebrow { color: var(--text-muted); }
+.field-main .h2 { color: var(--white); }
+.field-copy { display: flex; flex-direction: column; gap: 28px; }
+.field-copy p { font-size: var(--t-large); line-height: 1.5; color: var(--text-muted); max-width: 46ch; }
+.stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--hairline-dark); }
+.stat { display: flex; flex-direction: column; gap: 10px; padding: 24px 16px 0 0; }
+.stat + .stat { padding-left: 24px; border-left: 1px solid var(--hairline-dark); }
+.stat-num { font-size: var(--t-h2); line-height: 1.15; font-weight: 300; color: var(--pink); font-variant-numeric: tabular-nums; }
+.stat-label { font-size: clamp(14px, 1.1vw, 18px); line-height: 1.35; font-weight: 500; color: var(--text-muted); }
+.field-quote {
+  background: var(--teal-800);
+  padding: var(--pad);
+  display: flex; flex-direction: column; justify-content: center; gap: 20px;
+}
+.qmark { font-size: 96px; line-height: .6; height: 44px; font-weight: 300; color: var(--slate-100); opacity: .55; font-family: Georgia, "Times New Roman", serif; }
+.field-quote blockquote p { font-size: clamp(20px, 1.9vw, 30px); line-height: 1.5; font-style: italic; font-weight: 300; color: var(--slate-100); max-width: 30ch; }
+.field-quote figcaption { font-family: var(--f-label); font-weight: 500; font-size: 13px; letter-spacing: .16em; text-transform: uppercase; color: var(--text-muted); opacity: .8; }
+
+/* Fragmentation sources */
+.frag { gap: clamp(40px, 7vh, 72px); }
+.frag-top { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 32px var(--pad); align-items: end; }
+.frag-intro { display: flex; flex-direction: column; gap: 24px; }
+.frag-intro p { font-size: var(--t-large); line-height: 1.5; color: var(--text-body); max-width: 56ch; }
+.pull { border-left: 2px solid var(--pink); padding-left: 24px; display: flex; flex-direction: column; gap: 12px; }
+.pull p { font-size: clamp(19px, 1.6vw, 24px); line-height: 1.6; font-style: italic; font-weight: 300; color: var(--text-primary); }
+.pull cite { font-style: normal; font-size: 14px; color: var(--text-body); }
+.frag-sub { font-size: var(--t-large); color: var(--text-body); padding-top: 32px; border-top: 1px solid var(--hairline); }
+.groups { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px 24px; position: relative; }
+.group { display: flex; flex-direction: column; gap: 20px; }
+.dots { display: flex; gap: 8px; height: 14px; }
+.dot { width: 14px; height: 14px; border-radius: 50%; background: var(--illo-teal); }
+.group h3 { border-left: 1px solid var(--pink); padding: 0 8px; font-size: 18px; line-height: 24px; font-weight: 500; color: var(--text-primary); }
+.group ul { display: flex; flex-direction: column; gap: 12px; }
+.group li { font-size: 16px; line-height: 1.45; color: var(--text-primary); }
+
+/* Next chapter */
+.next { padding-block: 12px 24px; }
+.next a {
+  display: flex; align-items: center; justify-content: space-between; gap: 24px;
+  background: var(--bg-surface);
+  border-radius: var(--radius);
+  padding: clamp(24px, 4vw, 48px) var(--pad);
+}
+.next-copy { display: flex; flex-direction: column; gap: 12px; }
+.next-copy .eyebrow b { color: var(--pink); font-weight: 500; }
+.next-title { font-size: var(--t-h4); line-height: 1.25; font-weight: 300; }
+.next-arrow {
+  flex: none; width: 56px; height: 56px; border-radius: 50%;
+  display: grid; place-items: center;
+  border: 1.5px solid var(--pink); color: var(--pink);
+  transition: background-color .3s var(--ease-out), color .3s var(--ease-out);
+}
+.next-arrow svg { width: 22px; height: 22px; transition: transform .35s var(--ease-out); }
+.next a:hover .next-arrow { background: var(--pink); color: var(--white); }
+.next a:hover .next-arrow svg { transform: translateX(3px); }
+
+.toast {
+  position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); z-index: 80;
+  transform: translate(-50%, 20px); opacity: 0;
+  background: var(--teal-950); color: var(--white);
+  padding: 10px 18px; border-radius: 999px; font-size: 14px; font-weight: 400;
+  transition: opacity .3s var(--ease-out), transform .3s var(--ease-out);
+  pointer-events: none;
+}
+.toast.is-on { opacity: 1; transform: translate(-50%, 0); }
+
+/* ───────── Responsive ───────── */
+@media (max-width: 1100px) {
+  :root { --rail: 0px; }
+  .shell { grid-template-columns: minmax(0, 1fr); padding-left: var(--gutter-l); }
+  .menu-btn { display: inline-flex; }
+  .rail {
+    position: fixed;
+    z-index: 45;
+    top: calc(var(--bar) + env(safe-area-inset-top, 0px));
+    left: 0;
+    width: min(340px, 88vw);
+    height: calc(100dvh - var(--bar) - env(safe-area-inset-top, 0px));
+    background: var(--bg-canvas);
+    border-right: 1px solid var(--hairline);
+    transform: translateX(-102%);
+    visibility: hidden;
+    transition: transform .45s var(--ease-out), visibility 0s linear .45s;
+  }
+  .nav-open .rail { transform: none; visibility: visible; transition: transform .45s var(--ease-out), visibility 0s; }
+  .scrim {
+    display: block; position: fixed; inset: 0; z-index: 44;
+    background: rgba(7, 23, 27, 0.32);
+    opacity: 0; pointer-events: none; transition: opacity .35s var(--ease-out);
+  }
+  .nav-open .scrim { opacity: 1; pointer-events: auto; }
+  .people { grid-template-columns: minmax(0, 1fr); }
+  .card { width: clamp(520px, 78vw, 900px); }
+  .frag-top { grid-template-columns: minmax(0, 1fr); align-items: start; }
+}
+@media (max-width: 860px) {
+  .field-panel { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 767px) {
+  .bar-title, .bar-sep { display: none; }
+  .sec { padding-block: 8px; }
+  .hero-art { right: -40%; width: 120vw; top: 30%; opacity: .7; }
+  .meter { display: none; }
+  .howto-viewport { margin-inline: 0; padding-inline: 0; }
+  .howto-track { flex-direction: column; gap: 16px; width: 100%; }
+  .card { width: 100%; padding: 28px 24px 32px; }
+  .card-in { grid-template-columns: 1fr; gap: 24px; }
+  .card-art { order: -1; }
+  .illo { max-width: 260px; max-height: none; min-height: 0; }
+  .groups { grid-template-columns: minmax(0, 1fr); gap: 40px; }
+  .stat { padding-right: 8px; }
+  .stat + .stat { padding-left: 14px; }
+  .next a { padding: 24px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .howto-viewport { overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: thin; }
+  .card { scroll-snap-align: start; }
+  .cue i::after { animation: none; }
+}
+</style>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="bar">
+  <button class="menu-btn" id="menu-btn" type="button" aria-controls="rail" aria-expanded="false"><i aria-hidden="true"></i>Contents</button>
+  <a class="bar-brand" href="#top" aria-label="Magnifico, back to top">
+    <span class="logo">
+      <svg viewBox="0 0 100 18.86" aria-hidden="true" focusable="false">
+        <g class="logo-mark" fill="#FF0074">
+          <path d="M3.44242 0.300781H9.89963C9.89269 0.316976 9.88807 0.333171 9.88575 0.35168L8.33334 7.34796L6.61666 14.4669C6.60509 14.5339 6.61897 14.5895 6.65136 14.6265H0.168703C0.0460834 14.6265 -0.0163834 14.5455 0.00443886 14.4229L1.70261 7.38266L3.23883 0.465046C3.25965 0.342426 3.34063 0.300781 3.44242 0.300781Z"/>
+          <path d="M13.3009 14.5085C13.3101 14.557 13.331 14.5987 13.3587 14.6265H9.95312C9.98089 14.5987 10.0017 14.5617 10.011 14.5085L11.2325 9.18954L11.7693 6.66542L12.0585 5.05054L13.3009 14.5085Z"/>
+          <path d="M21.2712 0.310036L15.8689 9.80961L14.6265 0.35168C14.6219 0.333171 14.6173 0.316976 14.6104 0.300781H21.2781C21.2781 0.300781 21.2735 0.307722 21.2712 0.310036Z"/>
+          <path d="M21.6226 5.25635L21.2084 6.6445L20.5861 9.18944L19.3645 14.4667C19.3529 14.5338 19.3668 14.5893 19.3992 14.6264H16.2759C16.3036 14.6102 16.3268 14.5824 16.343 14.55L21.6226 5.25635Z"/>
+        </g>
+        <g class="logo-word" fill="#002A32">
+          <path d="M32.3184 4.18059C32.3393 4.05566 32.4225 4.01401 32.5243 4.01401H35.9184C36.0433 4.01401 36.1058 4.0973 36.0849 4.21992L34.8217 9.49721L33.7043 14.5061C33.6834 14.631 33.6002 14.6727 33.4984 14.6727H30.2686C30.1437 14.6727 30.102 14.5894 30.1228 14.4668L30.2686 13.8676C29.5236 14.4876 28.5913 14.8809 27.4738 14.8809C25.0931 14.8809 23.5615 13.0809 23.5615 10.4111C23.5615 7.49364 25.3615 3.80811 29.0679 3.80811C30.4745 3.80811 31.4902 4.32635 32.0894 5.21476L32.3161 4.18059H32.3184ZM31.4485 8.25713C31.4485 6.91062 30.8701 6.20729 29.8336 6.20729C27.9087 6.20729 27.3095 8.89799 27.3095 10.263C27.3095 11.5262 27.8069 12.4771 28.9036 12.4771C30.7452 12.4771 31.4485 9.68229 31.4485 8.25481V8.25713Z"/>
+          <path d="M44.3837 4.18059C44.4045 4.05566 44.4878 4.01401 44.5896 4.01401H47.942C48.0669 4.01401 48.1271 4.0973 48.1062 4.21992L46.6996 10.1612L45.6862 14.6102C45.0245 17.5277 42.9955 18.8533 39.9115 18.8533C36.6008 18.8533 34.6551 17.2176 34.5718 15.1076C34.5718 14.9827 34.6551 14.9202 34.7569 14.9202H38.1301C38.2342 14.9202 38.3152 14.9827 38.3152 15.1076C38.3776 15.9567 39.0393 16.4518 40.0735 16.4518C41.2118 16.4518 41.8318 15.8734 42.1441 14.5686L42.3917 13.4511C41.6467 14.0503 40.7352 14.4251 39.5761 14.4251C37.1329 14.4251 35.6013 12.7478 35.6013 10.1612C35.6013 7.3664 37.3596 3.80811 41.0868 3.80811C42.5143 3.80811 43.5508 4.32635 44.1708 5.21476L44.3767 4.18059H44.3837ZM43.4721 8.07204C43.4721 6.85047 42.8729 6.2096 41.8573 6.2096C39.9115 6.2096 39.354 8.75455 39.354 10.0178C39.354 11.1977 39.8514 12.0468 40.948 12.0468C42.8105 12.0468 43.4721 9.39772 43.4721 8.07204Z"/>
+          <path d="M50.4708 14.5086C50.45 14.6335 50.3667 14.6751 50.2649 14.6751H46.8292C46.7043 14.6751 46.6418 14.5919 46.6626 14.4692L47.8842 9.41868L49.085 4.18305C49.1058 4.05811 49.1891 4.01647 49.2909 4.01647H52.4998C52.6247 4.01647 52.6849 4.09976 52.6641 4.22238L52.4165 5.2149C53.2448 4.38664 54.4247 3.7666 55.7897 3.7666C57.983 3.7666 59.5146 5.29819 58.8529 8.11382L58.3763 10.1428L57.4231 14.5109C57.4023 14.6358 57.319 14.6775 57.2149 14.6775H53.8209C53.6959 14.6775 53.6335 14.5942 53.6543 14.4716L54.626 10.5801L55.1234 8.32436C55.3501 7.2069 55.0401 6.46193 54.0684 6.46193C52.5368 6.46193 51.771 8.44929 51.4818 9.75184L51.2944 10.6426L50.4662 14.5132L50.4708 14.5086Z"/>
+          <path d="M62.1222 14.5086C62.1013 14.6335 62.018 14.6752 61.9163 14.6752H58.4806C58.3556 14.6752 58.2932 14.5919 58.314 14.4692L59.5564 9.43952L60.7155 4.18306C60.7363 4.05812 60.8196 4.01648 60.9214 4.01648H64.3363C64.4612 4.01648 64.5237 4.09977 64.5028 4.22239L63.198 9.4372L62.1222 14.5086ZM65.3727 0.393409L64.7527 3.02164C64.7319 3.14657 64.6486 3.18822 64.5468 3.18822H61.1528C61.0278 3.18822 60.9677 3.10493 60.9885 2.98231L61.6085 0.354078C61.6294 0.229144 61.7127 0.1875 61.8145 0.1875H65.2085C65.3334 0.1875 65.3936 0.270789 65.3751 0.395722L65.3727 0.393409Z"/>
+          <path d="M70.5482 3.78734L70.5066 4.01407H72.8664C72.9914 4.01407 73.0515 4.09736 73.033 4.21998L72.4939 6.43407C72.4731 6.55901 72.3898 6.60065 72.288 6.60065H69.9074L69.1207 10.0155L68.2092 14.5062C68.1884 14.6311 68.1051 14.6727 68.0033 14.6727H64.4843C64.3594 14.6727 64.2992 14.5895 64.3177 14.4668L65.4352 10.0178L66.2635 6.60297H64.8776C64.7527 6.60297 64.6902 6.51968 64.7111 6.39706L65.2293 4.18296C65.2501 4.05802 65.3334 4.01638 65.4352 4.01638H66.8627L66.9668 3.53978C67.566 0.974018 69.6158 0 71.6865 0C72.4315 0 73.1973 0.104111 73.7572 0.185087C73.8821 0.205909 73.9237 0.31002 73.9029 0.411818L73.3639 2.62592C73.343 2.73003 73.2806 2.79249 73.1973 2.77167C72.9081 2.68838 72.4939 2.64674 72.0173 2.64674C71.2724 2.64674 70.775 2.87347 70.5482 3.78502V3.78734Z"/>
+          <path d="M75.2652 14.5086C75.2444 14.6335 75.1611 14.6752 75.0593 14.6752H71.6236C71.4987 14.6752 71.4362 14.5919 71.4571 14.4692L72.6995 9.43952L73.8586 4.18306C73.8794 4.05812 73.9627 4.01648 74.0645 4.01648H77.4793C77.6043 4.01648 77.6667 4.09977 77.6459 4.22239L76.341 9.4372L75.2652 14.5086ZM78.5158 0.393409L77.8958 3.02164C77.875 3.14657 77.7917 3.18822 77.6899 3.18822H74.2958C74.1709 3.18822 74.1108 3.10493 74.1316 2.98231L74.7516 0.354078C74.7724 0.229144 74.8557 0.1875 74.9575 0.1875H78.3516C78.4765 0.1875 78.5366 0.270789 78.5181 0.395722L78.5158 0.393409Z"/>
+          <path d="M77.1904 10.0802C77.1904 6.79028 79.5086 3.74561 83.5042 3.74561C86.3406 3.74561 88.2031 5.29802 88.2656 7.78281C88.2656 7.90774 88.1823 7.97021 88.0805 7.97021H84.9132C84.8091 7.97021 84.7258 7.90774 84.7258 7.78281C84.6633 6.70699 84.0433 6.18875 83.2358 6.18875C81.6209 6.18875 80.9176 8.52778 80.9176 10.226C80.9176 11.7992 81.496 12.5025 82.4284 12.5025C83.3608 12.5025 84.0641 11.7784 84.3533 10.7835C84.3741 10.6794 84.4574 10.6193 84.5592 10.6193H87.7265C87.8514 10.6193 87.9139 10.6817 87.8931 10.7835C87.3147 13.2267 85.3273 14.9433 82.3243 14.9433C79.3212 14.9433 77.1904 13.2452 77.1904 10.0802Z"/>
+          <path d="M88.5337 10.0594C88.5337 6.79028 90.9144 3.74561 94.8683 3.74561C97.8065 3.74561 100.002 5.4646 100.002 8.60876C100.002 11.7529 97.6214 14.9433 93.6884 14.9433C90.7501 14.9433 88.5337 13.2244 88.5337 10.0594ZM96.2958 8.44449C96.2958 6.9129 95.6757 6.16793 94.7017 6.16793C92.9642 6.16793 92.2586 8.56943 92.2586 10.2445C92.2586 11.7969 92.8786 12.5002 93.8318 12.5002C95.6109 12.5002 96.2958 10.0154 96.2958 8.44449Z"/>
+        </g>
+      </svg>
+    </span>
+  </a>
+  <span class="bar-sep" aria-hidden="true"></span>
+  <span class="bar-title">From Data Sprawl to a Single Source of Truth</span>
+  <span class="bar-step">Step <b>1</b> of 6</span>
+  <div class="bar-progress" aria-hidden="true"><span id="page-progress"></span></div>
+</header>
+
+<div class="shell">
+  <aside class="rail" id="rail" aria-label="Playbook contents">
+    <nav>
+      <p class="rail-title">Contents</p>
+      <ol class="toc">
+        <li class="toc-item is-soon"><a class="toc-link" href="#" data-soon><span class="toc-num">00</span><span>Intro: The Dashboard Isn’t the Problem</span></a></li>
+        <li class="toc-item is-current">
+          <a class="toc-link" href="#top" aria-current="page"><span class="toc-num">01</span><span>Listen before you design</span></a>
+          <ol class="subnav">
+            <li><a href="#start-with-people" data-spy="start-with-people">Start with people</a></li>
+            <li><a href="#how-to-apply" data-spy="how-to-apply">How to apply it</a></li>
+            <li><a href="#in-the-field" data-spy="in-the-field">In the field</a></li>
+            <li><a href="#fragmentation" data-spy="fragmentation">Fragmentation sources</a></li>
+          </ol>
+        </li>
+        <li class="toc-item is-soon"><a class="toc-link" href="#" data-soon><span class="toc-num">02</span><span>Know who decides what</span></a></li>
+        <li class="toc-item is-soon"><a class="toc-link" href="#" data-soon><span class="toc-num">03</span><span>Follow the data to its source</span></a></li>
+        <li class="toc-item is-soon"><a class="toc-link" href="#" data-soon><span class="toc-num">04</span><span>Agree on what matters</span></a></li>
+        <li class="toc-item is-soon"><a class="toc-link" href="#" data-soon><span class="toc-num">05</span><span>Design around decisions</span></a></li>
+        <li class="toc-item is-soon"><a class="toc-link" href="#" data-soon><span class="toc-num">06</span><span>Test before you build</span></a></li>
+        <li class="toc-item is-soon"><a class="toc-link" href="#" data-soon><span class="toc-num">07</span><span>Where to start</span></a></li>
+      </ol>
+    </nav>
+    <div class="assess">
+      <h2>How ready is your organization to go from data to decisions?</h2>
+      <p>The Data to Decision Assessment uses the same CLEAR steps to show you which practices you already have in place, where the gaps are, and what to tackle first.</p>
+      <button class="btn" type="button" data-soon>Take the assessment
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </button>
+    </div>
+  </aside>
+  <div class="scrim" id="scrim"></div>
+
+  <main id="main">
+    <!-- 1 · Header -->
+    <section class="sec" id="top" data-section="top" aria-labelledby="t-hero">
+      <div class="panel hero">
+        <div class="hero-art" aria-hidden="true">
+          <svg viewBox="0 0 600 600">
+            <circle class="ring" cx="300" cy="300" r="64"/>
+            <circle class="ring" cx="300" cy="300" r="122"/>
+            <circle class="ring" cx="300" cy="300" r="180"/>
+            <circle class="ring" cx="300" cy="300" r="238"/>
+            <circle class="ring" cx="300" cy="300" r="296"/>
+            <circle class="core" cx="300" cy="300" r="16"/>
+          </svg>
+        </div>
+        <div class="hero-inner">
+          <p class="eyebrow">Listen<span class="sep">|</span>Step 1</p>
+          <h1 class="display" id="t-hero"><span class="w"><span>Listen</span></span> <span class="w"><span>Before</span></span> <span class="w"><span>You</span></span> <span class="w"><span>Design</span></span></h1>
+          <p class="lead">Start with people and their workarounds. Interviews reveal the habits, incentives and gaps behind fragmented information.</p>
+        </div>
+        <div class="cue" aria-hidden="true"><i></i>Scroll</div>
+      </div>
+    </section>
+
+    <!-- 2 · Start with people -->
+    <section class="sec" id="start-with-people" data-section="start-with-people" aria-labelledby="t-people">
+      <div class="panel people">
+        <div class="people-head">
+          <p class="eyebrow">The principle</p>
+          <h2 class="h2" id="t-people">Start with people</h2>
+        </div>
+        <div class="people-body">
+          <p class="people-lead" data-words>Most data initiatives start with the data: an inventory of systems, a list of KPIs, a request for requirements. <strong>Start with people instead.</strong></p>
+          <p class="people-text">Fragmented data is rarely a technology problem at its root. It grows out of how people work, which tools they trust, what they’ve built to get around gaps, and what the organization rewards. None of that shows up on a system diagram. You find it by asking.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 · How to apply it (pins, then scrolls sideways) -->
+    <section class="sec" id="how-to-apply" data-section="how-to-apply" aria-labelledby="t-howto">
+      <div class="panel howto">
+        <div class="howto-head">
+          <div class="howto-head-l">
+            <p class="eyebrow">The method</p>
+            <h2 class="h2" id="t-howto">How to apply it</h2>
+          </div>
+          <div class="meter">
+            <span class="meter-count"><b id="meter-cur">01</b> / 04</span>
+            <div class="ticks" role="group" aria-label="Jump to step">
+              <button class="tick is-active" type="button" data-go="0"><span class="tick-label">Step 1: Map</span></button>
+              <button class="tick" type="button" data-go="1"><span class="tick-label">Step 2: Ask</span></button>
+              <button class="tick" type="button" data-go="2"><span class="tick-label">Step 3: Evidence</span></button>
+              <button class="tick" type="button" data-go="3"><span class="tick-label">Step 4: Patterns</span></button>
+            </div>
+          </div>
+        </div>
+
+        <div class="howto-viewport">
+          <ol class="howto-track">
+            <!-- 01 Map -->
+            <li class="card" data-illo="map">
+              <div class="card-in">
+                <div class="card-copy">
+                  <div class="card-meta"><span class="card-num">01</span><span class="card-label">Map</span></div>
+                  <h3 class="card-title">Map who to talk to.</h3>
+                  <p class="card-body">List every function that creates, interprets or acts on operational data: operations leadership, production, maintenance and reliability, integrity, health and safety, projects, and technology. Include frontline people as well as managers, and always include IT.</p>
+                </div>
+                <div class="card-art">
+                  <svg class="illo" viewBox="0 0 459 461" aria-hidden="true">
+                    <path class="line m-line" d="M231 222 L161.3 154.3" pathLength="1"/>
+                    <path class="line m-line" d="M231 222 L299.4 154.3" pathLength="1"/>
+                    <path class="line m-line" d="M231 222 L230 316" pathLength="1"/>
+                    <circle class="teal m-sat" cx="161.284" cy="154.284" r="20"/>
+                    <circle class="teal m-sat" cx="299.438" cy="154.284" r="20"/>
+                    <circle class="teal m-sat" cx="230" cy="316" r="20"/>
+                    <circle class="pulse m-pulse" cx="231" cy="222" r="47"/>
+                    <circle class="pink cut m-hub" cx="231" cy="222" r="47"/>
+                  </svg>
+                </div>
+              </div>
+            </li>
+
+            <!-- 02 Ask -->
+            <li class="card" data-illo="ask">
+              <div class="card-in">
+                <div class="card-copy">
+                  <div class="card-meta"><span class="card-num">02</span><span class="card-label">Ask</span></div>
+                  <h3 class="card-title">Ask about work, not wish lists.</h3>
+                  <p class="card-body">Don’t ask what dashboard people want. Ask them to walk you through a recent decision: which tools they opened, which numbers they checked by hand, where they keep their own records, and why.</p>
+                </div>
+                <div class="card-art">
+                  <svg class="illo" viewBox="0 0 459 461" aria-hidden="true">
+                    <circle class="pink a-person" cx="179" cy="265.354" r="94"/>
+                    <g class="a-bubble">
+                      <ellipse class="teal" cx="325.5612" cy="146.2857" rx="48.4388" ry="43.2857"/>
+                      <path class="teal" d="M281.151 182.333L300.437 177.713L286.319 165.091L281.151 182.333Z"/>
+                      <circle class="card-fill a-dot" cx="305.5" cy="146.3" r="6"/>
+                      <circle class="card-fill a-dot" cx="325.5" cy="146.3" r="6"/>
+                      <circle class="card-fill a-dot" cx="345.5" cy="146.3" r="6"/>
+                    </g>
+                  </svg>
+                </div>
+              </div>
+            </li>
+
+            <!-- 03 Evidence -->
+            <li class="card" data-illo="evidence">
+              <div class="card-in">
+                <div class="card-copy">
+                  <div class="card-meta"><span class="card-num">03</span><span class="card-label">Evidence</span></div>
+                  <h3 class="card-title">Treat workarounds as evidence.</h3>
+                  <p class="card-body">The spreadsheet someone trusts more than the official system is the most useful thing you’ll find. Note every one.</p>
+                </div>
+                <div class="card-art">
+                  <svg class="illo" viewBox="0 0 459 461" aria-hidden="true">
+                    <defs><clipPath id="ev-clip"><circle class="ev-clipc" cx="168.5" cy="245.5" r="136"/></clipPath></defs>
+                    <g class="ev-grid">
+                      <circle class="teal" cx="73.6" cy="150.6" r="37.6"/>
+                      <circle class="teal" cx="168.5" cy="150.6" r="37.6"/>
+                      <circle class="teal" cx="263.4" cy="150.6" r="37.6"/>
+                      <circle class="teal" cx="73.6" cy="245.5" r="37.6"/>
+                      <circle class="teal ev-key" cx="168.5" cy="245.5" r="37.6"/>
+                      <circle class="teal" cx="263.4" cy="245.5" r="37.6"/>
+                      <circle class="teal" cx="73.6" cy="340.4" r="37.6"/>
+                      <circle class="teal" cx="168.5" cy="340.4" r="37.6"/>
+                      <circle class="teal" cx="263.4" cy="340.4" r="37.6"/>
+                    </g>
+                    <g class="ev-lens">
+                      <g clip-path="url(#ev-clip)">
+                        <circle class="ev-wash" cx="168.5" cy="245.5" r="136"/>
+                        <g class="ev-zoom">
+                          <circle class="teal" cx="73.6" cy="150.6" r="37.6"/>
+                          <circle class="teal" cx="168.5" cy="150.6" r="37.6"/>
+                          <circle class="teal" cx="263.4" cy="150.6" r="37.6"/>
+                          <circle class="teal" cx="73.6" cy="245.5" r="37.6"/>
+                          <circle class="teal ev-key" cx="168.5" cy="245.5" r="37.6"/>
+                          <circle class="teal" cx="263.4" cy="245.5" r="37.6"/>
+                          <circle class="teal" cx="73.6" cy="340.4" r="37.6"/>
+                          <circle class="teal" cx="168.5" cy="340.4" r="37.6"/>
+                          <circle class="teal" cx="263.4" cy="340.4" r="37.6"/>
+                        </g>
+                      </g>
+                      <circle class="ev-inner" cx="168.5" cy="245.5" r="128"/>
+                      <line class="ev-handle" x1="263.8" y1="344.2" x2="351.8" y2="432.2"/>
+                      <circle class="ev-ring" cx="168.5" cy="245.5" r="134"/>
+                    </g>
+                  </svg>
+                </div>
+              </div>
+            </li>
+
+            <!-- 04 Patterns -->
+            <li class="card" data-illo="pattern">
+              <div class="card-in">
+                <div class="card-copy">
+                  <div class="card-meta"><span class="card-num">04</span><span class="card-label">Patterns</span></div>
+                  <h3 class="card-title">Look for the pattern behind the symptoms.</h3>
+                  <p class="card-body">Ask what in your culture, incentives or habits lets fragmentation grow. That is what will have to change, and no tool will change it for you.</p>
+                </div>
+                <div class="card-art">
+                  <svg class="illo" viewBox="0 0 459 461" aria-hidden="true">
+                    <circle class="ring-line p-ring" cx="230.13" cy="219.73" r="117.87" pathLength="1" transform="rotate(-90 230.13 219.73)"/>
+                    <circle class="pink p-core" cx="230.13" cy="219.73" r="50.67"/>
+                    <g class="p-orbit"><circle class="teal cut p-sat" cx="141.83" cy="133.96" r="30.33"/></g>
+                    <g class="p-orbit"><circle class="teal cut p-sat" cx="316.82" cy="133.96" r="30.33"/></g>
+                    <g class="p-orbit"><circle class="teal cut p-sat" cx="228.87" cy="338.8" r="30.33"/></g>
+                  </svg>
+                </div>
+              </div>
+            </li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4 · In the field -->
+    <section class="sec" id="in-the-field" data-section="in-the-field" aria-labelledby="t-field">
+      <div class="panel field-panel">
+        <div class="field-main">
+          <div class="field-copy">
+            <p class="eyebrow">Case study · Oil and gas</p>
+            <h2 class="h2" id="t-field">In the field</h2>
+            <p>With an oil and gas company, we held 26 conversations over two months across eight parts of the business before designing anything. The workarounds were everywhere, and so was the frustration.</p>
+          </div>
+          <dl class="stats">
+            <div class="stat"><dt class="stat-label">Conversations</dt><dd class="stat-num" data-count="26" style="margin:0;order:-1">26</dd></div>
+            <div class="stat"><dt class="stat-label">Months</dt><dd class="stat-num" data-count="2" style="margin:0;order:-1">02</dd></div>
+            <div class="stat"><dt class="stat-label">Business units</dt><dd class="stat-num" data-count="8" style="margin:0;order:-1">08</dd></div>
+          </dl>
+        </div>
+        <figure class="field-quote">
+          <span class="qmark" aria-hidden="true">“</span>
+          <blockquote><p>It does get overwhelming... there’s so many different streams, sometimes it’s hard to maintain a focus on what we need to be focused on.</p></blockquote>
+          <figcaption>From the interviews</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- 5 · Fragmentation sources -->
+    <section class="sec" id="fragmentation" data-section="fragmentation" aria-labelledby="t-frag">
+      <div class="panel frag">
+        <div class="frag-top">
+          <div class="frag-intro">
+            <p class="eyebrow">What we found</p>
+            <h2 class="h2" id="t-frag">Fragmentation sources</h2>
+            <p>The most important finding wasn’t technical. The company had a strong independent spirit: teams were trusted to solve their own problems their own way. It was a genuine strength. It also meant every team built its own reports, dashboards and naming conventions, and the result was many competing versions of the truth.</p>
+          </div>
+          <figure class="pull">
+            <blockquote><p>“That’s kind of on us, we should have never got to the place we’re in now. We should have had standards out there that kind of dictated naming conventions and things.”</p></blockquote>
+            <cite>From the interviews</cite>
+          </figure>
+        </div>
+        <div class="frag-groups">
+          <p class="frag-sub">The eight sources of fragmentation, sorted into three groups.</p>
+          <div class="groups" id="groups" style="margin-top:40px">
+            <div class="group">
+              <div class="dots" aria-hidden="true"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+              <h3>Information &amp; Trust</h3>
+              <ul><li>Source data quality</li><li>Replication and duplication</li><li>Missing shared standards</li><li>No trusted central data store</li></ul>
+            </div>
+            <div class="group">
+              <div class="dots" aria-hidden="true"><span class="dot"></span><span class="dot"></span></div>
+              <h3>Tools &amp; Workflows</h3>
+              <ul><li>No system retirement policy</li><li>Dashboard accessibility</li></ul>
+            </div>
+            <div class="group">
+              <div class="dots" aria-hidden="true"><span class="dot"></span><span class="dot"></span></div>
+              <h3>People &amp; Support</h3>
+              <ul><li>Data literacy and training</li><li>IT coordination and capacity</li></ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Next chapter -->
+    <div class="next">
+      <a href="#" data-soon>
+        <div class="next-copy">
+          <p class="eyebrow">Next · <b>Step 2</b></p>
+          <p class="next-title">Know who decides what</p>
+        </div>
+        <span class="next-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+    </div>
+  </main>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+<script>
+(() => {
+  "use strict";
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+  const PINK = "#ff0074";
+  const TEAL = "#015565";
+
+  const hasGsap = typeof window.gsap !== "undefined" && typeof window.ScrollTrigger !== "undefined";
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const barH = () => $(".bar").getBoundingClientRect().height;
+
+  /* ───── Toast for links that aren't live yet ───── */
+  const toast = $("#toast");
+  let toastTimer;
+  const say = (msg) => {
+    toast.textContent = msg;
+    toast.classList.add("is-on");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove("is-on"), 2200);
+  };
+  $$("[data-soon]").forEach((el) => el.addEventListener("click", (e) => {
+    e.preventDefault();
+    say(el.classList.contains("btn") ? "The assessment launches soon" : "This chapter is coming next");
+  }));
+
+  /* ───── Drawer (tablet / phone) ───── */
+  const menuBtn = $("#menu-btn");
+  let lenis = null;
+  const setNav = (open) => {
+    document.body.classList.toggle("nav-open", open);
+    menuBtn.setAttribute("aria-expanded", String(open));
+    if (lenis) open ? lenis.stop() : lenis.start();
+    if (open) $(".rail .toc-item.is-current .toc-link").focus({ preventScroll: true });
+  };
+  menuBtn.addEventListener("click", () => setNav(!document.body.classList.contains("nav-open")));
+  $("#scrim").addEventListener("click", () => setNav(false));
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && document.body.classList.contains("nav-open")) { setNav(false); menuBtn.focus(); }
+  });
+
+  /* ───── In-page navigation ───── */
+  const scrollToEl = (el) => {
+    const y = el.getBoundingClientRect().top + window.scrollY - barH();
+    if (lenis) lenis.scrollTo(y, { duration: 1.4 });
+    else window.scrollTo({ top: y, behavior: reduce ? "auto" : "smooth" });
+  };
+  $$('a[href^="#"]:not([data-soon])').forEach((a) => {
+    const id = a.getAttribute("href").slice(1);
+    if (!id) return;
+    a.addEventListener("click", (e) => {
+      const target = document.getElementById(id);
+      if (!target) return;
+      e.preventDefault();
+      setNav(false);
+      scrollToEl(target);
+      if (id === "main") target.focus?.();
+    });
+  });
+
+  /* ───── Logo: full at the top, reduced mark once the header panel has scrolled away ───── */
+  const bar = $(".bar");
+  const heroSec = $("#top");
+  const updateLogo = () => {
+    const past = heroSec.getBoundingClientRect().bottom <= barH() + 1;
+    bar.classList.toggle("is-compact", past);
+  };
+  window.addEventListener("scroll", updateLogo, { passive: true });
+  window.addEventListener("resize", updateLogo);
+  updateLogo();
+
+  if (!hasGsap) return; // Static page still reads fully without the libraries.
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  /* ───── Smooth scroll ───── */
+  /* Lenis drives document.documentElement, which only scrolls in standards mode.
+     Without a doctype (e.g. opening the raw file locally) fall back to native scrolling. */
+  const standardsMode = document.compatMode === "CSS1Compat";
+  if (!reduce && standardsMode && typeof window.Lenis !== "undefined") {
+    lenis = new Lenis({ lerp: 0.1, smoothWheel: true, wheelMultiplier: 1 });
+    lenis.on("scroll", ScrollTrigger.update);
+    gsap.ticker.add((t) => lenis.raf(t * 1000));
+    gsap.ticker.lagSmoothing(0);
+  }
+
+  /* ───── Page progress + scroll spy ───── */
+  const progress = $("#page-progress");
+  ScrollTrigger.create({
+    start: 0, end: "max",
+    onUpdate: (s) => { progress.style.transform = `scaleX(${s.progress})`; },
+  });
+  const spyLinks = $$("[data-spy]");
+  const setActive = (id) => spyLinks.forEach((l) => l.classList.toggle("is-active", l.dataset.spy === id));
+  const createSpy = () => {
+    const secs = $$("[data-section]");
+    secs.forEach((sec, i) => {
+      const next = secs[i + 1];
+      ScrollTrigger.create({
+        trigger: sec,
+        start: "top 50%",
+        endTrigger: next || sec,
+        end: next ? "top 50%" : "bottom 50%",
+        onToggle: (s) => { if (s.isActive) setActive(sec.dataset.section); },
+      });
+    });
+  };
+
+  /* ───── Illustration timelines (each runs 0 → 1) ───── */
+  const builders = {
+    map(svg) {
+      const hub = $(".m-hub", svg), sats = $$(".m-sat", svg), lines = $$(".m-line", svg), pulse = $(".m-pulse", svg);
+      gsap.set(lines, { strokeDasharray: 1, strokeDashoffset: 1 });
+      const tl = gsap.timeline({ paused: true, defaults: { ease: "none" } });
+      tl.from(hub, { scale: 0, transformOrigin: "50% 50%", duration: 0.32, ease: "back.out(1.7)" }, 0);
+      sats.forEach((s, i) => {
+        const dx = 231 - +s.getAttribute("cx"), dy = 222 - +s.getAttribute("cy");
+        const at = 0.18 + i * 0.08;
+        tl.from(s, { x: dx, y: dy, scale: 0.35, transformOrigin: "50% 50%", duration: 0.48, ease: "expo.out" }, at);
+        tl.to(lines[i], { strokeDashoffset: 0, duration: 0.48, ease: "expo.out" }, at);
+      });
+      tl.fromTo(pulse, { scale: 1, opacity: 0.9, transformOrigin: "50% 50%" }, { scale: 1.9, opacity: 0, duration: 0.3, ease: "power2.out" }, 0.7);
+      return tl;
+    },
+
+    ask(svg) {
+      const person = $(".a-person", svg), bubble = $(".a-bubble", svg), dots = $$(".a-dot", svg);
+      const tl = gsap.timeline({ paused: true, defaults: { ease: "none" } });
+      tl.from(person, { y: 70, scale: 0.7, opacity: 0, transformOrigin: "50% 100%", duration: 0.36, ease: "power3.out" }, 0);
+      tl.from(bubble, { scale: 0, svgOrigin: "281 182", duration: 0.3, ease: "back.out(1.9)" }, 0.3);
+      tl.from(dots, { scale: 0, transformOrigin: "50% 50%", duration: 0.12, stagger: 0.06, ease: "back.out(3)" }, 0.52);
+      dots.forEach((d, i) => {
+        tl.to(d, { y: -8, duration: 0.06, ease: "power2.out" }, 0.74 + i * 0.07)
+          .to(d, { y: 0, duration: 0.08, ease: "power2.in" }, 0.8 + i * 0.07);
+      });
+      tl.to(person, { y: -6, duration: 0.2, ease: "sine.inOut" }, 0.8);
+      return tl;
+    },
+
+    evidence(svg) {
+      const k = 1.675;
+      const circles = $$(".ev-clipc, .ev-wash, .ev-inner, .ev-ring", svg);
+      const handle = $(".ev-handle", svg), zoom = $(".ev-zoom", svg), lens = $(".ev-lens", svg);
+      const keys = $$(".ev-key", svg);
+      const p = { x: 430, y: 440 };
+      const draw = () => {
+        circles.forEach((c) => { c.setAttribute("cx", p.x); c.setAttribute("cy", p.y); });
+        handle.setAttribute("x1", p.x + 95.3); handle.setAttribute("y1", p.y + 98.7);
+        handle.setAttribute("x2", p.x + 183.3); handle.setAttribute("y2", p.y + 186.7);
+        zoom.setAttribute("transform", `translate(${p.x * (1 - k)} ${p.y * (1 - k)}) scale(${k})`);
+      };
+      draw();
+      const tl = gsap.timeline({ paused: true, defaults: { ease: "none" } });
+      tl.from($$(".ev-grid circle", svg), {
+        scale: 0, transformOrigin: "50% 50%", duration: 0.26, ease: "back.out(1.8)",
+        stagger: { each: 0.03, grid: [3, 3], from: "start" },
+      }, 0);
+      tl.from(lens, { opacity: 0, duration: 0.08 }, 0.36);
+      tl.to(p, { x: 263.4, y: 340.4, duration: 0.2, ease: "power2.out", onUpdate: draw }, 0.36);
+      tl.to(p, { x: 263.4, y: 150.6, duration: 0.17, ease: "power1.inOut", onUpdate: draw }, 0.56);
+      tl.to(p, { x: 168.5, y: 245.5, duration: 0.17, ease: "power3.out", onUpdate: draw }, 0.73);
+      tl.to(keys, { fill: PINK, duration: 0.08 }, 0.86);
+      tl.fromTo(lens, { scale: 1 }, { scale: 1.03, svgOrigin: "168.5 245.5", duration: 0.05, yoyo: true, repeat: 1 }, 0.9);
+      tl.eventCallback("onReverseComplete", draw);
+      return tl;
+    },
+
+    pattern(svg) {
+      const ring = $(".p-ring", svg), core = $(".p-core", svg), orbits = $$(".p-orbit", svg), sats = $$(".p-sat", svg);
+      gsap.set(ring, { strokeDasharray: 1, strokeDashoffset: 1 });
+      const tl = gsap.timeline({ paused: true, defaults: { ease: "none" } });
+      tl.to(ring, { strokeDashoffset: 0, duration: 0.55, ease: "power2.inOut" }, 0.05);
+      const spins = [-150, -210, -120];
+      orbits.forEach((o, i) => {
+        tl.from(o, { rotation: spins[i], svgOrigin: "230.13 219.73", duration: 0.62, ease: "power3.out" }, 0.04 + i * 0.06);
+        tl.from(sats[i], { scale: 0, transformOrigin: "50% 50%", duration: 0.2, ease: "back.out(2)" }, 0.04 + i * 0.06);
+      });
+      tl.from(core, { scale: 0, transformOrigin: "50% 50%", duration: 0.28, ease: "back.out(1.8)" }, 0.6);
+      return tl;
+    },
+  };
+
+  const cards = $$(".card");
+  const timelines = cards.map((card) => {
+    const svg = $(".illo", card);
+    const tl = builders[card.dataset.illo](svg);
+    const copy = $$(".card-meta, .card-title, .card-body", card);
+    tl.from(copy, { y: 28, opacity: 0, duration: 0.3, stagger: 0.06, ease: "power3.out" }, 0);
+    return tl;
+  });
+
+  if (reduce) {
+    timelines.forEach((tl) => tl.progress(1));
+    createSpy();
+    return; // Everything else stays in its finished, readable state.
+  }
+
+  /* ───── Hero: load sequence + scroll-away ───── */
+  const hero = $(".hero");
+  gsap.timeline({ defaults: { ease: "expo.out" } })
+    .from(".hero .eyebrow", { y: 16, opacity: 0, duration: 1 }, 0.1)
+    .from(".display .w > span", { yPercent: 110, duration: 1.2, stagger: 0.08 }, 0.15)
+    .from(".lead", { y: 20, opacity: 0, duration: 1.1 }, 0.55)
+    .from(".hero-art .ring", { scale: 0.4, opacity: 0, svgOrigin: "300 300", duration: 1.6, stagger: 0.09 }, 0.2)
+    .from(".hero-art .core", { scale: 0, svgOrigin: "300 300", duration: 1, ease: "back.out(2)" }, 0.35)
+    .from(".cue", { opacity: 0, duration: 1 }, 0.9);
+  gsap.to(".hero-inner", {
+    yPercent: -14, opacity: 0.25, ease: "none",
+    scrollTrigger: { trigger: hero, start: () => `top top+=${barH()}`, end: "bottom top", scrub: true },
+  });
+  gsap.to(".hero-art", {
+    rotate: 12, scale: 1.12, ease: "none",
+    scrollTrigger: { trigger: hero, start: () => `top top+=${barH()}`, end: "bottom top", scrub: true },
+  });
+
+  /* ───── Start with people: words come into focus as you read ───── */
+  const lead = $("[data-words]");
+  const wrapWords = (node) => {
+    Array.from(node.childNodes).forEach((n) => {
+      if (n.nodeType === 3) {
+        const frag = document.createDocumentFragment();
+        n.textContent.split(/(\s+)/).forEach((part) => {
+          if (!part) return;
+          if (/^\s+$/.test(part)) frag.appendChild(document.createTextNode(part));
+          else { const s = document.createElement("span"); s.className = "word"; s.textContent = part; frag.appendChild(s); }
+        });
+        n.replaceWith(frag);
+      } else if (n.nodeType === 1) wrapWords(n);
+    });
+  };
+  wrapWords(lead);
+  gsap.fromTo($$(".word", lead), { opacity: 0.14 }, {
+    opacity: 1, stagger: 0.05, ease: "none",
+    scrollTrigger: { trigger: lead, start: "top 82%", end: "bottom 48%", scrub: true },
+  });
+  gsap.from(".people-head > *, .people-text", {
+    y: 30, opacity: 0, duration: 1.1, stagger: 0.1, ease: "expo.out",
+    scrollTrigger: { trigger: "#start-with-people", start: "top 70%", toggleActions: "play none none reverse" },
+  });
+
+  /* ───── How to apply: pinned horizontal travel ───── */
+  const section = $("#how-to-apply");
+  const viewport = $(".howto-viewport");
+  const track = $(".howto-track");
+  const meterCur = $("#meter-cur");
+  const ticks = $$(".tick");
+  let howtoST = null;
+  let lastIdx = 0;
+  const setMeter = (i) => {
+    if (i === lastIdx) return;
+    lastIdx = i;
+    meterCur.textContent = String(i + 1).padStart(2, "0");
+    ticks.forEach((t, j) => t.classList.toggle("is-active", j === i));
+  };
+
+  const mm = gsap.matchMedia();
+
+  mm.add("(min-width: 768px)", () => {
+    const pad = () => parseFloat(getComputedStyle(viewport).paddingLeft) || 0;
+    const dist = () => Math.max(0, track.scrollWidth - (viewport.clientWidth - 2 * pad()));
+
+    const travel = gsap.to(track, {
+      x: () => -dist(),
+      ease: "none",
+      scrollTrigger: {
+        trigger: section,
+        start: () => `top top+=${barH()}`,
+        end: () => `+=${dist()}`,
+        pin: true,
+        scrub: true,
+        anticipatePin: 1,
+        invalidateOnRefresh: true,
+        onUpdate: (s) => {
+          const x = s.progress * dist();
+          let idx = 0;
+          cards.forEach((c, i) => { if (c.offsetLeft - cards[0].offsetLeft <= x + c.offsetWidth * 0.5) idx = i; });
+          setMeter(idx);
+        },
+      },
+    });
+    howtoST = travel.scrollTrigger;
+
+    const vp = () => viewport.getBoundingClientRect();
+    timelines.forEach((tl, i) => {
+      if (i === 0) {
+        ScrollTrigger.create({
+          trigger: section,
+          start: "top 78%",
+          end: () => `top top+=${barH() + 4}`,
+          scrub: 0.6,
+          animation: tl,
+        });
+      } else {
+        ScrollTrigger.create({
+          trigger: cards[i],
+          containerAnimation: travel,
+          start: () => `left ${vp().right - vp().width * 0.08}px`,
+          end: () => `left ${vp().left + vp().width * 0.32}px`,
+          scrub: 0.6,
+          animation: tl,
+        });
+      }
+    });
+
+    return () => { howtoST = null; gsap.set(track, { clearProps: "transform" }); };
+  });
+
+  mm.add("(max-width: 767px)", () => {
+    timelines.forEach((tl, i) => {
+      ScrollTrigger.create({ trigger: cards[i], start: "top 85%", end: "center 55%", scrub: 0.6, animation: tl });
+    });
+  });
+
+  ticks.forEach((t) => t.addEventListener("click", () => {
+    if (!howtoST) return;
+    const i = +t.dataset.go;
+    const total = Math.max(1, track.scrollWidth - (viewport.clientWidth - 2 * (parseFloat(getComputedStyle(viewport).paddingLeft) || 0)));
+    const x = Math.min(cards[i].offsetLeft - cards[0].offsetLeft, total);
+    const y = howtoST.start + (x / total) * (howtoST.end - howtoST.start);
+    if (lenis) lenis.scrollTo(y, { duration: 1.2 }); else window.scrollTo({ top: y, behavior: "smooth" });
+  }));
+
+  /* ───── In the field ───── */
+  const field = $("#in-the-field");
+  gsap.from(".field-copy > *", {
+    y: 30, opacity: 0, duration: 1.1, stagger: 0.08, ease: "expo.out",
+    scrollTrigger: { trigger: field, start: "top 70%", toggleActions: "play none none reverse" },
+  });
+  gsap.from(".field-quote > *", {
+    y: 30, opacity: 0, duration: 1.2, stagger: 0.12, ease: "expo.out",
+    scrollTrigger: { trigger: field, start: "top 55%", toggleActions: "play none none reverse" },
+  });
+  $$("[data-count]").forEach((el, i) => {
+    const target = +el.dataset.count;
+    const o = { v: 0 };
+    el.textContent = "00";
+    ScrollTrigger.create({
+      trigger: ".stats", start: "top 85%", once: true,
+      onEnter: () => gsap.to(o, {
+        v: target, duration: 1.6, delay: i * 0.12, ease: "power3.out",
+        onUpdate: () => { el.textContent = String(Math.round(o.v)).padStart(2, "0"); },
+      }),
+    });
+  });
+
+  /* ───── Fragmentation: eight sources sort into three groups ───── */
+  const groups = $("#groups");
+  const dots = $$(".dot", groups);
+  const scatter = dots.map((_, i) => ({ a: (i / dots.length) * Math.PI * 2 + 0.4, r: 26 + (i % 3) * 14 }));
+  gsap.from(dots, {
+    x: (i, el) => {
+      const g = groups.getBoundingClientRect(), d = el.getBoundingClientRect();
+      return g.left + g.width / 2 + Math.cos(scatter[i].a) * scatter[i].r * 2.2 - (d.left + d.width / 2);
+    },
+    y: (i, el) => {
+      const g = groups.getBoundingClientRect(), d = el.getBoundingClientRect();
+      return g.top - 70 + Math.sin(scatter[i].a) * scatter[i].r - (d.top + d.height / 2);
+    },
+    scale: 0.6,
+    backgroundColor: PINK,
+    ease: "power2.inOut",
+    stagger: 0.03,
+    scrollTrigger: { trigger: groups, start: "top 92%", end: "top 45%", scrub: 0.8, invalidateOnRefresh: true },
+  });
+  gsap.from(".group h3, .group li", {
+    y: 16, opacity: 0, duration: 0.9, stagger: 0.04, ease: "expo.out",
+    scrollTrigger: { trigger: groups, start: "top 55%", toggleActions: "play none none reverse" },
+  });
+  gsap.from(".frag-intro > *, .pull", {
+    y: 30, opacity: 0, duration: 1.1, stagger: 0.08, ease: "expo.out",
+    scrollTrigger: { trigger: "#fragmentation", start: "top 70%", toggleActions: "play none none reverse" },
+  });
+
+  /* Scroll spy goes last so it measures sections after the pin spacing exists. */
+  createSpy();
+
+  /* Recalculate once fonts settle and the layout is final. */
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => ScrollTrigger.refresh());
+  window.addEventListener("load", () => ScrollTrigger.refresh());
+})();
+</script>
+
+</html>
