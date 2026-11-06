@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>One Truth Options</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;500&family=Inter:wght@300;400;500&display=swap">
+<style>
+:root {
+  --pink: #ff0074;
+  --teal-950: #07171b;
+  --teal-900: #002a32;
+  --canvas: #f6f6f6;
+  --white: #ffffff;
+  --n700: #474646;
+  --hair: rgba(7, 23, 27, 0.1);
+  --f-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --f-label: "IBM Plex Sans", "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+* { box-sizing: border-box; margin: 0; }
+body { background: var(--canvas); color: var(--teal-950); font-family: var(--f-sans); -webkit-font-smoothing: antialiased; }
+.wrap { max-width: 1240px; margin: 0 auto; padding: 56px max(16px, 3vw) 40vh; }
+.eyebrow { font: 500 12px/1 var(--f-label); letter-spacing: .16em; text-transform: uppercase; color: var(--pink); }
+.top h1 { margin-top: 20px; font-size: clamp(34px, 4.4vw, 60px); font-weight: 300; line-height: 1.08; }
+.top p { margin-top: 18px; color: var(--n700); font-size: 18px; line-height: 1.5; max-width: 66ch; }
+
+.bar {
+  position: sticky; top: 0; z-index: 5; margin: 40px calc(-1 * max(16px, 3vw)) 0; padding: 12px max(16px, 3vw);
+  background: rgba(246, 246, 246, .9); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--hair); display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none;
+}
+.bar a {
+  flex: none; font: 500 12px/1 var(--f-label); letter-spacing: .16em; text-transform: uppercase; text-decoration: none;
+  color: var(--teal-950); border: 1px solid var(--hair); background: #fff; padding: 11px 14px; border-radius: 999px;
+}
+.bar a:hover { border-color: var(--teal-900); }
+
+.opt { padding-top: 96px; }
+.opt-head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px 48px; align-items: end; }
+.opt-head h2 { margin-top: 14px; font-size: clamp(28px, 3.2vw, 44px); font-weight: 300; line-height: 1.15; }
+.opt-head p { color: var(--n700); font-size: 17px; line-height: 1.5; }
+
+.track { position: relative; height: 300vh; }
+.pin { position: sticky; top: 0; height: 100vh; display: flex; align-items: center; padding: 64px 0 24px; }
+.stage { position: relative; width: 100%; background: var(--white); border-radius: 8px; padding: clamp(20px, 3vw, 48px); padding-top: 64px; }
+.stage svg { display: block; width: 100%; height: auto; max-height: calc(100vh - 200px); overflow: visible; margin: 0 auto; }
+.badge {
+  position: absolute; top: 18px; left: 18px;
+  font: 500 11px/1 var(--f-label); letter-spacing: .16em; text-transform: uppercase;
+  color: var(--teal-900); border: 1px solid rgba(0, 42, 50, .18); padding: 7px 10px; border-radius: 999px;
+}
+.prog { position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--hair); border-radius: 0 0 8px 8px; overflow: hidden; }
+.prog i { display: block; height: 100%; width: 100%; background: var(--teal-900); transform-origin: 0 50%; transform: scaleX(0); }
+
+/* No card: the art sits straight on the page background, with no edge or progress line */
+.stage.bare { background: transparent; }
+.stage.bare .prog { display: none; }
+.stage.bare .node { fill: var(--canvas); }
+
+.split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(24px, 5vw, 80px); align-items: center; width: 100%; }
+.split .copy h3 { font-size: clamp(30px, 3.4vw, 48px); font-weight: 300; line-height: 1.15; }
+.split .copy p { margin-top: 20px; color: var(--n700); font-size: 18px; line-height: 1.55; max-width: 48ch; }
+.split .stage { padding: 56px clamp(16px, 2.4vw, 36px) 28px; }
+
+/* SVG language: light-card rules (dark teal lines, opacity for hierarchy, pink is the ball only) */
+.ln { fill: none; stroke: var(--teal-900); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.hl { fill: none; stroke: var(--teal-900); stroke-width: 1; }
+.ball { fill: var(--pink); }
+.dot { fill: var(--teal-900); }
+.node { fill: var(--white); stroke: var(--teal-900); stroke-width: 1.5; }
+.lbl { font: 400 17px/1 var(--f-sans); fill: var(--teal-950); }
+.lbl-s { font: 300 14px/1 var(--f-sans); fill: var(--n700); }
+.axis { font: 500 11px/1 var(--f-label); letter-spacing: .16em; text-transform: uppercase; fill: var(--teal-900); }
+
+@media (max-width: 760px) {
+  .opt-head, .split { grid-template-columns: minmax(0, 1fr); }
+  .split .copy p { font-size: 16px; margin-top: 12px; }
+  .stage { padding: 56px 12px 20px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <p class="eyebrow">Intro · Infographic options</p>
+    <h1>One screen isn’t one truth</h1>
+    <p>Four ways to show the difference between putting all the data on one screen and agreeing on what it means. Each one is pinned and scrubbed by scroll, and plays backwards when you scroll up.</p>
+  </header>
+  <nav class="bar">
+    <a href="#a">A · The spectrum</a>
+    <a href="#a2">A2 · Ordered screen</a>
+    <a href="#a3">A3 · No card</a>
+    <a href="#b">B · Under the glass</a>
+    <a href="#c">C · Three answers</a>
+    <a href="#d">D · Line up the panes</a>
+  </nav>
+
+  <section class="opt" id="a">
+    <div class="opt-head">
+      <div><p class="eyebrow">Option A · Your idea</p><h2>The spectrum</h2></div>
+      <div><p>A scale runs from pane of glass to source of truth, with a marker moving along it as you scroll. Above it, the dots on a crowded screen leave one by one and settle in a ring around the pink ball, each tied to it by a thread. You end with the same data, but it's now all connected to one source.</p></div>
+    </div>
+    <div class="track"><div class="pin"><div class="stage"><span class="badge">A · The spectrum</span><svg viewBox="0 0 1000 440" role="img" aria-label="Data on one crowded screen moves along a spectrum until every point is connected to a single source of truth."></svg><div class="prog"><i></i></div></div></div></div>
+  </section>
+
+  <section class="opt" id="a2">
+    <div class="opt-head">
+      <div><p class="eyebrow">Option A2 · Ordered screen</p><h2>The spectrum, from a real dashboard</h2></div>
+      <div><p>The same move, but the pane of glass now reads as a dashboard. The dots sit in four faint widgets: a KPI grid, a line chart, a bar chart and a table. They leave in a scattered order, so the whole screen empties at once instead of one widget at a time. The empty widget frames stay behind.</p></div>
+    </div>
+    <div class="track"><div class="pin"><div class="stage"><span class="badge">A2 · Ordered screen</span><svg viewBox="0 0 1000 440" role="img" aria-label="A dashboard's data moves along a spectrum until every point is connected to a single source of truth."></svg><div class="prog"><i></i></div></div></div></div>
+  </section>
+
+  <section class="opt" id="a3">
+    <div class="opt-head">
+      <div><p class="eyebrow">Option A3 · No card</p><h2>The spectrum, on the page</h2></div>
+      <div><p>A2 with no white card. The illustration sits straight on the light gray page with no frame or edge, so it reads as part of the section rather than a box inside it.</p></div>
+    </div>
+    <div class="track"><div class="pin"><div class="stage bare"><svg viewBox="0 0 1000 440" role="img" aria-label="A dashboard's data moves along a spectrum until every point is connected to a single source of truth."></svg><div class="prog"><i></i></div></div></div></div>
+  </section>
+
+  <section class="opt" id="b">
+    <div class="opt-head">
+      <div><p class="eyebrow">Option B · Vertical cut</p><h2>Under the glass</h2></div>
+      <div><p>The screen stays exactly the same the whole time. Underneath it, every tile is wired to a different source, a tangle of spreadsheets and systems. As you scroll, the wires reroute one by one to a single source. The point is that the screen was never the problem.</p></div>
+    </div>
+    <div class="track"><div class="pin"><div class="stage"><span class="badge">B · Under the glass</span><svg viewBox="0 0 1000 470" role="img" aria-label="The same dashboard, first wired to many sources, then to one."></svg><div class="prog"><i></i></div></div></div></div>
+  </section>
+
+  <section class="opt" id="c">
+    <div class="opt-head">
+      <div><p class="eyebrow">Option C · A chart</p><h2>Three answers, one screen</h2></div>
+      <div><p>This one takes the block note literally: a new dashboard "simply shows the disagreement more efficiently." One chart shows three teams' versions of the same metric, drawn neatly side by side and disagreeing. Keep scrolling and they pull together into one line.</p></div>
+    </div>
+    <div class="track"><div class="pin"><div class="stage"><span class="badge">C · Three answers</span><svg viewBox="0 0 1000 420" role="img" aria-label="Three versions of the same metric on one chart merge into one line."></svg><div class="prog"><i></i></div></div></div></div>
+  </section>
+
+  <section class="opt" id="d">
+    <div class="opt-head">
+      <div><p class="eyebrow">Option D · Two columns</p><h2>Line up the panes</h2></div>
+      <div><p>Every team already has its own pane of glass, each with its own scatter of data. As you scroll, the panes float into one stack and their dots move into the same places, until one pink thread runs straight through every layer. It's the stacked echo look from the heroes, and it sits beside the copy.</p></div>
+    </div>
+    <div class="track"><div class="pin"><div class="split">
+      <div class="copy">
+        <h3>One screen isn’t one truth</h3>
+        <p>A single pane of glass puts all your data on one screen. A single source of truth means everyone agrees what each number means, where it comes from and who owns it.</p>
+        <p>You can have the first without the second, and then a new dashboard simply shows the disagreement more efficiently.</p>
+      </div>
+      <div class="stage"><span class="badge">D · Line up the panes</span><svg viewBox="0 0 560 560" role="img" aria-label="Three teams' screens move into one stack and their data lines up through a single source."></svg><div class="prog"><i></i></div></div>
+    </div></div></div>
+  </section>
+</div>
+
+<script>
+(() => {
+const NS = "http://www.w3.org/2000/svg";
+const el = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; };
+const set = (e, attrs) => { for (const k in attrs) e.setAttribute(k, attrs[k]); };
+const cl = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const sm = (a, b, x) => { const t = cl((x - a) / (b - a)); return t * t * (3 - 2 * t); };
+const lerp = (a, b, t) => a + (b - a) * t;
+const ease = (t) => (t < .5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
+const f1 = (n) => n.toFixed(1);
+const rng = (seed) => () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+const REDUCE = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const text = (parent, cls, x, y, str, anchor = "middle", extra = {}) => { const t = el("text", { class: cls, x, y, "text-anchor": anchor, ...extra }, parent); t.textContent = str; return t; };
+
+/* ---------- A · The spectrum ---------- */
+// A dashboard made of dots: KPI grid, line chart, bar chart, table (36 dots in all).
+function dashboardDots(svg, S) {
+  const pad = 14, gap = 12, w = (S.w - 2 * pad - gap) / 2, h = (S.h - 2 * pad - gap) / 2;
+  const W = [[S.x + pad, S.y + pad], [S.x + pad + w + gap, S.y + pad], [S.x + pad, S.y + pad + h + gap], [S.x + pad + w + gap, S.y + pad + h + gap]];
+  W.forEach(([x, y]) => el("rect", { class: "hl", x, y, width: w, height: h, rx: 4, "stroke-opacity": .14 }, svg));
+  const pts = [];
+  for (let r = 0; r < 3; r++) for (let c = 0; c < 4; c++) pts.push([W[0][0] + 16 + c * 26, W[0][1] + 15 + r * 17]);
+  [12, 24, 18, 32, 27, 41, 35, 46].forEach((v, i) => pts.push([W[1][0] + 12 + i * 12.3, W[1][1] + h - 8 - v * .95]));
+  [1, 3, 2, 3, 1].forEach((n, c) => { for (let k = 0; k < n; k++) pts.push([W[2][0] + 18 + c * 19, W[2][1] + h - 12 - k * 13]); });
+  for (let r = 0; r < 3; r++) {
+    for (let c = 0; c < 2; c++) pts.push([W[3][0] + 14 + c * 52, W[3][1] + 15 + r * 17]);
+    el("line", { class: "hl", x1: W[3][0] + 22, x2: W[3][0] + 52, y1: W[3][1] + 15 + r * 17, y2: W[3][1] + 15 + r * 17, "stroke-opacity": .14 }, svg);
+    el("line", { class: "hl", x1: W[3][0] + 74, x2: W[3][0] + w - 12, y1: W[3][1] + 15 + r * 17, y2: W[3][1] + 15 + r * 17, "stroke-opacity": .14 }, svg);
+  }
+  return pts;
+}
+
+function optA(svg, opts = {}) {
+  const R = rng(7), N = 36;
+  const SCR = { x: 70, y: 40, w: 260, h: 170 }, BALL = { x: 820, y: 125 }, RING = 82;
+  el("rect", { class: "ln", x: SCR.x, y: SCR.y, width: SCR.w, height: SCR.h, rx: 8, "stroke-opacity": .45 }, svg);
+  const grid = opts.ordered ? dashboardDots(svg, SCR) : null;
+  // Ordered screens empty in a scattered order, so no one widget drains first.
+  const order = Array.from({ length: N }, (_, i) => i).sort(() => R() - .5);
+  el("line", { class: "ln", x1: SCR.x + SCR.w / 2 - 34, x2: SCR.x + SCR.w / 2 + 34, y1: SCR.y + SCR.h + 14, y2: SCR.y + SCR.h + 14, "stroke-opacity": .3 }, svg);
+  // Spectrum: one hairline, fading in toward the truth end
+  const defs = el("defs", {}, svg);
+  const gr = el("linearGradient", { id: "specA", x1: 0, x2: 1 }, defs);
+  el("stop", { offset: 0, "stop-color": "#002a32", "stop-opacity": .2 }, gr);
+  el("stop", { offset: 1, "stop-color": "#002a32", "stop-opacity": .6 }, gr);
+  const SY = 300, SX0 = 200, SX1 = 820;
+  el("line", { x1: SX0, x2: SX1, y1: SY, y2: SY, stroke: "url(#specA)", "stroke-width": 1.5 }, svg);
+  for (let i = 0; i <= 10; i++) el("line", { class: "hl", x1: lerp(SX0, SX1, i / 10), x2: lerp(SX0, SX1, i / 10), y1: SY - 4, y2: SY + 4, "stroke-opacity": .18 }, svg);
+  el("circle", { class: "node", cx: SX0, cy: SY, r: 5 }, svg);
+  el("circle", { class: "node", cx: SX1, cy: SY, r: 5 }, svg);
+  const marker = el("circle", { class: "ball", r: 7, cy: SY }, svg);
+  text(svg, "lbl", SX0, SY + 44, "A single pane of glass");
+  text(svg, "lbl-s", SX0, SY + 69, "Puts all your data on one screen.");
+  text(svg, "lbl", SX1, SY + 44, "A single source of truth");
+  text(svg, "lbl-s", SX1, SY + 69, "Everyone agrees what each number means,");
+  text(svg, "lbl-s", SX1, SY + 87, "where it comes from and who owns it.");
+
+  const threads = el("g", {}, svg), dotsG = el("g", {}, svg);
+  const dots = Array.from({ length: N }, (_, i) => {
+    const a = (i / N) * Math.PI * 2 - Math.PI / 2;
+    const sx = grid ? grid[i][0] : SCR.x + 18 + R() * (SCR.w - 36), sy = grid ? grid[i][1] : SCR.y + 18 + R() * (SCR.h - 36);
+    const slot = grid ? order[i] : i;
+    return {
+      sx, sy,
+      ex: BALL.x + Math.cos(a) * RING, ey: BALL.y + Math.sin(a) * RING,
+      lift: 30 + R() * 70, start: 0.08 + (slot / N) * 0.6 + R() * 0.05,
+      th: el("line", { class: "hl", x1: BALL.x, y1: BALL.y, "stroke-opacity": 0 }, threads),
+      c: el("circle", { class: "dot", r: 3.5, "fill-opacity": .6 }, dotsG),
+    };
+  });
+  const ball = el("circle", { class: "ball", cx: BALL.x, cy: BALL.y, r: 12 }, svg);
+
+  return (p) => {
+    set(marker, { cx: f1(lerp(SX0, SX1, ease(cl(p / 0.92)))) });
+    let arrived = 0;
+    dots.forEach((d) => {
+      const t = ease(cl((p - d.start) / 0.26));
+      const x = lerp(d.sx, d.ex, t), y = lerp(d.sy, d.ey, t) - Math.sin(Math.PI * t) * d.lift;
+      set(d.c, { cx: f1(x), cy: f1(y) });
+      const land = sm(0.85, 1, t); arrived += land;
+      set(d.th, { x2: f1(d.ex), y2: f1(d.ey), "stroke-opacity": f1(0.22 * land) === "0.0" ? 0 : (0.22 * land).toFixed(3) });
+    });
+    // The ball fills out as the threads connect.
+    set(ball, { r: f1(lerp(6, 12, arrived / N)) });
+  };
+}
+
+/* ---------- B · Under the glass ---------- */
+function optB(svg) {
+  const SCR = { x: 330, y: 24, w: 340, h: 170 };
+  el("rect", { class: "ln", x: SCR.x, y: SCR.y, width: SCR.w, height: SCR.h, rx: 8, "stroke-opacity": .5 }, svg);
+  // A plain dashboard: twelve tiles, each one a number someone looks at
+  const tiles = [];
+  for (let r = 0; r < 3; r++) for (let c = 0; c < 4; c++) {
+    const x = SCR.x + 30 + c * 93, y = SCR.y + 26 + r * 46;
+    el("rect", { class: "hl", x, y, width: 74, height: 32, rx: 4, "stroke-opacity": .25 }, svg);
+    el("circle", { class: "dot", cx: x + 14, cy: y + 16, r: 4, "fill-opacity": .6 }, svg);
+    el("line", { class: "hl", x1: x + 26, x2: x + 26 + 16 + ((r * 4 + c) * 7) % 24, y1: y + 16, y2: y + 16, "stroke-opacity": .35 }, svg);
+    tiles.push({ x: x + 14, y: y + 16 });
+  }
+  el("line", { class: "hl", x1: 40, x2: 960, y1: 238, y2: 238, "stroke-opacity": .1, "stroke-dasharray": "3 6" }, svg);
+  text(svg, "axis", 40, 226, "What you see", "start", { opacity: .5 });
+  text(svg, "axis", 40, 260, "What’s underneath", "start", { opacity: .5 });
+  const SRC = [[110, 330], [230, 400], [360, 345], [640, 410], [760, 330], [880, 395], [500, 430]];
+  const srcEls = SRC.map(([x, y]) => el("circle", { class: "node", cx: x, cy: y, r: 7 }, svg));
+  const BALL = { x: 500, y: 360 };
+  const wires = tiles.map((t, i) => ({ t, port: SCR.x + 40 + i * (SCR.w - 80) / 11, s: SRC[(i * 3 + (i >> 2)) % SRC.length], at: 0.12 + i * 0.05,
+    p: el("path", { class: "ln", "stroke-opacity": .32 }, svg) }));
+  const ball = el("circle", { class: "ball", cx: BALL.x, cy: BALL.y, r: 12 }, svg);
+  const cap = text(svg, "lbl-s", 500, 462, "Same screen. One source underneath.", "middle", { opacity: 0 });
+
+  return (p) => {
+    let done = 0;
+    wires.forEach((w) => {
+      const k = ease(cl((p - w.at) / 0.16)); done += k;
+      const ex = lerp(w.s[0], BALL.x, k), ey = lerp(w.s[1], BALL.y, k);
+      const by = SCR.y + SCR.h;
+      // Each tile has its own port on the bottom edge of the screen; the wire leaves from there.
+      w.p.setAttribute("d", `M${f1(w.port)} ${by}C${f1(w.port)} ${by + 90} ${f1(ex)} ${f1(ey - 110)} ${f1(ex)} ${f1(ey)}`);
+      w.p.setAttribute("stroke-opacity", lerp(.3, .45, k).toFixed(3));
+    });
+    // Each old source fades once nothing points at it any more.
+    srcEls.forEach((s, j) => {
+      const users = wires.filter((w) => w.s === SRC[j]);
+      const left = users.reduce((a, w) => a + (1 - ease(cl((p - w.at) / 0.16))), 0) / Math.max(1, users.length);
+      s.setAttribute("opacity", left.toFixed(3));
+    });
+    set(ball, { r: f1(lerp(0, 12, sm(0.08, 0.2, p))) });
+    cap.setAttribute("opacity", sm(0.86, 0.95, p).toFixed(3));
+  };
+}
+
+/* ---------- C · Three answers, one screen ---------- */
+function optC(svg) {
+  const F = { x: 150, y: 30, w: 700, h: 290 };
+  el("rect", { class: "ln", x: F.x, y: F.y, width: F.w, height: F.h, rx: 8, "stroke-opacity": .45 }, svg);
+  for (let i = 1; i < 4; i++) el("line", { class: "hl", x1: F.x + 30, x2: F.x + F.w - 30, y1: F.y + i * F.h / 4, y2: F.y + i * F.h / 4, "stroke-opacity": .07 }, svg);
+  const X0 = F.x + 40, X1 = F.x + F.w - 110, base = (u) => F.y + 190 - 70 * u - 22 * Math.sin(u * 7.5) - 12 * Math.sin(u * 17 + 1);
+  const teams = [
+    { name: "Operations", op: .65, off: (u) => 0 },
+    { name: "Finance", op: .38, off: (u) => -48 * u - 10 * Math.sin(u * 11) * u },
+    { name: "Field", op: .22, off: (u) => 56 * u ** 1.3 + 9 * Math.sin(u * 13 + 2) * u },
+  ];
+  teams.forEach((t) => {
+    t.path = el("path", { class: "ln", "stroke-opacity": t.op }, svg);
+    t.tag = text(svg, "lbl-s", 0, 0, t.name, "start");
+  });
+  const ball = el("circle", { class: "ball", r: 10 }, svg);
+  const capA = text(svg, "lbl", 500, 372, "One screen, three answers");
+  const capB = text(svg, "lbl", 500, 372, "One screen, one answer", "middle", { opacity: 0 });
+  const sub = text(svg, "lbl-s", 500, 398, "The same metric, as three teams report it");
+
+  return (p) => {
+    const draw = ease(cl(p / 0.42)), agree = ease(cl((p - 0.5) / 0.36));
+    const xEnd = lerp(X0, X1, draw);
+    teams.forEach((t, i) => {
+      let d = "";
+      for (let x = X0; x <= xEnd; x += 4) {
+        const u = (x - X0) / (X1 - X0);
+        d += (d ? "L" : "M") + x + " " + f1(base(u) + t.off(u) * (1 - agree));
+      }
+      t.path.setAttribute("d", d);
+      const u = (xEnd - X0) / (X1 - X0), y = base(u) + t.off(u) * (1 - agree);
+      set(t.tag, { x: f1(xEnd + 14 + 8 * agree), y: f1(y + 5), opacity: (sm(0.1, 0.25, p) * (i ? 1 - agree : 1)).toFixed(3) });
+      if (i === 0) set(ball, { cx: f1(xEnd), cy: f1(y), r: f1(lerp(0, 10, agree)) });
+      // Once the lines agree, the remaining tag reads as the one answer
+      if (i === 0) t.tag.textContent = agree > .5 ? "Everyone" : "Operations";
+    });
+    capA.setAttribute("opacity", (1 - sm(0.7, 0.8, p)).toFixed(3));
+    capB.setAttribute("opacity", sm(0.78, 0.88, p).toFixed(3));
+    sub.textContent = p > .8 ? "The same metric, as everyone reports it" : "The same metric, as three teams report it";
+  };
+}
+
+/* ---------- D · Line up the panes ---------- */
+function optD(svg) {
+  const R = rng(21), N = 9;
+  // A pane is a flat screen seen from above at an angle: local (u, v) in [-1, 1] → page.
+  const proj = (cx, cy, u, v) => [cx + u * 130 + v * 52, cy + v * 46 - u * 30];
+  const shared = Array.from({ length: N }, () => [R() * 1.5 - .75, R() * 1.5 - .75]);
+  const KEY = 4; // the dot that becomes the pink thread
+  shared[KEY] = [0.05, 0.0];
+  const START = [[150, 140], [400, 300], [180, 430]], END = (k) => [280, 200 + k * 110];
+  const panes = START.map((s, k) => ({
+    s, k,
+    own: Array.from({ length: N }, () => [R() * 1.6 - .8, R() * 1.6 - .8]),
+    outline: el("path", { class: "ln", "stroke-opacity": .45, fill: "#fff", "fill-opacity": .85 }, svg),
+    dots: [],
+  }));
+  // Draw back to front: pane 2 is lowest on the page in the stack, so it goes first.
+  panes.slice().reverse().forEach((pn) => { svg.appendChild(pn.outline); pn.dots = shared.map(() => el("circle", { class: "dot", r: 3.5, "fill-opacity": .6 }, svg)); });
+  const thread = el("line", { class: "ln", stroke: "#ff0074", "stroke-opacity": 0 }, svg);
+  svg.insertBefore(thread, svg.firstChild);
+  const ball = el("circle", { class: "ball", r: 0 }, svg);
+
+  return (p) => {
+    const move = ease(cl((p - 0.06) / 0.5)), align = ease(cl((p - 0.42) / 0.4)), pin = sm(0.84, 0.96, p);
+    let top = null, bottom = null;
+    panes.forEach((pn) => {
+      const [cx, cy] = [lerp(pn.s[0], END(pn.k)[0], move), lerp(pn.s[1], END(pn.k)[1], move)];
+      const c = [[-1, -1], [1, -1], [1, 1], [-1, 1]].map(([u, v]) => proj(cx, cy, u, v));
+      pn.outline.setAttribute("d", "M" + c.map((q) => q.map(f1).join(" ")).join("L") + "Z");
+      pn.dots.forEach((d, i) => {
+        const u = lerp(pn.own[i][0], shared[i][0], align), v = lerp(pn.own[i][1], shared[i][1], align);
+        const [x, y] = proj(cx, cy, u, v);
+        set(d, { cx: f1(x), cy: f1(y) });
+        if (i === KEY) { if (pn.k === 0) top = [x, y]; if (pn.k === 2) bottom = [x, y]; }
+      });
+    });
+    set(thread, { x1: f1(top[0]), y1: f1(top[1] - 40), x2: f1(bottom[0]), y2: f1(bottom[1]), "stroke-opacity": (0.55 * pin).toFixed(3) });
+    set(ball, { cx: f1(top[0]), cy: f1(top[1] - 40), r: f1(11 * pin) });
+  };
+}
+
+/* ---------- Scroll driver ---------- */
+const builders = { a: optA, a2: (s) => optA(s, { ordered: true }), a3: (s) => optA(s, { ordered: true }), b: optB, c: optC, d: optD };
+const runs = Object.entries(builders).map(([id, fn]) => {
+  const sec = document.getElementById(id);
+  return { track: sec.querySelector(".track"), bar: sec.querySelector(".prog i"), draw: fn(sec.querySelector("svg")), p: REDUCE ? 1 : 0 };
+});
+const target = (r) => { const b = r.track.getBoundingClientRect(); return cl(-b.top / (b.height - innerHeight)); };
+const frame = () => {
+  runs.forEach((r) => {
+    const b = r.track.getBoundingClientRect();
+    if (b.bottom < -50 || b.top > innerHeight + 50) return;
+    if (!REDUCE) r.p += (target(r) - r.p) * .14;
+    r.bar.style.transform = `scaleX(${r.p.toFixed(4)})`;
+    r.draw(r.p);
+  });
+  requestAnimationFrame(frame);
+};
+runs.forEach((r) => r.draw(r.p));
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

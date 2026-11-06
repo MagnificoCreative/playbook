@@ -93,26 +93,10 @@ trust_section = <<~'HTML'
 </section>
 HTML
 
-compare = <<~HTML
-  <div class="compare" data-reveal="top 80%">
-    <div class="compare-item">
-      <svg class="compare-art" viewBox="0 0 280 140" aria-hidden="true">
-        <rect class="ln" x="1" y="1" width="278" height="138" rx="6" stroke-opacity=".35"/>
-        <rect class="ln" x="16" y="16" width="118" height="50" rx="4" stroke-opacity=".5"/><rect class="ln" x="146" y="16" width="118" height="50" rx="4" stroke-opacity=".5"/>
-        <rect class="ln" x="16" y="76" width="118" height="48" rx="4" stroke-opacity=".5"/><rect class="ln" x="146" y="76" width="118" height="48" rx="4" stroke-opacity=".5"/>
-        <path class="ln" d="M28 50h40M158 50h76M28 108h58M158 108h28" stroke-opacity=".8"/>
-      </svg>
-      <h3>A single pane of glass</h3>
-      <p>Puts all your data on one screen.</p>
-    </div>
-    <div class="compare-item is-truth">
-      <svg class="compare-art" viewBox="0 0 280 140" aria-hidden="true">
-        <path class="ln" d="M10 20C80 20 100 70 140 70M10 70h130M10 120C80 120 100 70 140 70M270 20C200 20 180 70 140 70M270 120C200 120 180 70 140 70" stroke-opacity=".45"/>
-        <circle cx="140" cy="70" r="12" fill="#ff0074"/>
-      </svg>
-      <h3>A single source of truth</h3>
-      <p>Means everyone agrees what each number means, where it comes from and who owns it.</p>
-    </div>
+# One screen isn't one truth: the spectrum, from a dashboard of dots to one source (drawn by scripts.js)
+truth_spectrum = <<~HTML
+  <div class="stage viz truth-viz" id="truth">
+    <svg viewBox="0 0 1000 440" role="img" aria-label="A dashboard's data moves along a spectrum, from a single pane of glass that puts all your data on one screen, to a single source of truth, where everyone agrees what each number means, where it comes from and who owns it."></svg>
   </div>
   <p class="block-note" data-reveal="top 85%"><span>You can have the first without the second, and then a new dashboard simply shows the disagreement more efficiently.</span></p>
 HTML
@@ -157,7 +141,7 @@ page(0, "The Dashboard Isn’t the Problem",
      "The usual response is to ask for a better dashboard: one screen, all the data, finally in one place. It’s a reasonable request, and it rarely works. <strong>Not because the dashboard is badly built, but because the problem it’s meant to solve sits underneath it.</strong>"], ROOTS) +
   trust_section +
   block("one-truth", "One screen isn’t one truth",
-    ["That’s the distinction at the heart of this playbook."], nil, compare) +
+    ["That’s the distinction at the heart of this playbook."], nil, truth_spectrum) +
   block("how-it-works", "How this playbook works",
     ["The playbook follows Magnifico’s CLEAR discovery process (Context, Listen, Examine, Align, Roadmap) and adds a final step for building with confidence. Six steps, one chapter each. Every chapter explains the step, shows you how to apply it in your own organization, and ends with an example from our work with an oil and gas company that went through the same process, from the first interviews to a delivered platform."],
     nil, steps_list) +
