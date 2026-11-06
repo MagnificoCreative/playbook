@@ -808,4 +808,6 @@
   };
 
   window.HeroScenes = S;
+  /* Shared helpers, so other scene sets (e.g. How to apply) speak the same language */
+  window.HeroKit = { NS, C, B, TAU, set, el, clamp, lerp, sm, env, io, out, backOut, rng, hash, f2, arcD, along, ball, ln, pathOn, drawTo, poly, radialMask, glowDef };
 })();

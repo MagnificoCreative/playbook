@@ -81,3 +81,5 @@ Every moving line leaves a short, fading echo behind it, like a radar sweep. Thi
 
 <!-- New rules go here, newest last, with the date. Example:
 - 2026-11-06: Rule text. -->
+- 2026-11-06: **Light cards (How to apply it).** The step illustrations use the same language on the light card (`#f6f6f6`). Lines, dots and outlines swap slate for dark teal `#002a32` at the same opacities, the guide hairlines go up to `.07`, and the ball, glow, geometry, easing and trail stay the same. Each card loops on its own clock while it's on screen, starts from `t = 0` so it builds in the first time you see it, and shows a still frame under reduced motion. Production code: [../assets/motion/howto-scenes.js](../assets/motion/howto-scenes.js). Options: [howto.html](howto.html).
+- 2026-11-06: **Chapter 01 How-to-apply picks** (may change): Map `m3` Every layer, Ask `a1` The bubble, Evidence `e1` The lens, Patterns `p1` Orbits fall into step.

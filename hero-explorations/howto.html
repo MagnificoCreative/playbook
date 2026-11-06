@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How to Apply Options</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@500&family=Inter:wght@300;400;500&display=swap">
+<style>
+:root {
+  --pink: #ff0074;
+  --teal-950: #07171b;
+  --teal-900: #002a32;
+  --slate-100: #d5def0;
+  --canvas: #f6f6f6;
+  --white: #ffffff;
+  --n700: #474646;
+  --hair: rgba(7, 23, 27, 0.1);
+  --f-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --f-label: "IBM Plex Sans", "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+* { box-sizing: border-box; margin: 0; }
+html { scroll-behavior: smooth; }
+body { background: var(--white); color: var(--teal-950); font-family: var(--f-sans); -webkit-font-smoothing: antialiased; }
+.wrap { max-width: 1320px; margin: 0 auto; padding: 56px max(16px, 3vw) 120px; }
+.eyebrow { font: 500 12px/1 var(--f-label); letter-spacing: .16em; text-transform: uppercase; }
+
+.top .eyebrow { color: var(--pink); margin-bottom: 20px; }
+.top h1 { font-size: clamp(34px, 4.4vw, 60px); font-weight: 300; line-height: 1.08; }
+.top p { margin-top: 18px; color: var(--n700); font-size: 18px; line-height: 1.5; max-width: 64ch; }
+
+.bar {
+  position: sticky; top: 0; z-index: 5; margin: 48px calc(-1 * max(16px, 3vw)) 0; padding: 12px max(16px, 3vw);
+  background: rgba(255, 255, 255, .9); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--hair);
+  display: flex; gap: 8px; align-items: center; overflow-x: auto; scrollbar-width: none;
+}
+.bar a, .bar button {
+  flex: none; font: 500 12px/1 var(--f-label); letter-spacing: .16em; text-transform: uppercase; text-decoration: none;
+  color: var(--teal-950); border: 1px solid var(--hair); background: #fff; padding: 11px 14px; border-radius: 999px; cursor: pointer;
+}
+.bar a:hover { border-color: var(--teal-900); }
+.bar .sp { flex: 1; }
+.bar button[aria-pressed="true"] { background: var(--teal-900); color: var(--slate-100); border-color: var(--teal-900); }
+
+.step { padding-top: 88px; scroll-margin-top: 40px; }
+.st-head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px 48px; align-items: end; margin-bottom: 32px; }
+.st-head .eyebrow { color: var(--pink); margin-bottom: 14px; }
+.st-head h2 { font-size: clamp(28px, 3.2vw, 44px); font-weight: 300; line-height: 1.15; }
+.st-head p { color: var(--n700); font-size: 17px; line-height: 1.5; }
+
+.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px 24px; }
+.frame { position: relative; background: var(--canvas); border-radius: 8px; overflow: hidden; aspect-ratio: 1; }
+.frame svg { position: absolute; inset: 7%; width: 86%; height: 86%; overflow: visible; }
+.badge {
+  position: absolute; top: 14px; left: 14px; z-index: 1;
+  font: 500 11px/1 var(--f-label); letter-spacing: .16em; text-transform: uppercase;
+  color: var(--teal-900); border: 1px solid rgba(0, 42, 50, .18); padding: 7px 10px; border-radius: 999px;
+}
+.cap { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 12px; margin-top: 16px; }
+.cap .l { font: 500 12px/1 var(--f-label); letter-spacing: .16em; color: var(--pink); padding-top: 6px; }
+.cap h3 { font-size: 19px; font-weight: 400; line-height: 1.3; }
+.cap p { margin-top: 6px; color: var(--n700); font-size: 15px; line-height: 1.5; }
+
+/* SVG language, the hero rules on a light card: dark teal lines instead of slate */
+.ln { fill: none; stroke: var(--teal-900); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.gd { fill: none; stroke: var(--teal-900); stroke-opacity: .07; stroke-width: 1; }
+.ball { fill: var(--pink); }
+.dot { fill: var(--teal-900); }
+.echo .ball, .echo .gd, .echo .glow { display: none; }
+.no-trail .echo { display: none; }
+
+@media (max-width: 1000px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px) {
+  .st-head { grid-template-columns: minmax(0, 1fr); }
+  .grid { grid-template-columns: minmax(0, 1fr); }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <p class="eyebrow">Chapter 01 · How to apply it · Spot motion</p>
+    <h1>Six options for each step</h1>
+    <p>The four step illustrations redrawn in the hero language: the pink ball at the center, thin lines that carry the meaning, eased motion, seamless loops and the fading trail. The only change is the ground. On the light card the lines are dark teal at the same opacities.</p>
+  </header>
+
+  <nav class="bar" id="bar" aria-label="Steps"></nav>
+  <main id="steps"></main>
+</div>
+
+<script src="chapters/scenes.js"></script>
+<script src="howto/scenes.js"></script>
+<script>
+(() => {
+  const STEPS = [
+    { id: "map", n: "01", label: "Map", title: "Map who to talk to.", text: "Every function that creates, interprets or acts on operational data, frontline people as well as managers, and always IT.", o: [
+      ["m1", "Seven functions", "Seven people appear around the ball, one per function, and each one sends a line home. The map is the set of links left behind."],
+      ["m2", "Radar sweep", "A sweep goes round and whoever it passes answers back. The trail turns the sweep into a real radar wash."],
+      ["m3", "Every layer", "Three rings: leadership, managers, the front line. Each ring draws on, its people show up and link in, so nobody is left out."],
+      ["m4", "Make the rounds", "One route leaves the ball, visits everyone in turn, pausing at each, and comes home. Closest to how the mapping is actually done."],
+      ["m5", "Ripple out", "The ball sends out a single ripple. As it reaches each person they appear and answer, nearest first."],
+      ["m6", "Branch out", "Functions branch out from the ball, then the people in each function, then it all folds back home. A reinterpretation of the original hub."],
+    ] },
+    { id: "ask", n: "02", label: "Ask", title: "Ask about work, not wish lists.", text: "Ask people to walk you through a recent decision: which tools, which numbers, which records, and why.", o: [
+      ["a1", "The bubble", "The original speech bubble, drawn as one line. The dots type, then slide down the tail into the ball, one at a time."],
+      ["a2", "Short question, long answer", "A quick straight dash goes out, and a long, wavering line comes back. The answer is always bigger than the question."],
+      ["a3", "Walk me through it", "A dot walks a winding route, stopping at each step of the decision (the tools, the numbers, the records) until it reaches the ball."],
+      ["a4", "Five whys", "The same question asked again and again. Each probe goes a little deeper and leaves a mark at that depth."],
+      ["a5", "From wish list to the work", "A list of wishes folds down into one timeline through the ball, and a dot runs along it to the decision."],
+      ["a6", "Listen more than you talk", "Two small waves go out and five larger ones come back to the ball. It switches sides every loop."],
+    ] },
+    { id: "evidence", n: "03", label: "Evidence", title: "Treat workarounds as evidence.", text: "The spreadsheet someone trusts more than the official system is the most useful thing you’ll find. Note every one.", o: [
+      ["e1", "The lens", "The original magnifier as a single ring. It drifts across a field of dots, swelling what sits under it, and settles on the ball."],
+      ["e2", "Desire path", "The official route goes the long way round. People cut across, and each crossing wears the shortcut in a little darker."],
+      ["e3", "The spreadsheet", "A grid draws itself, the cells fill in row by row, and one cell gets circled by hand. That cell is the ball."],
+      ["e4", "The detour", "Three official lines all have a break. People keep flowing anyway, routing around the gap to reach the ball."],
+      ["e5", "The scan", "A scan line sweeps the field. A few of the dots it passes get marked, and once the sweep is done they send their line home."],
+      ["e6", "Note every one", "Finds flare up all around, and each one comes home as a tally mark on a ring around the ball."],
+    ] },
+    { id: "patterns", n: "04", label: "Patterns", title: "Look for the pattern behind the symptoms.", text: "What in your culture, incentives or habits lets fragmentation grow. That is what will have to change.", o: [
+      ["p1", "Orbits fall into step", "The original orbiting dots, now drifting at their own speeds, until they ease into an even triangle around the ball. Then they drift apart again."],
+      ["p2", "Connect the symptoms", "Restless dots flare up one by one. Then each draws a line inward, they all lead to the same place, and they go still."],
+      ["p3", "Signal from noise", "Jittery lines settle into one shared wave, hold for a moment, and break up again."],
+      ["p4", "Below the surface", "Symptoms bob on a surface line. Under it, roots run down from each one and all reach the ball."],
+      ["p5", "The same loop again", "A single line draws a rosette, petal by petal, returning to the ball each time. The pattern is what repeats."],
+      ["p6", "Field lines", "Scattered dashes point every which way, then turn together into rings around the ball, as if a field was switched on."],
+    ] },
+  ];
+  const LAG = { m2: .03, a2: .035, e4: .035, p3: .03, p6: .05 };
+
+  const bar = document.getElementById("bar"), main = document.getElementById("steps");
+  STEPS.forEach(s => {
+    bar.insertAdjacentHTML("beforeend", `<a href="#${s.id}">${s.n} ${s.label}</a>`);
+    main.insertAdjacentHTML("beforeend", `<section class="step" id="${s.id}">
+      <div class="st-head"><div><p class="eyebrow">Step ${s.n} · ${s.label}</p><h2>${s.title}</h2></div><p>${s.text}</p></div>
+      <div class="grid">${s.o.map(([key, name, text], i) => `<article>
+        <div class="frame" data-scene="${key}"><span class="badge">${s.label} ${String.fromCharCode(65 + i)}</span><svg viewBox="0 0 600 600" aria-hidden="true"></svg></div>
+        <div class="cap"><span class="l">${String.fromCharCode(65 + i)}</span><div><h3>${name}</h3><p>${text}</p></div></div>
+      </article>`).join("")}</div>
+    </section>`);
+  });
+  bar.insertAdjacentHTML("beforeend", `<span class="sp"></span><button type="button" id="trail" aria-pressed="true">Trail on</button><button type="button" id="pause" aria-pressed="false">Pause</button>`);
+
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const scenes = [...document.querySelectorAll("[data-scene]")].map(f => ({ f, draw: window.HeroMount(f.querySelector("svg"), f.dataset.scene, { lag: LAG[f.dataset.scene] || .04 }), visible: false }));
+  const io = new IntersectionObserver(es => es.forEach(e => { const s = scenes.find(x => x.f === e.target); if (s) s.visible = e.isIntersecting; }), { rootMargin: "100px" });
+  let clock = 5.2;
+  scenes.forEach(s => { s.draw(clock); io.observe(s.f); });
+
+  let paused = reduce, last = performance.now();
+  const btn = document.getElementById("pause"), tbtn = document.getElementById("trail");
+  const sync = () => { btn.setAttribute("aria-pressed", String(paused)); btn.textContent = paused ? "Play" : "Pause"; };
+  sync();
+  btn.addEventListener("click", () => { paused = !paused; sync(); });
+  tbtn.addEventListener("click", () => {
+    const off = document.body.classList.toggle("no-trail");
+    tbtn.setAttribute("aria-pressed", String(!off)); tbtn.textContent = off ? "Trail off" : "Trail on";
+    scenes.forEach(s => s.draw(clock));
+  });
+  const tick = now => {
+    const dt = Math.min(.05, (now - last) / 1000); last = now;
+    if (!paused) { clock += dt; scenes.forEach(s => s.visible && s.draw(clock)); }
+    requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>

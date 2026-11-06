@@ -18,7 +18,6 @@
   --teal-950: #07171b;
   --teal-900: #002a32;
   --teal-800: #00424f;
-  --illo-teal: #015565;
   --slate-100: #d5def0;
   --white: #ffffff;
   --canvas: #f6f6f6;
@@ -384,7 +383,7 @@ main { min-width: 0; }
   max-width: 440px;
   max-height: calc(100svh - var(--bar) - 330px);
   min-height: 200px;
-  aspect-ratio: 459 / 461;
+  aspect-ratio: 1;
   overflow: visible;
 }
 @container (max-width: 620px) {
@@ -393,18 +392,12 @@ main { min-width: 0; }
   .illo { max-width: 300px; max-height: 34svh; min-height: 160px; }
 }
 
-/* Illustration paint */
-.illo .teal { fill: var(--illo-teal); }
-.illo .pink { fill: var(--pink); }
-.illo .cut { stroke: var(--card); stroke-width: 10; }
-.illo .line { fill: none; stroke: var(--illo-teal); stroke-width: 10; stroke-linecap: round; }
-.illo .pulse { fill: none; stroke: var(--pink); stroke-width: 2; opacity: 0; }
-.illo .card-fill { fill: var(--card); }
-.illo .ev-wash { fill: var(--sky-wash); }
-.illo .ev-inner { fill: none; stroke: var(--card); stroke-width: 8; }
-.illo .ev-ring { fill: none; stroke: var(--sky); stroke-width: 5; }
-.illo .ev-handle { stroke: var(--sky); stroke-width: 6; stroke-linecap: round; }
-.illo .ring-line { fill: none; stroke: var(--illo-teal); stroke-width: 10; }
+/* Illustration paint: the hero language on a light card (assets/motion/howto-scenes.js) */
+.illo .ln { fill: none; stroke: var(--teal-900); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.illo .gd { fill: none; stroke: var(--teal-900); stroke-opacity: .07; stroke-width: 1; }
+.illo .ball { fill: var(--pink); }
+.illo .dot { fill: var(--teal-900); }
+.illo .echo .ball, .illo .echo .gd, .illo .echo .glow { display: none; }
 
 /* In the field */
 .field-panel { padding: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); overflow: hidden; }
@@ -664,16 +657,7 @@ main { min-width: 0; }
                   <p class="card-body">List every function that creates, interprets or acts on operational data: operations leadership, production, maintenance and reliability, integrity, health and safety, projects, and technology. Include frontline people as well as managers, and always include IT.</p>
                 </div>
                 <div class="card-art">
-                  <svg class="illo" viewBox="0 0 459 461" aria-hidden="true">
-                    <path class="line m-line" d="M231 222 L161.3 154.3" pathLength="1"/>
-                    <path class="line m-line" d="M231 222 L299.4 154.3" pathLength="1"/>
-                    <path class="line m-line" d="M231 222 L230 316" pathLength="1"/>
-                    <circle class="teal m-sat" cx="161.284" cy="154.284" r="20"/>
-                    <circle class="teal m-sat" cx="299.438" cy="154.284" r="20"/>
-                    <circle class="teal m-sat" cx="230" cy="316" r="20"/>
-                    <circle class="pulse m-pulse" cx="231" cy="222" r="47"/>
-                    <circle class="pink cut m-hub" cx="231" cy="222" r="47"/>
-                  </svg>
+                  <svg class="illo" viewBox="0 0 600 600" data-scene="m3" aria-hidden="true"></svg>
                 </div>
               </div>
             </li>
@@ -687,16 +671,7 @@ main { min-width: 0; }
                   <p class="card-body">Don’t ask what dashboard people want. Ask them to walk you through a recent decision: which tools they opened, which numbers they checked by hand, where they keep their own records, and why.</p>
                 </div>
                 <div class="card-art">
-                  <svg class="illo" viewBox="0 0 459 461" aria-hidden="true">
-                    <circle class="pink a-person" cx="179" cy="265.354" r="94"/>
-                    <g class="a-bubble">
-                      <ellipse class="teal" cx="325.5612" cy="146.2857" rx="48.4388" ry="43.2857"/>
-                      <path class="teal" d="M281.151 182.333L300.437 177.713L286.319 165.091L281.151 182.333Z"/>
-                      <circle class="card-fill a-dot" cx="305.5" cy="146.3" r="6"/>
-                      <circle class="card-fill a-dot" cx="325.5" cy="146.3" r="6"/>
-                      <circle class="card-fill a-dot" cx="345.5" cy="146.3" r="6"/>
-                    </g>
-                  </svg>
+                  <svg class="illo" viewBox="0 0 600 600" data-scene="a1" aria-hidden="true"></svg>
                 </div>
               </div>
             </li>
@@ -710,39 +685,7 @@ main { min-width: 0; }
                   <p class="card-body">The spreadsheet someone trusts more than the official system is the most useful thing you’ll find. Note every one.</p>
                 </div>
                 <div class="card-art">
-                  <svg class="illo" viewBox="0 0 459 461" aria-hidden="true">
-                    <defs><clipPath id="ev-clip"><circle class="ev-clipc" cx="168.5" cy="245.5" r="136"/></clipPath></defs>
-                    <g class="ev-grid">
-                      <circle class="teal" cx="73.6" cy="150.6" r="37.6"/>
-                      <circle class="teal" cx="168.5" cy="150.6" r="37.6"/>
-                      <circle class="teal" cx="263.4" cy="150.6" r="37.6"/>
-                      <circle class="teal" cx="73.6" cy="245.5" r="37.6"/>
-                      <circle class="teal ev-key" cx="168.5" cy="245.5" r="37.6"/>
-                      <circle class="teal" cx="263.4" cy="245.5" r="37.6"/>
-                      <circle class="teal" cx="73.6" cy="340.4" r="37.6"/>
-                      <circle class="teal" cx="168.5" cy="340.4" r="37.6"/>
-                      <circle class="teal" cx="263.4" cy="340.4" r="37.6"/>
-                    </g>
-                    <g class="ev-lens">
-                      <g clip-path="url(#ev-clip)">
-                        <circle class="ev-wash" cx="168.5" cy="245.5" r="136"/>
-                        <g class="ev-zoom">
-                          <circle class="teal" cx="73.6" cy="150.6" r="37.6"/>
-                          <circle class="teal" cx="168.5" cy="150.6" r="37.6"/>
-                          <circle class="teal" cx="263.4" cy="150.6" r="37.6"/>
-                          <circle class="teal" cx="73.6" cy="245.5" r="37.6"/>
-                          <circle class="teal ev-key" cx="168.5" cy="245.5" r="37.6"/>
-                          <circle class="teal" cx="263.4" cy="245.5" r="37.6"/>
-                          <circle class="teal" cx="73.6" cy="340.4" r="37.6"/>
-                          <circle class="teal" cx="168.5" cy="340.4" r="37.6"/>
-                          <circle class="teal" cx="263.4" cy="340.4" r="37.6"/>
-                        </g>
-                      </g>
-                      <circle class="ev-inner" cx="168.5" cy="245.5" r="128"/>
-                      <line class="ev-handle" x1="263.8" y1="344.2" x2="351.8" y2="432.2"/>
-                      <circle class="ev-ring" cx="168.5" cy="245.5" r="134"/>
-                    </g>
-                  </svg>
+                  <svg class="illo" viewBox="0 0 600 600" data-scene="e1" aria-hidden="true"></svg>
                 </div>
               </div>
             </li>
@@ -756,13 +699,7 @@ main { min-width: 0; }
                   <p class="card-body">Ask what in your culture, incentives or habits lets fragmentation grow. That is what will have to change, and no tool will change it for you.</p>
                 </div>
                 <div class="card-art">
-                  <svg class="illo" viewBox="0 0 459 461" aria-hidden="true">
-                    <circle class="ring-line p-ring" cx="230.13" cy="219.73" r="117.87" pathLength="1" transform="rotate(-90 230.13 219.73)"/>
-                    <circle class="pink p-core" cx="230.13" cy="219.73" r="50.67"/>
-                    <g class="p-orbit"><circle class="teal cut p-sat" cx="141.83" cy="133.96" r="30.33"/></g>
-                    <g class="p-orbit"><circle class="teal cut p-sat" cx="316.82" cy="133.96" r="30.33"/></g>
-                    <g class="p-orbit"><circle class="teal cut p-sat" cx="228.87" cy="338.8" r="30.33"/></g>
-                  </svg>
+                  <svg class="illo" viewBox="0 0 600 600" data-scene="p1" aria-hidden="true"></svg>
                 </div>
               </div>
             </li>
@@ -845,13 +782,12 @@ main { min-width: 0; }
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+<script src="../assets/motion/howto-scenes.js"></script>
 <script>
 (() => {
   "use strict";
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
-  const PINK = "#ff0074";
-  const TEAL = "#015565";
 
   const hasGsap = typeof window.gsap !== "undefined" && typeof window.ScrollTrigger !== "undefined";
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -915,6 +851,26 @@ main { min-width: 0; }
       requestAnimationFrame(tick);
     };
     requestAnimationFrame(tick);
+  })();
+
+  /* ───── How to apply: step illustrations loop while their card is on screen ───── */
+  (() => {
+    const H = window.HowtoScenes;
+    if (!H) return;
+    $$(".illo[data-scene]").forEach((svg) => {
+      const key = svg.dataset.scene;
+      const draw = H.mount(svg, key);
+      let clock = reduce ? H.STILL[key] : 0, visible = false, last = performance.now();
+      draw(clock);
+      if (reduce) return; // a single still frame that shows the whole piece
+      new IntersectionObserver(([e]) => { visible = e.isIntersecting; }).observe(svg);
+      const tick = (now) => {
+        const dt = Math.min(0.05, (now - last) / 1000); last = now;
+        if (visible) { clock += dt; draw(clock); }
+        requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    });
   })();
 
   /* ───── Toast for links that aren't live yet ───── */
@@ -1013,84 +969,11 @@ main { min-width: 0; }
     });
   };
 
-  /* ───── Illustration timelines (each runs 0 → 1) ───── */
-  const builders = {
-    map(svg) {
-      const hub = $(".m-hub", svg), sats = $$(".m-sat", svg), lines = $$(".m-line", svg), pulse = $(".m-pulse", svg);
-      gsap.set(lines, { strokeDasharray: 1, strokeDashoffset: 1 });
-      const tl = gsap.timeline({ paused: true, defaults: { ease: "none" } });
-      tl.from(hub, { scale: 0, transformOrigin: "50% 50%", duration: 0.32, ease: "back.out(1.7)" }, 0);
-      sats.forEach((s, i) => {
-        const dx = 231 - +s.getAttribute("cx"), dy = 222 - +s.getAttribute("cy");
-        const at = 0.18 + i * 0.08;
-        tl.from(s, { x: dx, y: dy, scale: 0.35, transformOrigin: "50% 50%", duration: 0.48, ease: "expo.out" }, at);
-        tl.to(lines[i], { strokeDashoffset: 0, duration: 0.48, ease: "expo.out" }, at);
-      });
-      tl.fromTo(pulse, { scale: 1, opacity: 0.9, transformOrigin: "50% 50%" }, { scale: 1.9, opacity: 0, duration: 0.3, ease: "power2.out" }, 0.7);
-      return tl;
-    },
-
-    ask(svg) {
-      const person = $(".a-person", svg), bubble = $(".a-bubble", svg), dots = $$(".a-dot", svg);
-      const tl = gsap.timeline({ paused: true, defaults: { ease: "none" } });
-      tl.from(person, { y: 70, scale: 0.7, opacity: 0, transformOrigin: "50% 100%", duration: 0.36, ease: "power3.out" }, 0);
-      tl.from(bubble, { scale: 0, svgOrigin: "281 182", duration: 0.3, ease: "back.out(1.9)" }, 0.3);
-      tl.from(dots, { scale: 0, transformOrigin: "50% 50%", duration: 0.12, stagger: 0.06, ease: "back.out(3)" }, 0.52);
-      dots.forEach((d, i) => {
-        tl.to(d, { y: -8, duration: 0.06, ease: "power2.out" }, 0.74 + i * 0.07)
-          .to(d, { y: 0, duration: 0.08, ease: "power2.in" }, 0.8 + i * 0.07);
-      });
-      tl.to(person, { y: -6, duration: 0.2, ease: "sine.inOut" }, 0.8);
-      return tl;
-    },
-
-    evidence(svg) {
-      const k = 1.675;
-      const circles = $$(".ev-clipc, .ev-wash, .ev-inner, .ev-ring", svg);
-      const handle = $(".ev-handle", svg), zoom = $(".ev-zoom", svg), lens = $(".ev-lens", svg);
-      const keys = $$(".ev-key", svg);
-      const p = { x: 430, y: 440 };
-      const draw = () => {
-        circles.forEach((c) => { c.setAttribute("cx", p.x); c.setAttribute("cy", p.y); });
-        handle.setAttribute("x1", p.x + 95.3); handle.setAttribute("y1", p.y + 98.7);
-        handle.setAttribute("x2", p.x + 183.3); handle.setAttribute("y2", p.y + 186.7);
-        zoom.setAttribute("transform", `translate(${p.x * (1 - k)} ${p.y * (1 - k)}) scale(${k})`);
-      };
-      draw();
-      const tl = gsap.timeline({ paused: true, defaults: { ease: "none" } });
-      tl.from($$(".ev-grid circle", svg), {
-        scale: 0, transformOrigin: "50% 50%", duration: 0.26, ease: "back.out(1.8)",
-        stagger: { each: 0.03, grid: [3, 3], from: "start" },
-      }, 0);
-      tl.from(lens, { opacity: 0, duration: 0.08 }, 0.36);
-      tl.to(p, { x: 263.4, y: 340.4, duration: 0.2, ease: "power2.out", onUpdate: draw }, 0.36);
-      tl.to(p, { x: 263.4, y: 150.6, duration: 0.17, ease: "power1.inOut", onUpdate: draw }, 0.56);
-      tl.to(p, { x: 168.5, y: 245.5, duration: 0.17, ease: "power3.out", onUpdate: draw }, 0.73);
-      tl.to(keys, { fill: PINK, duration: 0.08 }, 0.86);
-      tl.fromTo(lens, { scale: 1 }, { scale: 1.03, svgOrigin: "168.5 245.5", duration: 0.05, yoyo: true, repeat: 1 }, 0.9);
-      tl.eventCallback("onReverseComplete", draw);
-      return tl;
-    },
-
-    pattern(svg) {
-      const ring = $(".p-ring", svg), core = $(".p-core", svg), orbits = $$(".p-orbit", svg), sats = $$(".p-sat", svg);
-      gsap.set(ring, { strokeDasharray: 1, strokeDashoffset: 1 });
-      const tl = gsap.timeline({ paused: true, defaults: { ease: "none" } });
-      tl.to(ring, { strokeDashoffset: 0, duration: 0.55, ease: "power2.inOut" }, 0.05);
-      const spins = [-150, -210, -120];
-      orbits.forEach((o, i) => {
-        tl.from(o, { rotation: spins[i], svgOrigin: "230.13 219.73", duration: 0.62, ease: "power3.out" }, 0.04 + i * 0.06);
-        tl.from(sats[i], { scale: 0, transformOrigin: "50% 50%", duration: 0.2, ease: "back.out(2)" }, 0.04 + i * 0.06);
-      });
-      tl.from(core, { scale: 0, transformOrigin: "50% 50%", duration: 0.28, ease: "back.out(1.8)" }, 0.6);
-      return tl;
-    },
-  };
-
+  /* ───── How to apply: each card's copy reveals on scroll (each timeline runs 0 → 1).
+     The illustrations loop on their own clock (see "step illustrations" above). ───── */
   const cards = $$(".card");
   const timelines = cards.map((card) => {
-    const svg = $(".illo", card);
-    const tl = builders[card.dataset.illo](svg);
+    const tl = gsap.timeline({ paused: true, defaults: { ease: "none" } }).set({}, {}, 1);
     const copy = $$(".card-meta, .card-title, .card-body", card);
     tl.from(copy, { y: 28, opacity: 0, duration: 0.3, stagger: 0.06, ease: "power3.out" }, 0);
     return tl;
