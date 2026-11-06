@@ -138,23 +138,24 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   display: block; height: 100%; background: var(--pink);
   transform: scaleX(0); transform-origin: 0 50%;
 }
+/* Menu toggle: two lines in a hairline circle; they turn into an X while the menu is open */
 .menu-btn {
-  display: none;
-  align-items: center; gap: 10px;
-  height: 36px; padding: 0 14px 0 10px;
-  border-radius: 999px;
-  border: 1px solid var(--hairline);
-  font-size: 14px; font-weight: 400;
+  flex: none; display: inline-grid; place-items: center;
+  width: 40px; height: 40px; margin-right: 8px;
+  border-radius: 50%; border: 1px solid var(--n200);
+  color: var(--text-emphasis);
+  transition: border-color .25s var(--ease-out), background-color .25s var(--ease-out);
 }
-.menu-btn i { position: relative; width: 16px; height: 10px; }
+.menu-btn:hover { border-color: var(--n300); background: rgba(7, 23, 27, 0.03); }
+.menu-btn i { position: relative; width: 16px; height: 8px; }
 .menu-btn i::before, .menu-btn i::after {
-  content: ""; position: absolute; left: 0; right: 0; height: 1.5px; background: currentColor;
-  transition: transform .3s var(--ease-out), top .3s var(--ease-out);
+  content: ""; position: absolute; left: 0; right: 0; height: 1.5px; border-radius: 1px; background: currentColor;
+  transition: transform .4s var(--ease-out), top .4s var(--ease-out);
 }
-.menu-btn i::before { top: 1px; }
-.menu-btn i::after { top: 7.5px; }
-.nav-open .menu-btn i::before { top: 4.25px; transform: rotate(45deg); }
-.nav-open .menu-btn i::after { top: 4.25px; transform: rotate(-45deg); }
+.menu-btn i::before { top: 0; }
+.menu-btn i::after { top: 6.5px; }
+.menu-is-open .menu-btn i::before { top: 3.25px; transform: rotate(45deg) scaleX(.85); }
+.menu-is-open .menu-btn i::after { top: 3.25px; transform: rotate(-45deg) scaleX(.85); }
 
 /* ───────── Shell ───────── */
 .shell {
@@ -471,7 +472,6 @@ main { min-width: 0; }
 @media (max-width: 1100px) {
   :root { --rail: 0px; }
   .shell { grid-template-columns: minmax(0, 1fr); padding-left: var(--gutter-l); }
-  .menu-btn { display: inline-flex; }
   .rail {
     position: fixed;
     z-index: 45;
@@ -623,7 +623,7 @@ main { min-width: 0; }
 .stair-link svg { width: 16px; height: 16px; transition: transform .35s var(--ease-out); }
 .stair-link:hover svg { transform: translateX(3px); }
 .stair-link.is-here { color: var(--text-body); font-weight: 300; }
-.stairs-base { display: block; height: 1px; background: var(--hairline); transform-origin: 0 50%; }
+.stairs-base { display: block; height: 1px; background: var(--hairline); transform-origin: 0 50%; margin-inline: calc(var(--pad) * -1); }  /* runs out to the section margins */
 .clear-next {
   display: flex; align-items: center; gap: 12px; margin-top: 28px; align-self: center;
   font-size: 15px; color: var(--text-body); padding: 10px 6px;
@@ -765,4 +765,39 @@ main { min-width: 0; }
 .people-text strong { font-weight: 500; color: var(--text-primary); }
 /* When the roots close a section, they sit at its foot and lead into the next one */
 .people:has(.roots) { align-content: end; padding-bottom: 0; }
+
+#where-trust-is-lost .trust-split { align-items: start; }
 .people .roots { padding: 0; margin-top: calc(var(--pad) + 26px); }  /* matches the space below the roots */
+
+/* ───────── Collapsible rail (wide screens) ───────── */
+@media (min-width: 1101px) {
+  .rail-ready .shell { transition: grid-template-columns .55s var(--ease-out); }
+  .rail-ready .rail { transition: opacity .35s var(--ease-out), transform .55s var(--ease-out), visibility 0s; }
+  body.rail-collapsed { --rail: 0px; }
+  .rail-collapsed .shell { grid-template-columns: 0px minmax(0, 1fr); padding-left: var(--gutter-r); }
+  .rail-collapsed .rail { opacity: 0; transform: translateX(-32px); visibility: hidden; pointer-events: none; }
+  .rail-ready.rail-collapsed .rail { transition: opacity .25s var(--ease-out), transform .45s var(--ease-out), visibility 0s linear .45s; }
+}
+
+/* Top bar · where you are: chapter, then the section in view */
+.bar-where { margin-left: auto; display: flex; align-items: baseline; gap: 10px; min-width: 0; font-size: 14px; white-space: nowrap; }
+.bw-num { font-family: var(--f-label); font-weight: 500; font-size: 12px; letter-spacing: .16em; color: var(--pink); }
+.bw-ch { color: var(--text-emphasis); font-weight: 400; overflow: hidden; text-overflow: ellipsis; }
+.bw-sec { color: var(--text-body); overflow: hidden; text-overflow: ellipsis; transition: opacity .3s var(--ease-out); }
+.bw-sec:empty { display: none; }
+.bw-sec::before { content: "/"; margin-right: 10px; color: var(--n300); }
+@media (max-width: 1100px) { .bar-title, .bar-sep { display: none; } }
+@media (max-width: 767px) { .bw-sec { display: none; } .bar-where { font-size: 13px; } }
+
+/* ───────── Section rhythm: one gap between every section ─────────
+   Framed panels (hero, How to apply, In the field, the call to action) keep their full height;
+   open text sections fit their content, so the space you see between sections is always the same. */
+:root { --section-gap: clamp(64px, 9vh, 104px); }
+main { display: flow-root; padding-block: 12px 24px; }
+main > * + * { margin-top: var(--section-gap); }  /* margins, not flex gap: pinned sections need a block parent to keep their scroll space */
+main > .sec, main > .pin-spacer > .sec { padding-block: 0; }
+.sec:has(> .people), .sec:has(> .block), .sec:has(> .frag) { min-height: 0; }
+.panel.people, .panel.block, .panel.frag { padding-block: 0; }
+.people:has(.roots) { padding-bottom: 0; }
+main > .next { padding-block: 0; }
+@media (max-width: 767px) { :root { --section-gap: 56px; } }

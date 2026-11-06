@@ -190,6 +190,14 @@ def next_band(label, title, href)
   HTML
 end
 
+# The top bar, with a "where am I" label on the right: chapter, then the section in view (filled in by the scroll spy)
+def bar_for(p)
+  num = p[:num] ? %(<span class="bw-num">#{p[:num]}</span>) : ""
+  name = p[:num] ? p[:toc] : "Introduction"
+  where = %(<p class="bar-where">#{num}<span class="bw-ch">#{name}</span><span class="bw-sec" id="bar-section"></span></p>\n  )
+  BAR.sub(%(<div class="bar-progress"), where + %(<div class="bar-progress"))
+end
+
 def page(i, title, subnav, body, script_key: nil)
   p = PAGES[i]
   chapter_js = script_key && SCRIPTS[script_key] ? "<script>\n#{SCRIPTS[script_key]}</script>\n" : ""
@@ -208,7 +216,7 @@ def page(i, title, subnav, body, script_key: nil)
 
     <a class="skip" href="#main">Skip to content</a>
 
-    #{BAR}
+    #{bar_for(p)}
     <div class="shell">
     #{rail(i, subnav)}
       <div class="scrim" id="scrim"></div>
