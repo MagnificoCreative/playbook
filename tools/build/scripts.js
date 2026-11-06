@@ -1,6 +1,114 @@
 // ==== intro ====
 /* Introduction: one piece of information travels Source → Act and loses trust at every stage. */
 window.PlaybookChapter = (P) => {
+  /* One screen isn't one truth: a dashboard of dots empties along a spectrum, from a single pane of glass
+     to a single source of truth, where every point ends up threaded to one pink source. Pinned on wide screens.
+     Phones get a stacked layout: the screen on top, the ring below, and the spectrum running down the side. */
+  (() => {
+    const svg = P.$("#truth svg");
+    if (!svg) return;
+    const NS = "http://www.w3.org/2000/svg", TEAL = "#002a32";
+    const el = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); parent.appendChild(e); return e; };
+    const set = (e, attrs) => { for (const k in attrs) e.setAttribute(k, attrs[k]); };
+    const cl = (x) => Math.min(1, Math.max(0, x));
+    const sm = (a, b, x) => { const t = cl((x - a) / (b - a)); return t * t * (3 - 2 * t); };
+    const lerp = (a, b, t) => a + (b - a) * t;
+    const ease = (t) => (t < .5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
+    const f1 = (n) => n.toFixed(1);
+
+    // Two layouts share one drawing. Spectrum runs from `a` (pane of glass) to `b` (source of truth).
+    const WIDE = { vb: "0 0 1000 440", S: { x: 70, y: 40, w: 260, h: 170 }, ball: { x: 820, y: 125 },
+      a: { x: 200, y: 300 }, b: { x: 820, y: 300 },
+      pane: { x: 200, y: 344 }, truth: { x: 820, y: 344 } };
+    const STACKED = { vb: "0 0 400 640", S: { x: 70, y: 24, w: 260, h: 170 }, ball: { x: 200, y: 404 },
+      a: { x: 22, y: 109 }, b: { x: 22, y: 404 },
+      pane: { x: 200, y: 246 }, truth: { x: 200, y: 540 } };
+
+    const build = (G) => {
+      while (svg.firstChild) svg.removeChild(svg.firstChild);
+      svg.setAttribute("viewBox", G.vb);
+      let seed = 7; // seeded, so the arcs and departure order are the same on every visit
+      const R = () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+      const text = (cls, x, y, s) => { const t = el("text", { class: cls, x, y, "text-anchor": "middle" }, svg); t.textContent = s; };
+      const N = 36, S = G.S, BALL = G.ball, RING = 82;
+      el("rect", { class: "ln", x: S.x, y: S.y, width: S.w, height: S.h, rx: 8, "stroke-opacity": .45 }, svg);
+      el("line", { class: "ln", x1: S.x + S.w / 2 - 34, x2: S.x + S.w / 2 + 34, y1: S.y + S.h + 14, y2: S.y + S.h + 14, "stroke-opacity": .3 }, svg);
+      // The dashboard, in dots: KPI grid, line chart, bar chart, table
+      const pad = 14, gap = 12, w = (S.w - 2 * pad - gap) / 2, h = (S.h - 2 * pad - gap) / 2;
+      const W = [[S.x + pad, S.y + pad], [S.x + pad + w + gap, S.y + pad], [S.x + pad, S.y + pad + h + gap], [S.x + pad + w + gap, S.y + pad + h + gap]];
+      W.forEach(([x, y]) => el("rect", { class: "hl", x, y, width: w, height: h, rx: 4, "stroke-opacity": .14 }, svg));
+      const pts = [];
+      for (let r = 0; r < 3; r++) for (let c = 0; c < 4; c++) pts.push([W[0][0] + 16 + c * 26, W[0][1] + 15 + r * 17]);
+      [12, 24, 18, 32, 27, 41, 35, 46].forEach((v, i) => pts.push([W[1][0] + 12 + i * 12.3, W[1][1] + h - 8 - v * .95]));
+      [1, 3, 2, 3, 1].forEach((n, c) => { for (let k = 0; k < n; k++) pts.push([W[2][0] + 18 + c * 19, W[2][1] + h - 12 - k * 13]); });
+      for (let r = 0; r < 3; r++) {
+        for (let c = 0; c < 2; c++) pts.push([W[3][0] + 14 + c * 52, W[3][1] + 15 + r * 17]);
+        el("line", { class: "hl", x1: W[3][0] + 22, x2: W[3][0] + 52, y1: W[3][1] + 15 + r * 17, y2: W[3][1] + 15 + r * 17, "stroke-opacity": .14 }, svg);
+        el("line", { class: "hl", x1: W[3][0] + 74, x2: W[3][0] + w - 12, y1: W[3][1] + 15 + r * 17, y2: W[3][1] + 15 + r * 17, "stroke-opacity": .14 }, svg);
+      }
+      // The spectrum, darkening toward the truth end, with ticks across it
+      const defs = el("defs", {}, svg);
+      const gr = el("linearGradient", { id: "truth-spectrum", gradientUnits: "userSpaceOnUse", x1: G.a.x, y1: G.a.y, x2: G.b.x, y2: G.b.y }, defs);
+      el("stop", { offset: 0, "stop-color": TEAL, "stop-opacity": .2 }, gr);
+      el("stop", { offset: 1, "stop-color": TEAL, "stop-opacity": .6 }, gr);
+      el("line", { x1: G.a.x, y1: G.a.y, x2: G.b.x, y2: G.b.y, stroke: "url(#truth-spectrum)", "stroke-width": 1.5 }, svg);
+      const len = Math.hypot(G.b.x - G.a.x, G.b.y - G.a.y), nx = -(G.b.y - G.a.y) / len, ny = (G.b.x - G.a.x) / len;
+      for (let i = 0; i <= 10; i++) {
+        const x = lerp(G.a.x, G.b.x, i / 10), y = lerp(G.a.y, G.b.y, i / 10);
+        el("line", { class: "hl", x1: f1(x - nx * 4), y1: f1(y - ny * 4), x2: f1(x + nx * 4), y2: f1(y + ny * 4), "stroke-opacity": .18 }, svg);
+      }
+      el("circle", { class: "node", cx: G.a.x, cy: G.a.y, r: 5 }, svg);
+      el("circle", { class: "node", cx: G.b.x, cy: G.b.y, r: 5 }, svg);
+      const marker = el("circle", { class: "ball", r: 7, cx: G.a.x, cy: G.a.y }, svg);
+      text("lbl", G.pane.x, G.pane.y, "A single pane of glass");
+      text("lbl-s", G.pane.x, G.pane.y + 25, "Puts all your data on one screen.");
+      text("lbl", G.truth.x, G.truth.y, "A single source of truth");
+      text("lbl-s", G.truth.x, G.truth.y + 25, "Everyone agrees what each number means,");
+      text("lbl-s", G.truth.x, G.truth.y + 43, "where it comes from and who owns it.");
+
+      const threads = el("g", {}, svg), dotsG = el("g", {}, svg);
+      const order = Array.from({ length: N }, (_, i) => i).sort(() => R() - .5);
+      const dots = pts.map(([sx, sy], i) => {
+        const a = (i / N) * Math.PI * 2 - Math.PI / 2;
+        return { sx, sy, ex: BALL.x + Math.cos(a) * RING, ey: BALL.y + Math.sin(a) * RING, lift: 30 + R() * 70, start: 0.08 + (order[i] / N) * 0.6 + R() * 0.05,
+          th: el("line", { class: "hl", x1: BALL.x, y1: BALL.y, x2: BALL.x, y2: BALL.y, "stroke-opacity": 0 }, threads),
+          c: el("circle", { r: 3.5, fill: TEAL, "fill-opacity": .6 }, dotsG) };
+      });
+      // Stacked, the dots fall down to the ring, so the arc bows sideways instead of up.
+      const bowX = G === STACKED;
+      const ball = el("circle", { class: "ball", cx: BALL.x, cy: BALL.y, r: 6 }, svg);
+      return (p) => {
+        const m = ease(cl(p / 0.92));
+        set(marker, { cx: f1(lerp(G.a.x, G.b.x, m)), cy: f1(lerp(G.a.y, G.b.y, m)) });
+        let arrived = 0;
+        dots.forEach((d, i) => {
+          const t = ease(cl((p - d.start) / 0.26)), bow = Math.sin(Math.PI * t) * d.lift;
+          const x = lerp(d.sx, d.ex, t) + (bowX ? (i % 2 ? bow : -bow) * .6 : 0), y = lerp(d.sy, d.ey, t) - (bowX ? 0 : bow);
+          set(d.c, { cx: f1(x), cy: f1(y) });
+          const land = sm(0.85, 1, t); arrived += land;
+          set(d.th, { x2: f1(d.ex), y2: f1(d.ey), "stroke-opacity": (0.22 * land).toFixed(3) });
+        });
+        set(ball, { r: f1(lerp(6, 12, arrived / N)) });
+      };
+    };
+
+    // Same breakpoint as the stylesheet's phone rules
+    const phone = matchMedia("(max-width: 767px)");
+    const o = { p: 0 };
+    let draw = build(phone.matches ? STACKED : WIDE);
+    phone.addEventListener("change", () => { draw = build(phone.matches ? STACKED : WIDE); draw(o.p); });
+
+    if (!P.gsap || P.reduce) { o.p = 1; draw(1); return; }
+    draw(0);
+    const mm = P.gsap.matchMedia();
+    mm.add("(min-width: 1101px) and (min-height: 620px)", () => {
+      P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p),
+        scrollTrigger: { trigger: "#one-truth", start: () => `top top+=${P.barH()}`, end: "+=120%", pin: true, scrub: 0.6, anticipatePin: 1, invalidateOnRefresh: true, refreshPriority: 1 } });
+    });
+    mm.add("(max-width: 1100px), (max-height: 619px)", () => {
+      P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p), scrollTrigger: { trigger: "#truth", start: "top 70%", end: "bottom 45%", scrub: 0.8 } });
+    });
+  })();
   /* CLEAR staircase: the base draws, each step rises in turn, then its contents settle in */
   if (P.$("#clear") && P.gsap && !P.reduce) {
     const g = P.gsap, stairs = P.$$("#clear .stair");
@@ -34,9 +142,9 @@ window.PlaybookChapter = (P) => {
   const NS = "http://www.w3.org/2000/svg";
   const cl = (x) => Math.min(1, Math.max(0, x));
   const sm = (a, b, x) => { const t = cl((x - a) / (b - a)); return t * t * (3 - 2 * t); };
-  const YS = [110, 245, 380, 515, 650], T = [100, 80, 60, 40, 20], SPAN = 4.4;
+  const YS = [82, 170, 258, 346, 434], T = [100, 80, 60, 40, 20], SPAN = 4.4;
   const xv = (v) => 260 + 270 * (v - 10) / 95;
-  const value = (y) => { let v = T[0]; for (let k = 1; k < 5; k++) v -= (T[k - 1] - T[k]) * sm(YS[k] - 70, YS[k] - 14, y); return v; };
+  const value = (y) => { let v = T[0]; for (let k = 1; k < 5; k++) v -= (T[k - 1] - T[k]) * sm(YS[k] - 62, YS[k] - 22, y); return v; };
   const travel = (p) => { const u = Math.min(4, Math.max(0, p * SPAN)); if (u >= 4) return 4; const k = Math.floor(u); return k + sm(0.12, 0.88, u - k); };
   const arriveP = (k) => (k ? (k - 0.12) / SPAN : 0.035);
   const line = P.$("#flow-line", svg), ball = P.$("#flow-ball", svg);
@@ -54,7 +162,7 @@ window.PlaybookChapter = (P) => {
     line.setAttribute("d", d);
     ball.setAttribute("cx", xv(value(by)).toFixed(1));
     ball.setAttribute("cy", by.toFixed(1));
-    guides.forEach((g, k) => g.setAttribute("y2", (40 + 650 * (k ? sm(YS[k] - 30, YS[k] + 30, by) : 1)).toFixed(1)));
+    guides.forEach((g, k) => g.setAttribute("y2", (40 + 440 * (k ? sm(YS[k] - 30, YS[k] + 30, by) : 1)).toFixed(1)));
     subs.forEach(({ t, words }, i) => {
       const a = arriveP(i), r = sm(a - 0.03, a + 0.05, p);
       t.setAttribute("transform", `translate(0 ${(10 * (1 - r) ** 2).toFixed(1)})`);

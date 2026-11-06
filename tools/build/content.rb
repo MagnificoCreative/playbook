@@ -58,34 +58,34 @@ trust_section = <<~'HTML'
         <p>Operational information loses trust on its way from source to decision. It’s born in sensors, records and systems. It’s exported and reshaped in spreadsheets. It’s reconciled by hand before meetings. It’s presented in dashboards built by different teams. By the time it reaches a decision, nobody is sure which version to believe.</p>
       </div>
 <div class="stage viz trust-viz" id="flow">
-  <svg viewBox="0 0 560 700" role="img" aria-label="Trust steps down as operational information moves from Source to Prepare, Reconcile, Present and Act.">
+  <svg viewBox="0 0 560 490" role="img" aria-label="Trust steps down as operational information moves from Source to Prepare, Reconcile, Present and Act.">
     <line class="hl" x1="0" y1="40" x2="540" y2="40" stroke-opacity=".3"/>
     <text class="axis" x="540" y="24" text-anchor="end">Trust</text>
     <text class="axis axis-dim" text-anchor="end" transform="translate(556 56) rotate(-90)">High</text>
-    <text class="axis axis-dim" text-anchor="start" transform="translate(556 690) rotate(-90)">Low</text>
+    <text class="axis axis-dim" text-anchor="start" transform="translate(556 480) rotate(-90)">Low</text>
     <g class="flow-rows">
-      <line class="hl" x1="0" y1="156" x2="540" y2="156" stroke-opacity=".06"/>
-      <line class="hl" x1="0" y1="291" x2="540" y2="291" stroke-opacity=".06"/>
-      <line class="hl" x1="0" y1="426" x2="540" y2="426" stroke-opacity=".06"/>
-      <line class="hl" x1="0" y1="561" x2="540" y2="561" stroke-opacity=".06"/>
-      <line class="hl" x1="0" y1="696" x2="540" y2="696" stroke-opacity=".06"/>
+      <line class="hl" x1="0" y1="128" x2="540" y2="128" stroke-opacity=".06"/>
+      <line class="hl" x1="0" y1="216" x2="540" y2="216" stroke-opacity=".06"/>
+      <line class="hl" x1="0" y1="304" x2="540" y2="304" stroke-opacity=".06"/>
+      <line class="hl" x1="0" y1="392" x2="540" y2="392" stroke-opacity=".06"/>
+      <line class="hl" x1="0" y1="480" x2="540" y2="480" stroke-opacity=".06"/>
     </g>
     <g class="flow-guides">
-      <line class="hl" x1="515.8" y1="40" x2="515.8" y2="690" stroke-opacity=".14" stroke-dasharray="3 5"/>
-      <line class="hl" x1="458.9" y1="40" x2="458.9" y2="690" stroke-opacity=".14" stroke-dasharray="3 5"/>
-      <line class="hl" x1="402.1" y1="40" x2="402.1" y2="690" stroke-opacity=".14" stroke-dasharray="3 5"/>
-      <line class="hl" x1="345.3" y1="40" x2="345.3" y2="690" stroke-opacity=".14" stroke-dasharray="3 5"/>
-      <line class="hl" x1="288.4" y1="40" x2="288.4" y2="690" stroke-opacity=".14" stroke-dasharray="3 5"/>
+      <line class="hl" x1="515.8" y1="40" x2="515.8" y2="480" stroke-opacity=".14" stroke-dasharray="3 5"/>
+      <line class="hl" x1="458.9" y1="40" x2="458.9" y2="480" stroke-opacity=".14" stroke-dasharray="3 5"/>
+      <line class="hl" x1="402.1" y1="40" x2="402.1" y2="480" stroke-opacity=".14" stroke-dasharray="3 5"/>
+      <line class="hl" x1="345.3" y1="40" x2="345.3" y2="480" stroke-opacity=".14" stroke-dasharray="3 5"/>
+      <line class="hl" x1="288.4" y1="40" x2="288.4" y2="480" stroke-opacity=".14" stroke-dasharray="3 5"/>
     </g>
     <path class="ln" id="flow-line" stroke-opacity=".6" d=""/>
     <g class="flow-labels">
-      <text class="lbl" x="0" y="106">Source</text><text class="lbl-s flow-sub" x="0" y="130">Sensors, records, systems</text>
-      <text class="lbl" x="0" y="241">Prepare</text><text class="lbl-s flow-sub" x="0" y="265">Exported to spreadsheets</text>
-      <text class="lbl" x="0" y="376">Reconcile</text><text class="lbl-s flow-sub" x="0" y="400">By hand, before meetings</text>
-      <text class="lbl" x="0" y="511">Present</text><text class="lbl-s flow-sub" x="0" y="535">Dashboards by different teams</text>
-      <text class="lbl" x="0" y="646">Act</text><text class="lbl-s flow-sub" x="0" y="670">Which version to believe?</text>
+      <text class="lbl" x="0" y="78">Source</text><text class="lbl-s flow-sub" x="0" y="102">Sensors, records, systems</text>
+      <text class="lbl" x="0" y="166">Prepare</text><text class="lbl-s flow-sub" x="0" y="190">Exported to spreadsheets</text>
+      <text class="lbl" x="0" y="254">Reconcile</text><text class="lbl-s flow-sub" x="0" y="278">By hand, before meetings</text>
+      <text class="lbl" x="0" y="342">Present</text><text class="lbl-s flow-sub" x="0" y="366">Dashboards by different teams</text>
+      <text class="lbl" x="0" y="430">Act</text><text class="lbl-s flow-sub" x="0" y="454">Which version to believe?</text>
     </g>
-    <circle class="ball" id="flow-ball" cx="515.8" cy="110" r="10"/>
+    <circle class="ball" id="flow-ball" cx="515.8" cy="82" r="10"/>
   </svg>
 </div>
     </div>
@@ -93,26 +93,10 @@ trust_section = <<~'HTML'
 </section>
 HTML
 
-compare = <<~HTML
-  <div class="compare" data-reveal="top 80%">
-    <div class="compare-item">
-      <svg class="compare-art" viewBox="0 0 280 140" aria-hidden="true">
-        <rect class="ln" x="1" y="1" width="278" height="138" rx="6" stroke-opacity=".35"/>
-        <rect class="ln" x="16" y="16" width="118" height="50" rx="4" stroke-opacity=".5"/><rect class="ln" x="146" y="16" width="118" height="50" rx="4" stroke-opacity=".5"/>
-        <rect class="ln" x="16" y="76" width="118" height="48" rx="4" stroke-opacity=".5"/><rect class="ln" x="146" y="76" width="118" height="48" rx="4" stroke-opacity=".5"/>
-        <path class="ln" d="M28 50h40M158 50h76M28 108h58M158 108h28" stroke-opacity=".8"/>
-      </svg>
-      <h3>A single pane of glass</h3>
-      <p>Puts all your data on one screen.</p>
-    </div>
-    <div class="compare-item is-truth">
-      <svg class="compare-art" viewBox="0 0 280 140" aria-hidden="true">
-        <path class="ln" d="M10 20C80 20 100 70 140 70M10 70h130M10 120C80 120 100 70 140 70M270 20C200 20 180 70 140 70M270 120C200 120 180 70 140 70" stroke-opacity=".45"/>
-        <circle cx="140" cy="70" r="12" fill="#ff0074"/>
-      </svg>
-      <h3>A single source of truth</h3>
-      <p>Means everyone agrees what each number means, where it comes from and who owns it.</p>
-    </div>
+# One screen isn't one truth: the spectrum, from a dashboard of dots to one source (drawn by scripts.js)
+truth_spectrum = <<~HTML
+  <div class="stage viz truth-viz" id="truth">
+    <svg viewBox="0 0 1000 440" role="img" aria-label="A dashboard's data moves along a spectrum, from a single pane of glass that puts all your data on one screen, to a single source of truth, where everyone agrees what each number means, where it comes from and who owns it."></svg>
   </div>
   <p class="block-note" data-reveal="top 85%"><span>You can have the first without the second, and then a new dashboard simply shows the disagreement more efficiently.</span></p>
 HTML
@@ -157,7 +141,7 @@ page(0, "The Dashboard Isn’t the Problem",
      "The usual response is to ask for a better dashboard: one screen, all the data, finally in one place. It’s a reasonable request, and it rarely works. <strong>Not because the dashboard is badly built, but because the problem it’s meant to solve sits underneath it.</strong>"], ROOTS) +
   trust_section +
   block("one-truth", "One screen isn’t one truth",
-    ["That’s the distinction at the heart of this playbook."], nil, compare) +
+    ["That’s the distinction at the heart of this playbook."], nil, truth_spectrum) +
   block("how-it-works", "How this playbook works",
     ["The playbook follows Magnifico’s CLEAR discovery process (Context, Listen, Examine, Align, Roadmap) and adds a final step for building with confidence. Six steps, one chapter each. Every chapter explains the step, shows you how to apply it in your own organization, and ends with an example from our work with an oil and gas company that went through the same process, from the first interviews to a delivered platform."],
     nil, steps_list) +
