@@ -7,7 +7,7 @@ window.PlaybookChapter = (P) => {
   (() => {
     const svg = P.$("#truth svg");
     if (!svg) return;
-    const NS = "http://www.w3.org/2000/svg", TEAL = "#002a32";
+    const NS = "http://www.w3.org/2000/svg", TEAL = "#002a32", THIN = "stroke-width: 1"; // every outline is 1px
     const el = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); parent.appendChild(e); return e; };
     const set = (e, attrs) => { for (const k in attrs) e.setAttribute(k, attrs[k]); };
     const cl = (x) => Math.min(1, Math.max(0, x));
@@ -31,8 +31,8 @@ window.PlaybookChapter = (P) => {
       const R = () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
       const text = (cls, x, y, s) => { const t = el("text", { class: cls, x, y, "text-anchor": "middle" }, svg); t.textContent = s; };
       const N = 36, S = G.S, BALL = G.ball, RING = 82;
-      el("rect", { class: "ln", x: S.x, y: S.y, width: S.w, height: S.h, rx: 8, "stroke-opacity": .45 }, svg);
-      el("line", { class: "ln", x1: S.x + S.w / 2 - 34, x2: S.x + S.w / 2 + 34, y1: S.y + S.h + 14, y2: S.y + S.h + 14, "stroke-opacity": .3 }, svg);
+      el("rect", { class: "ln", x: S.x, y: S.y, width: S.w, height: S.h, rx: 8, "stroke-opacity": .45, style: THIN }, svg);
+      el("line", { class: "ln", x1: S.x + S.w / 2 - 34, x2: S.x + S.w / 2 + 34, y1: S.y + S.h + 14, y2: S.y + S.h + 14, "stroke-opacity": .3, style: THIN }, svg);
       // The dashboard, in dots: KPI grid, line chart, bar chart, table
       const pad = 14, gap = 12, w = (S.w - 2 * pad - gap) / 2, h = (S.h - 2 * pad - gap) / 2;
       const W = [[S.x + pad, S.y + pad], [S.x + pad + w + gap, S.y + pad], [S.x + pad, S.y + pad + h + gap], [S.x + pad + w + gap, S.y + pad + h + gap]];
@@ -43,22 +43,20 @@ window.PlaybookChapter = (P) => {
       [1, 3, 2, 3, 1].forEach((n, c) => { for (let k = 0; k < n; k++) pts.push([W[2][0] + 18 + c * 19, W[2][1] + h - 12 - k * 13]); });
       for (let r = 0; r < 3; r++) {
         for (let c = 0; c < 2; c++) pts.push([W[3][0] + 14 + c * 52, W[3][1] + 15 + r * 17]);
-        el("line", { class: "hl", x1: W[3][0] + 22, x2: W[3][0] + 52, y1: W[3][1] + 15 + r * 17, y2: W[3][1] + 15 + r * 17, "stroke-opacity": .14 }, svg);
-        el("line", { class: "hl", x1: W[3][0] + 74, x2: W[3][0] + w - 12, y1: W[3][1] + 15 + r * 17, y2: W[3][1] + 15 + r * 17, "stroke-opacity": .14 }, svg);
       }
       // The spectrum, darkening toward the truth end, with ticks across it
       const defs = el("defs", {}, svg);
       const gr = el("linearGradient", { id: "truth-spectrum", gradientUnits: "userSpaceOnUse", x1: G.a.x, y1: G.a.y, x2: G.b.x, y2: G.b.y }, defs);
       el("stop", { offset: 0, "stop-color": TEAL, "stop-opacity": .2 }, gr);
       el("stop", { offset: 1, "stop-color": TEAL, "stop-opacity": .6 }, gr);
-      el("line", { x1: G.a.x, y1: G.a.y, x2: G.b.x, y2: G.b.y, stroke: "url(#truth-spectrum)", "stroke-width": 1.5 }, svg);
+      el("line", { x1: G.a.x, y1: G.a.y, x2: G.b.x, y2: G.b.y, stroke: "url(#truth-spectrum)", "stroke-width": 1 }, svg);
       const len = Math.hypot(G.b.x - G.a.x, G.b.y - G.a.y), nx = -(G.b.y - G.a.y) / len, ny = (G.b.x - G.a.x) / len;
       for (let i = 0; i <= 10; i++) {
         const x = lerp(G.a.x, G.b.x, i / 10), y = lerp(G.a.y, G.b.y, i / 10);
         el("line", { class: "hl", x1: f1(x - nx * 4), y1: f1(y - ny * 4), x2: f1(x + nx * 4), y2: f1(y + ny * 4), "stroke-opacity": .18 }, svg);
       }
-      el("circle", { class: "node", cx: G.a.x, cy: G.a.y, r: 5 }, svg);
-      el("circle", { class: "node", cx: G.b.x, cy: G.b.y, r: 5 }, svg);
+      el("circle", { class: "node", cx: G.a.x, cy: G.a.y, r: 5, style: THIN }, svg);
+      el("circle", { class: "node", cx: G.b.x, cy: G.b.y, r: 5, style: THIN }, svg);
       const marker = el("circle", { class: "ball", r: 7, cx: G.a.x, cy: G.a.y }, svg);
       text("lbl", G.pane.x, G.pane.y, "A single pane of glass");
       text("lbl-s", G.pane.x, G.pane.y + 25, "Puts all your data on one screen.");
