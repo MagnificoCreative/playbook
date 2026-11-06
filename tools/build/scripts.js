@@ -34,9 +34,9 @@ window.PlaybookChapter = (P) => {
   const NS = "http://www.w3.org/2000/svg";
   const cl = (x) => Math.min(1, Math.max(0, x));
   const sm = (a, b, x) => { const t = cl((x - a) / (b - a)); return t * t * (3 - 2 * t); };
-  const YS = [110, 245, 380, 515, 650], T = [100, 80, 60, 40, 20], SPAN = 4.4;
+  const YS = [82, 170, 258, 346, 434], T = [100, 80, 60, 40, 20], SPAN = 4.4;
   const xv = (v) => 260 + 270 * (v - 10) / 95;
-  const value = (y) => { let v = T[0]; for (let k = 1; k < 5; k++) v -= (T[k - 1] - T[k]) * sm(YS[k] - 70, YS[k] - 14, y); return v; };
+  const value = (y) => { let v = T[0]; for (let k = 1; k < 5; k++) v -= (T[k - 1] - T[k]) * sm(YS[k] - 62, YS[k] - 22, y); return v; };
   const travel = (p) => { const u = Math.min(4, Math.max(0, p * SPAN)); if (u >= 4) return 4; const k = Math.floor(u); return k + sm(0.12, 0.88, u - k); };
   const arriveP = (k) => (k ? (k - 0.12) / SPAN : 0.035);
   const line = P.$("#flow-line", svg), ball = P.$("#flow-ball", svg);
@@ -54,7 +54,7 @@ window.PlaybookChapter = (P) => {
     line.setAttribute("d", d);
     ball.setAttribute("cx", xv(value(by)).toFixed(1));
     ball.setAttribute("cy", by.toFixed(1));
-    guides.forEach((g, k) => g.setAttribute("y2", (40 + 650 * (k ? sm(YS[k] - 30, YS[k] + 30, by) : 1)).toFixed(1)));
+    guides.forEach((g, k) => g.setAttribute("y2", (40 + 440 * (k ? sm(YS[k] - 30, YS[k] + 30, by) : 1)).toFixed(1)));
     subs.forEach(({ t, words }, i) => {
       const a = arriveP(i), r = sm(a - 0.03, a + 0.05, p);
       t.setAttribute("transform", `translate(0 ${(10 * (1 - r) ** 2).toFixed(1)})`);

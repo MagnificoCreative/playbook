@@ -58,34 +58,34 @@ trust_section = <<~'HTML'
         <p>Operational information loses trust on its way from source to decision. It’s born in sensors, records and systems. It’s exported and reshaped in spreadsheets. It’s reconciled by hand before meetings. It’s presented in dashboards built by different teams. By the time it reaches a decision, nobody is sure which version to believe.</p>
       </div>
 <div class="stage viz trust-viz" id="flow">
-  <svg viewBox="0 0 560 700" role="img" aria-label="Trust steps down as operational information moves from Source to Prepare, Reconcile, Present and Act.">
+  <svg viewBox="0 0 560 490" role="img" aria-label="Trust steps down as operational information moves from Source to Prepare, Reconcile, Present and Act.">
     <line class="hl" x1="0" y1="40" x2="540" y2="40" stroke-opacity=".3"/>
     <text class="axis" x="540" y="24" text-anchor="end">Trust</text>
     <text class="axis axis-dim" text-anchor="end" transform="translate(556 56) rotate(-90)">High</text>
-    <text class="axis axis-dim" text-anchor="start" transform="translate(556 690) rotate(-90)">Low</text>
+    <text class="axis axis-dim" text-anchor="start" transform="translate(556 480) rotate(-90)">Low</text>
     <g class="flow-rows">
-      <line class="hl" x1="0" y1="156" x2="540" y2="156" stroke-opacity=".06"/>
-      <line class="hl" x1="0" y1="291" x2="540" y2="291" stroke-opacity=".06"/>
-      <line class="hl" x1="0" y1="426" x2="540" y2="426" stroke-opacity=".06"/>
-      <line class="hl" x1="0" y1="561" x2="540" y2="561" stroke-opacity=".06"/>
-      <line class="hl" x1="0" y1="696" x2="540" y2="696" stroke-opacity=".06"/>
+      <line class="hl" x1="0" y1="128" x2="540" y2="128" stroke-opacity=".06"/>
+      <line class="hl" x1="0" y1="216" x2="540" y2="216" stroke-opacity=".06"/>
+      <line class="hl" x1="0" y1="304" x2="540" y2="304" stroke-opacity=".06"/>
+      <line class="hl" x1="0" y1="392" x2="540" y2="392" stroke-opacity=".06"/>
+      <line class="hl" x1="0" y1="480" x2="540" y2="480" stroke-opacity=".06"/>
     </g>
     <g class="flow-guides">
-      <line class="hl" x1="515.8" y1="40" x2="515.8" y2="690" stroke-opacity=".14" stroke-dasharray="3 5"/>
-      <line class="hl" x1="458.9" y1="40" x2="458.9" y2="690" stroke-opacity=".14" stroke-dasharray="3 5"/>
-      <line class="hl" x1="402.1" y1="40" x2="402.1" y2="690" stroke-opacity=".14" stroke-dasharray="3 5"/>
-      <line class="hl" x1="345.3" y1="40" x2="345.3" y2="690" stroke-opacity=".14" stroke-dasharray="3 5"/>
-      <line class="hl" x1="288.4" y1="40" x2="288.4" y2="690" stroke-opacity=".14" stroke-dasharray="3 5"/>
+      <line class="hl" x1="515.8" y1="40" x2="515.8" y2="480" stroke-opacity=".14" stroke-dasharray="3 5"/>
+      <line class="hl" x1="458.9" y1="40" x2="458.9" y2="480" stroke-opacity=".14" stroke-dasharray="3 5"/>
+      <line class="hl" x1="402.1" y1="40" x2="402.1" y2="480" stroke-opacity=".14" stroke-dasharray="3 5"/>
+      <line class="hl" x1="345.3" y1="40" x2="345.3" y2="480" stroke-opacity=".14" stroke-dasharray="3 5"/>
+      <line class="hl" x1="288.4" y1="40" x2="288.4" y2="480" stroke-opacity=".14" stroke-dasharray="3 5"/>
     </g>
     <path class="ln" id="flow-line" stroke-opacity=".6" d=""/>
     <g class="flow-labels">
-      <text class="lbl" x="0" y="106">Source</text><text class="lbl-s flow-sub" x="0" y="130">Sensors, records, systems</text>
-      <text class="lbl" x="0" y="241">Prepare</text><text class="lbl-s flow-sub" x="0" y="265">Exported to spreadsheets</text>
-      <text class="lbl" x="0" y="376">Reconcile</text><text class="lbl-s flow-sub" x="0" y="400">By hand, before meetings</text>
-      <text class="lbl" x="0" y="511">Present</text><text class="lbl-s flow-sub" x="0" y="535">Dashboards by different teams</text>
-      <text class="lbl" x="0" y="646">Act</text><text class="lbl-s flow-sub" x="0" y="670">Which version to believe?</text>
+      <text class="lbl" x="0" y="78">Source</text><text class="lbl-s flow-sub" x="0" y="102">Sensors, records, systems</text>
+      <text class="lbl" x="0" y="166">Prepare</text><text class="lbl-s flow-sub" x="0" y="190">Exported to spreadsheets</text>
+      <text class="lbl" x="0" y="254">Reconcile</text><text class="lbl-s flow-sub" x="0" y="278">By hand, before meetings</text>
+      <text class="lbl" x="0" y="342">Present</text><text class="lbl-s flow-sub" x="0" y="366">Dashboards by different teams</text>
+      <text class="lbl" x="0" y="430">Act</text><text class="lbl-s flow-sub" x="0" y="454">Which version to believe?</text>
     </g>
-    <circle class="ball" id="flow-ball" cx="515.8" cy="110" r="10"/>
+    <circle class="ball" id="flow-ball" cx="515.8" cy="82" r="10"/>
   </svg>
 </div>
     </div>
