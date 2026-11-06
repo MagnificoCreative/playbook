@@ -6,7 +6,7 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@500&family=Inter:ital,wght@0,300;0,400;0,500;1,300&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;500&family=Inter:ital,wght@0,300;0,400;0,500;1,300&display=swap">
 <style>
 /* Layout: sticky contents rail on the left; the chapter runs as a stack of full-height panels.
    "How to apply it" pins and travels sideways, then vertical scrolling resumes. */
@@ -182,42 +182,43 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 32px;
-  padding: 32px 24px 24px var(--gutter-l);
+  gap: 24px;
+  padding: 24px 24px 24px var(--gutter-l);
   padding-left: max(24px, env(safe-area-inset-left, 0px));
   overflow-y: auto;
   overscroll-behavior: contain;
   scrollbar-width: none;
 }
 .rail::-webkit-scrollbar { display: none; }
-.rail-title { font-size: 20px; font-weight: 500; margin-bottom: 20px; letter-spacing: -0.01em; }
-.toc { display: flex; flex-direction: column; gap: 2px; }
+.toc { display: flex; flex-direction: column; gap: 4px; }
 .toc-link {
   display: flex; align-items: baseline; gap: 10px;
-  padding: 12px;
-  border-radius: var(--radius);
+  padding: 8px 12px;
+  border-radius: 4px;
   font-size: 15px; line-height: 1.4; font-weight: 400;
   color: var(--text-emphasis);
   transition: background-color .25s var(--ease-out);
 }
 .toc-link:hover { background: rgba(7, 23, 27, 0.04); }
 .toc-num {
-  font-family: var(--f-label); font-weight: 500; font-size: 13px; letter-spacing: 0.16em;
+  font-family: var(--f-label); font-weight: 300; font-size: 13px; letter-spacing: 0.16em;
   flex: none; width: 24px;
 }
 .toc-item.is-current > .toc-link { background: var(--n200); font-weight: 500; }
-.toc-item.is-current > .toc-link .toc-num { color: var(--pink); }
+.toc-intro { flex-direction: column; align-items: flex-start; gap: 2px; }
+.toc-kicker { font-size: 14px; font-weight: 300; }
+.toc-item.is-current > .toc-link .toc-num { color: var(--pink); font-weight: 500; }
 .toc-item.is-soon > .toc-link { color: color-mix(in srgb, var(--text-emphasis) 72%, transparent); }
 
 .subnav {
   display: flex; flex-direction: column;
-  margin: 8px 0 10px 46px;
+  margin: 4px 0 6px 46px;
   border-left: 1px solid var(--hairline);
 }
 .subnav a {
   position: relative;
   display: block;
-  padding: 7px 0 7px 16px;
+  padding: 5px 0 5px 16px;
   font-size: 14px;
   color: var(--text-body);
   transition: color .25s var(--ease-out);
@@ -234,8 +235,8 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .assess {
   background: var(--bg-surface);
   border-radius: var(--radius);
-  padding: 24px;
-  display: flex; flex-direction: column; gap: 12px;
+  padding: 20px;
+  display: flex; flex-direction: column; gap: 10px; align-items: center; text-align: center;
 }
 .assess h2 { font-size: 17px; line-height: 1.4; font-weight: 500; color: var(--text-primary); }
 .assess p { font-size: 14px; line-height: 1.5; color: var(--text-body); }
@@ -318,7 +319,7 @@ main { min-width: 0; }
 @keyframes cue { 0% { transform: translateY(-100%); } 100% { transform: translateY(260%); } }
 
 /* Start with people */
-.people { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 48px var(--pad); align-content: center; }
+.people { display: grid; grid-template-columns: minmax(0, 1fr); gap: 48px var(--pad); align-content: center; }
 .people-head { display: flex; flex-direction: column; gap: 24px; }
 .people-body { display: flex; flex-direction: column; gap: 32px; max-width: 760px; }
 .people-lead { font-size: var(--t-lead); line-height: 1.44; color: var(--text-primary); }
@@ -430,12 +431,13 @@ main { min-width: 0; }
 
 /* Fragmentation sources */
 .frag { gap: clamp(40px, 7vh, 72px); }
-.frag-top { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 32px var(--pad); align-items: end; }
+.frag-top { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 80px var(--pad); align-items: start; }
 .frag-intro { display: flex; flex-direction: column; gap: 24px; }
 .frag-intro p { font-size: var(--t-large); line-height: 1.5; color: var(--text-body); max-width: 56ch; }
-.pull { border-left: 2px solid var(--pink); padding-left: 24px; display: flex; flex-direction: column; gap: 12px; }
-.pull p { font-size: clamp(19px, 1.6vw, 24px); line-height: 1.6; font-style: italic; font-weight: 300; color: var(--text-primary); }
-.pull cite { font-style: normal; font-size: 14px; color: var(--text-body); }
+.pull { display: flex; flex-direction: column; gap: 20px; margin-top: calc(var(--t-h2) * 0.22 + 9px); }  /* sets the quote mark level with the headline cap height */
+.pull .qmark { color: var(--teal-800); opacity: .3; }
+.pull blockquote p { font-size: clamp(20px, 1.9vw, 30px); line-height: 1.5; font-style: italic; font-weight: 300; color: var(--text-primary); }
+.pull figcaption { font-size: 14px; color: var(--text-body); }
 .frag-sub { font-size: var(--t-large); color: var(--text-body); padding-top: 32px; border-top: 1px solid var(--hairline); }
 .groups { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px 24px; position: relative; }
 .group { display: flex; flex-direction: column; gap: 20px; }
@@ -501,9 +503,9 @@ main { min-width: 0; }
     opacity: 0; pointer-events: none; transition: opacity .35s var(--ease-out);
   }
   .nav-open .scrim { opacity: 1; pointer-events: auto; }
-  .people { grid-template-columns: minmax(0, 1fr); }
   .card { width: clamp(520px, 78vw, 900px); }
   .frag-top { grid-template-columns: minmax(0, 1fr); align-items: start; }
+  .pull { margin-top: 0; }
 }
 @media (max-width: 860px) {
   .field-panel { grid-template-columns: minmax(0, 1fr); }
@@ -564,9 +566,8 @@ main { min-width: 0; }
 <div class="shell">
   <aside class="rail" id="rail" aria-label="Playbook contents">
     <nav>
-      <p class="rail-title">Contents</p>
       <ol class="toc">
-        <li class="toc-item is-soon"><a class="toc-link" href="#" data-soon><span class="toc-num">00</span><span>Intro: The Dashboard Isn’t the Problem</span></a></li>
+        <li class="toc-item is-soon"><a class="toc-link toc-intro" href="#" data-soon><span class="toc-kicker">Introduction</span><span>The Dashboard Isn’t the Problem</span></a></li>
         <li class="toc-item is-current">
           <a class="toc-link" href="#top" aria-current="page"><span class="toc-num">01</span><span>Listen before you design</span></a>
           <ol class="subnav">
@@ -585,8 +586,7 @@ main { min-width: 0; }
       </ol>
     </nav>
     <div class="assess">
-      <h2>How ready is your organization to go from data to decisions?</h2>
-      <p>The Data to Decision Assessment uses the same CLEAR steps to show you which practices you already have in place, where the gaps are, and what to tackle first.</p>
+      <h2>How data-ready is your organization?</h2>
       <button class="btn" type="button" data-soon>Take the assessment
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
       </button>
@@ -802,8 +802,9 @@ main { min-width: 0; }
             <p>The most important finding wasn’t technical. The company had a strong independent spirit: teams were trusted to solve their own problems their own way. It was a genuine strength. It also meant every team built its own reports, dashboards and naming conventions, and the result was many competing versions of the truth.</p>
           </div>
           <figure class="pull">
-            <blockquote><p>“That’s kind of on us, we should have never got to the place we’re in now. We should have had standards out there that kind of dictated naming conventions and things.”</p></blockquote>
-            <cite>From the interviews</cite>
+            <span class="qmark" aria-hidden="true">“</span>
+            <blockquote><p>That’s kind of on us, we should have never got to the place we’re in now. We should have had standards out there that kind of dictated naming conventions and things.</p></blockquote>
+            <figcaption>From the interviews</figcaption>
           </figure>
         </div>
         <div class="frag-groups">
