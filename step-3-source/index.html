@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Follow the Data to Its Source</title>
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;500&family=Inter:ital,wght@0,300;0,400;0,500;1,300&display=swap">
+<link rel="stylesheet" href="../assets/playbook.css">
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="bar">
+  <button class="menu-btn" id="menu-btn" type="button" aria-controls="rail" aria-expanded="false"><i aria-hidden="true"></i>Contents</button>
+  <a class="bar-brand" href="#top" aria-label="Magnifico, back to top">
+    <span class="logo">
+      <svg viewBox="0 0 100 18.86" aria-hidden="true" focusable="false">
+        <g class="logo-mark" fill="#FF0074">
+          <path d="M3.44242 0.300781H9.89963C9.89269 0.316976 9.88807 0.333171 9.88575 0.35168L8.33334 7.34796L6.61666 14.4669C6.60509 14.5339 6.61897 14.5895 6.65136 14.6265H0.168703C0.0460834 14.6265 -0.0163834 14.5455 0.00443886 14.4229L1.70261 7.38266L3.23883 0.465046C3.25965 0.342426 3.34063 0.300781 3.44242 0.300781Z"/>
+          <path d="M13.3009 14.5085C13.3101 14.557 13.331 14.5987 13.3587 14.6265H9.95312C9.98089 14.5987 10.0017 14.5617 10.011 14.5085L11.2325 9.18954L11.7693 6.66542L12.0585 5.05054L13.3009 14.5085Z"/>
+          <path d="M21.2712 0.310036L15.8689 9.80961L14.6265 0.35168C14.6219 0.333171 14.6173 0.316976 14.6104 0.300781H21.2781C21.2781 0.300781 21.2735 0.307722 21.2712 0.310036Z"/>
+          <path d="M21.6226 5.25635L21.2084 6.6445L20.5861 9.18944L19.3645 14.4667C19.3529 14.5338 19.3668 14.5893 19.3992 14.6264H16.2759C16.3036 14.6102 16.3268 14.5824 16.343 14.55L21.6226 5.25635Z"/>
+        </g>
+        <g class="logo-word" fill="#002A32">
+          <path d="M32.3184 4.18059C32.3393 4.05566 32.4225 4.01401 32.5243 4.01401H35.9184C36.0433 4.01401 36.1058 4.0973 36.0849 4.21992L34.8217 9.49721L33.7043 14.5061C33.6834 14.631 33.6002 14.6727 33.4984 14.6727H30.2686C30.1437 14.6727 30.102 14.5894 30.1228 14.4668L30.2686 13.8676C29.5236 14.4876 28.5913 14.8809 27.4738 14.8809C25.0931 14.8809 23.5615 13.0809 23.5615 10.4111C23.5615 7.49364 25.3615 3.80811 29.0679 3.80811C30.4745 3.80811 31.4902 4.32635 32.0894 5.21476L32.3161 4.18059H32.3184ZM31.4485 8.25713C31.4485 6.91062 30.8701 6.20729 29.8336 6.20729C27.9087 6.20729 27.3095 8.89799 27.3095 10.263C27.3095 11.5262 27.8069 12.4771 28.9036 12.4771C30.7452 12.4771 31.4485 9.68229 31.4485 8.25481V8.25713Z"/>
+          <path d="M44.3837 4.18059C44.4045 4.05566 44.4878 4.01401 44.5896 4.01401H47.942C48.0669 4.01401 48.1271 4.0973 48.1062 4.21992L46.6996 10.1612L45.6862 14.6102C45.0245 17.5277 42.9955 18.8533 39.9115 18.8533C36.6008 18.8533 34.6551 17.2176 34.5718 15.1076C34.5718 14.9827 34.6551 14.9202 34.7569 14.9202H38.1301C38.2342 14.9202 38.3152 14.9827 38.3152 15.1076C38.3776 15.9567 39.0393 16.4518 40.0735 16.4518C41.2118 16.4518 41.8318 15.8734 42.1441 14.5686L42.3917 13.4511C41.6467 14.0503 40.7352 14.4251 39.5761 14.4251C37.1329 14.4251 35.6013 12.7478 35.6013 10.1612C35.6013 7.3664 37.3596 3.80811 41.0868 3.80811C42.5143 3.80811 43.5508 4.32635 44.1708 5.21476L44.3767 4.18059H44.3837ZM43.4721 8.07204C43.4721 6.85047 42.8729 6.2096 41.8573 6.2096C39.9115 6.2096 39.354 8.75455 39.354 10.0178C39.354 11.1977 39.8514 12.0468 40.948 12.0468C42.8105 12.0468 43.4721 9.39772 43.4721 8.07204Z"/>
+          <path d="M50.4708 14.5086C50.45 14.6335 50.3667 14.6751 50.2649 14.6751H46.8292C46.7043 14.6751 46.6418 14.5919 46.6626 14.4692L47.8842 9.41868L49.085 4.18305C49.1058 4.05811 49.1891 4.01647 49.2909 4.01647H52.4998C52.6247 4.01647 52.6849 4.09976 52.6641 4.22238L52.4165 5.2149C53.2448 4.38664 54.4247 3.7666 55.7897 3.7666C57.983 3.7666 59.5146 5.29819 58.8529 8.11382L58.3763 10.1428L57.4231 14.5109C57.4023 14.6358 57.319 14.6775 57.2149 14.6775H53.8209C53.6959 14.6775 53.6335 14.5942 53.6543 14.4716L54.626 10.5801L55.1234 8.32436C55.3501 7.2069 55.0401 6.46193 54.0684 6.46193C52.5368 6.46193 51.771 8.44929 51.4818 9.75184L51.2944 10.6426L50.4662 14.5132L50.4708 14.5086Z"/>
+          <path d="M62.1222 14.5086C62.1013 14.6335 62.018 14.6752 61.9163 14.6752H58.4806C58.3556 14.6752 58.2932 14.5919 58.314 14.4692L59.5564 9.43952L60.7155 4.18306C60.7363 4.05812 60.8196 4.01648 60.9214 4.01648H64.3363C64.4612 4.01648 64.5237 4.09977 64.5028 4.22239L63.198 9.4372L62.1222 14.5086ZM65.3727 0.393409L64.7527 3.02164C64.7319 3.14657 64.6486 3.18822 64.5468 3.18822H61.1528C61.0278 3.18822 60.9677 3.10493 60.9885 2.98231L61.6085 0.354078C61.6294 0.229144 61.7127 0.1875 61.8145 0.1875H65.2085C65.3334 0.1875 65.3936 0.270789 65.3751 0.395722L65.3727 0.393409Z"/>
+          <path d="M70.5482 3.78734L70.5066 4.01407H72.8664C72.9914 4.01407 73.0515 4.09736 73.033 4.21998L72.4939 6.43407C72.4731 6.55901 72.3898 6.60065 72.288 6.60065H69.9074L69.1207 10.0155L68.2092 14.5062C68.1884 14.6311 68.1051 14.6727 68.0033 14.6727H64.4843C64.3594 14.6727 64.2992 14.5895 64.3177 14.4668L65.4352 10.0178L66.2635 6.60297H64.8776C64.7527 6.60297 64.6902 6.51968 64.7111 6.39706L65.2293 4.18296C65.2501 4.05802 65.3334 4.01638 65.4352 4.01638H66.8627L66.9668 3.53978C67.566 0.974018 69.6158 0 71.6865 0C72.4315 0 73.1973 0.104111 73.7572 0.185087C73.8821 0.205909 73.9237 0.31002 73.9029 0.411818L73.3639 2.62592C73.343 2.73003 73.2806 2.79249 73.1973 2.77167C72.9081 2.68838 72.4939 2.64674 72.0173 2.64674C71.2724 2.64674 70.775 2.87347 70.5482 3.78502V3.78734Z"/>
+          <path d="M75.2652 14.5086C75.2444 14.6335 75.1611 14.6752 75.0593 14.6752H71.6236C71.4987 14.6752 71.4362 14.5919 71.4571 14.4692L72.6995 9.43952L73.8586 4.18306C73.8794 4.05812 73.9627 4.01648 74.0645 4.01648H77.4793C77.6043 4.01648 77.6667 4.09977 77.6459 4.22239L76.341 9.4372L75.2652 14.5086ZM78.5158 0.393409L77.8958 3.02164C77.875 3.14657 77.7917 3.18822 77.6899 3.18822H74.2958C74.1709 3.18822 74.1108 3.10493 74.1316 2.98231L74.7516 0.354078C74.7724 0.229144 74.8557 0.1875 74.9575 0.1875H78.3516C78.4765 0.1875 78.5366 0.270789 78.5181 0.395722L78.5158 0.393409Z"/>
+          <path d="M77.1904 10.0802C77.1904 6.79028 79.5086 3.74561 83.5042 3.74561C86.3406 3.74561 88.2031 5.29802 88.2656 7.78281C88.2656 7.90774 88.1823 7.97021 88.0805 7.97021H84.9132C84.8091 7.97021 84.7258 7.90774 84.7258 7.78281C84.6633 6.70699 84.0433 6.18875 83.2358 6.18875C81.6209 6.18875 80.9176 8.52778 80.9176 10.226C80.9176 11.7992 81.496 12.5025 82.4284 12.5025C83.3608 12.5025 84.0641 11.7784 84.3533 10.7835C84.3741 10.6794 84.4574 10.6193 84.5592 10.6193H87.7265C87.8514 10.6193 87.9139 10.6817 87.8931 10.7835C87.3147 13.2267 85.3273 14.9433 82.3243 14.9433C79.3212 14.9433 77.1904 13.2452 77.1904 10.0802Z"/>
+          <path d="M88.5337 10.0594C88.5337 6.79028 90.9144 3.74561 94.8683 3.74561C97.8065 3.74561 100.002 5.4646 100.002 8.60876C100.002 11.7529 97.6214 14.9433 93.6884 14.9433C90.7501 14.9433 88.5337 13.2244 88.5337 10.0594ZM96.2958 8.44449C96.2958 6.9129 95.6757 6.16793 94.7017 6.16793C92.9642 6.16793 92.2586 8.56943 92.2586 10.2445C92.2586 11.7969 92.8786 12.5002 93.8318 12.5002C95.6109 12.5002 96.2958 10.0154 96.2958 8.44449Z"/>
+        </g>
+      </svg>
+    </span>
+  </a>
+  <span class="bar-sep" aria-hidden="true"></span>
+  <span class="bar-title">From Data Sprawl to a Single Source of Truth</span>
+  <div class="bar-progress" aria-hidden="true"><span id="page-progress"></span></div>
+</header>
+
+<div class="shell">
+<aside class="rail" id="rail" aria-label="Playbook contents">
+  <nav>
+    <ol class="toc">
+        <li class="toc-item"><a class="toc-link toc-intro" href="../intro/"><span class="toc-kicker">Introduction</span><span>The Dashboard Isn’t the Problem</span></a></li>
+        <li class="toc-item"><a class="toc-link" href="../step-1-listen/"><span class="toc-num">01</span><span>Listen before you design</span></a></li>
+        <li class="toc-item"><a class="toc-link" href="../step-2-decide/"><span class="toc-num">02</span><span>Know who decides what</span></a></li>
+        <li class="toc-item is-current">
+          <a class="toc-link" href="#top" aria-current="page"><span class="toc-num">03</span><span>Follow the data to its source</span></a>
+          <ol class="subnav">
+            <li><a href="#integration-and-trust" data-spy="integration-and-trust">Integration and trust</a></li>
+            <li><a href="#how-to-apply" data-spy="how-to-apply">How to apply it</a></li>
+            <li><a href="#in-the-field" data-spy="in-the-field">In the field</a></li>
+            <li><a href="#one-number" data-spy="one-number">One number, many copies</a></li>
+          </ol>
+        </li>
+        <li class="toc-item"><a class="toc-link" href="../step-4-align/"><span class="toc-num">04</span><span>Agree on what matters</span></a></li>
+        <li class="toc-item"><a class="toc-link" href="../step-5-decisions/"><span class="toc-num">05</span><span>Design around decisions</span></a></li>
+        <li class="toc-item"><a class="toc-link" href="../step-6-test/"><span class="toc-num">06</span><span>Test before you build</span></a></li>
+        <li class="toc-item"><a class="toc-link" href="../where-to-start/"><span class="toc-num">07</span><span>Where to start</span></a></li>
+    </ol>
+  </nav>
+  <div class="assess">
+    <h2>How data-ready is your organization?</h2>
+    <button class="btn" type="button" data-soon="The assessment launches soon">Take the assessment
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </button>
+  </div>
+</aside>
+
+  <div class="scrim" id="scrim"></div>
+
+  <main id="main">
+<section class="sec" id="top" data-section="top" aria-labelledby="t-hero">
+  <div class="panel hero">
+    <div class="hero-art" aria-hidden="true"><svg viewBox="0 0 600 600" data-hero="03"></svg></div>
+    <div class="hero-inner">
+      <p class="eyebrow">Examine<span class="sep">|</span>Step 3</p>
+      <h1 class="display" id="t-hero"><span class="w"><span>Follow</span></span> <span class="w"><span>the</span></span> <span class="w"><span>Data</span></span> <span class="w"><span>to</span></span> <span class="w"><span>Its</span></span> <span class="w"><span>Source</span></span></h1>
+      <p class="lead">Integration and trust are different things. Trust has to be fixed where the data is born.</p>
+    </div>
+    <div class="cue" aria-hidden="true"><i></i>Scroll</div>
+  </div>
+</section>
+<section class="sec" id="integration-and-trust" data-section="integration-and-trust" aria-labelledby="t-integration-and-trust">
+  <div class="panel people">
+    <div class="people-head"><h2 class="h2" id="t-integration-and-trust">Integration and trust</h2></div>
+    <div class="people-body">
+      <p class="people-lead" data-words>Once you know who needs what, check whether your data can deliver it. This is where most organizations discover that <strong>integration and trust are different things.</strong></p>
+      <p class="people-text">If three copies of a number disagree today, putting them side by side on one screen only makes the disagreement easier to see. Trust has to be fixed where the data is born and everywhere it gets changed along the way.</p>
+    </div>
+    
+  </div>
+</section>
+<section class="sec" id="how-to-apply" data-section="how-to-apply" aria-labelledby="t-howto">
+  <div class="panel howto">
+    <div class="howto-head">
+      <div class="howto-head-l"><h2 class="h2" id="t-howto">How to apply it</h2></div>
+      <div class="meter">
+        <span class="meter-count"><b id="meter-cur">01</b> / <span id="meter-total">05</span></span>
+        <div class="ticks" role="group" aria-label="Jump to step"></div>
+      </div>
+    </div>
+    <div class="howto-viewport">
+      <ol class="howto-track">
+        <li class="card card--text">
+          <div class="card-meta"><span class="card-label">Metrics</span></div>
+          <div class="card-in"><div class="card-copy">
+            <h3 class="card-title">Pick a few critical metrics.</h3>
+            <p class="card-body">Start with the handful your leadership relies on most, not every system you own.</p>
+          </div></div>
+        </li>
+        <li class="card card--text">
+          <div class="card-meta"><span class="card-label">Trace</span></div>
+          <div class="card-in"><div class="card-copy">
+            <h3 class="card-title">Trace each one end to end.</h3>
+            <p class="card-body">From the system where it’s created to the meeting where it’s used. Note every copy, every change of definition, and every point where a person re-keys or adjusts it.</p>
+          </div></div>
+        </li>
+        <li class="card card--text">
+          <div class="card-meta"><span class="card-label">Retire</span></div>
+          <div class="card-in"><div class="card-copy">
+            <h3 class="card-title">Ask what should have been retired.</h3>
+            <p class="card-body">Old dashboards and legacy tools running alongside new ones keep competing versions alive.</p>
+          </div></div>
+        </li>
+        <li class="card card--text">
+          <div class="card-meta"><span class="card-label">Owners</span></div>
+          <div class="card-in"><div class="card-copy">
+            <h3 class="card-title">Name an owner for each definition, even provisionally.</h3>
+            <p class="card-body">A number nobody owns will drift again.</p>
+          </div></div>
+        </li>
+        <li class="card card--text">
+          <div class="card-meta"><span class="card-label">Together</span></div>
+          <div class="card-in"><div class="card-copy">
+            <h3 class="card-title">Do it with operations and IT in the same room.</h3>
+            <p class="card-body">Neither can see the whole path alone.</p>
+          </div></div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</section>
+<section class="sec" id="in-the-field" data-section="in-the-field" aria-labelledby="t-field">
+  <div class="panel field-panel">
+    <div class="field-main">
+      <div class="field-copy">
+        <h2 class="h2" id="t-field">In the field</h2>
+        <p>At the oil and gas company, we examined seven kinds of operational information: reliability, integrity, process optimization, projects, condition monitoring, regulatory reporting and production.</p>
+      </div>
+      <dl class="stats one">
+            <div class="stat"><dt class="stat-label">Kinds of operational information</dt><dd class="stat-num" data-count="7" style="margin:0;order:-1">07</dd></div>
+          </dl>
+    </div>
+    <figure class="field-quote">
+          <span class="qmark" aria-hidden="true">“</span>
+          <blockquote><p>There’s too much data. Nothing gets retired.</p></blockquote>
+          <figcaption>From the interviews</figcaption>
+        </figure>
+  </div>
+</section>
+<section class="sec" id="one-number" data-section="one-number" aria-labelledby="t-one-number">
+  <div class="panel block">
+    <div class="block-top" data-reveal>
+      <div class="block-intro">
+        <h2 class="h2" id="t-one-number">One number, many copies</h2>
+        <p>The same patterns appeared in almost all of them. Data was copied between systems and spreadsheets, definitions shifted, figures were reconciled by hand, and new dashboards arrived without the old ones ever leaving.</p>
+      </div>
+      <figure class="pull">
+          <span class="qmark" aria-hidden="true">“</span>
+          <blockquote><p>[The] foundation is not solid. So everything on top of it is just trying to band aid, aggregate those sources together, so it looks like it came from one place.</p></blockquote>
+          <figcaption>From the interviews</figcaption>
+        </figure>
+    </div>
+<div class="stage viz" id="trace">
+  <svg viewBox="0 0 1000 330" role="img" aria-label="One metric leaves its source as a single line, splits into conflicting copies through spreadsheets and dashboards, and only rejoins where a definition is agreed.">
+    <path class="ln t-src" d="M90 165H250" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="1" stroke-opacity=".7"/>
+    <path class="ln t-copy" d="M250 165C320 165 330 70 420 70H640C730 70 760 165 830 165" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="1" stroke-opacity=".45"/>
+    <path class="ln t-copy" d="M250 165H830" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="1" stroke-opacity=".45"/>
+    <path class="ln t-copy" d="M250 165C320 165 330 260 420 260H640C730 260 760 165 830 165" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="1" stroke-opacity=".45"/>
+    <path class="ln t-out" d="M830 165H940" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="1" stroke-opacity=".7"/>
+    <circle class="ball" cx="90" cy="165" r="12"/>
+    <text class="lbl" x="90" y="210" text-anchor="middle">Source</text>
+    <g class="t-vals">
+      <g><rect class="node" x="380" y="48" width="104" height="44" rx="6"/><text class="lbl-num" x="432" y="75" text-anchor="middle">1,240</text><text class="lbl-s" x="432" y="36" text-anchor="middle">Spreadsheet</text></g>
+      <g><rect class="node" x="380" y="143" width="104" height="44" rx="6"/><text class="lbl-num" x="432" y="170" text-anchor="middle">1,198</text><text class="lbl-s" x="432" y="131" text-anchor="middle">Team dashboard</text></g>
+      <g><rect class="node" x="380" y="238" width="104" height="44" rx="6"/><text class="lbl-num" x="432" y="265" text-anchor="middle">1,305</text><text class="lbl-s" x="432" y="226" text-anchor="middle">Monthly report</text></g>
+      <g><rect class="node" x="560" y="48" width="96" height="44" rx="6"/><text class="lbl-num" x="608" y="75" text-anchor="middle">1,251</text></g>
+      <g><rect class="node" x="560" y="238" width="96" height="44" rx="6"/><text class="lbl-num" x="608" y="265" text-anchor="middle">1,187</text></g>
+    </g>
+    <g class="t-agree">
+      <circle class="ball" cx="830" cy="165" r="14"/>
+      <text class="lbl" x="830" y="214" text-anchor="middle">Agreed definition</text>
+      <text class="lbl-s" x="830" y="238" text-anchor="middle">One owner</text>
+    </g>
+  </svg>
+</div>
+
+  </div>
+</section>
+<div class="next">
+  <a href="../step-4-align/">
+    <div class="next-copy">
+      <p class="eyebrow">Next · <b>Step 4</b></p>
+      <p class="next-title">Agree on what matters</p>
+    </div>
+    <span class="next-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+  </a>
+</div>
+
+  </main>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+<script src="../assets/motion/hero-scenes.js"></script>
+<script>
+/* Step 3: one metric splits into conflicting copies and only rejoins where a definition is agreed. */
+window.PlaybookChapter = (P) => {
+  const svg = P.$("#trace svg");
+  if (!svg) return;
+  const src = P.$(".t-src", svg), copies = P.$$(".t-copy", svg), out = P.$(".t-out", svg);
+  const vals = P.$$(".t-vals > g", svg), agree = P.$(".t-agree", svg);
+  if (!P.gsap || P.reduce) { [src, out, ...copies].forEach((p) => p.setAttribute("stroke-dashoffset", 0)); return; }
+  const g = P.gsap;
+  g.set(vals, { opacity: 0, y: 8 });
+  g.set(agree, { opacity: 0, scale: 0.6, svgOrigin: "830 165" });
+  g.timeline({ defaults: { ease: "none" }, scrollTrigger: { trigger: "#trace", start: "top 85%", end: "bottom 85%", scrub: 0.8 } })
+    .to(src, { attr: { "stroke-dashoffset": 0 }, duration: 0.15 })
+    .to(copies, { attr: { "stroke-dashoffset": 0 }, duration: 0.5, stagger: 0.06 }, 0.15)
+    .to(vals, { opacity: 1, y: 0, duration: 0.12, stagger: 0.05, ease: "power2.out" }, 0.25)
+    .to(agree, { opacity: 1, scale: 1, duration: 0.15, ease: "back.out(2)" }, 0.72)
+    .to(out, { attr: { "stroke-dashoffset": 0 }, duration: 0.12 }, 0.84);
+};
+
+</script>
+<script src="../assets/playbook.js"></script>
+</html>

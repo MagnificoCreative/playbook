@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trust Slope Options</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;500&family=Inter:wght@300;400;500&display=swap">
+<style>
+:root {
+  --pink: #ff0074;
+  --teal-950: #07171b;
+  --teal-900: #002a32;
+  --canvas: #f6f6f6;
+  --white: #ffffff;
+  --n700: #474646;
+  --hair: rgba(7, 23, 27, 0.1);
+  --f-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --f-label: "IBM Plex Sans", "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+* { box-sizing: border-box; margin: 0; }
+body { background: var(--canvas); color: var(--teal-950); font-family: var(--f-sans); -webkit-font-smoothing: antialiased; }
+.wrap { max-width: 1240px; margin: 0 auto; padding: 56px max(16px, 3vw) 40vh; }
+.eyebrow { font: 500 12px/1 var(--f-label); letter-spacing: .16em; text-transform: uppercase; color: var(--pink); }
+.top h1 { margin-top: 20px; font-size: clamp(34px, 4.4vw, 60px); font-weight: 300; line-height: 1.08; }
+.top p { margin-top: 18px; color: var(--n700); font-size: 18px; line-height: 1.5; max-width: 66ch; }
+
+.bar {
+  position: sticky; top: 0; z-index: 5; margin: 40px calc(-1 * max(16px, 3vw)) 0; padding: 12px max(16px, 3vw);
+  background: rgba(246, 246, 246, .9); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--hair); display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none;
+}
+.bar a {
+  flex: none; font: 500 12px/1 var(--f-label); letter-spacing: .16em; text-transform: uppercase; text-decoration: none;
+  color: var(--teal-950); border: 1px solid var(--hair); background: #fff; padding: 11px 14px; border-radius: 999px;
+}
+.bar a:hover { border-color: var(--teal-900); }
+
+.opt { padding-top: 96px; }
+.opt-head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px 48px; align-items: end; }
+.opt-head h2 { margin-top: 14px; font-size: clamp(28px, 3.2vw, 44px); font-weight: 300; line-height: 1.15; }
+.opt-head p { color: var(--n700); font-size: 17px; line-height: 1.5; }
+
+.track { position: relative; height: 300vh; }
+.pin { position: sticky; top: 0; height: 100vh; display: flex; align-items: center; padding: 64px 0 24px; }
+.stage { position: relative; width: 100%; background: var(--white); border-radius: 8px; padding: clamp(20px, 3vw, 48px); padding-top: 64px; }
+.stage svg { display: block; width: 100%; height: auto; max-height: calc(100vh - 200px); overflow: visible; }
+.badge {
+  position: absolute; top: 18px; left: 18px;
+  font: 500 11px/1 var(--f-label); letter-spacing: .16em; text-transform: uppercase;
+  color: var(--teal-900); border: 1px solid rgba(0, 42, 50, .18); padding: 7px 10px; border-radius: 999px;
+}
+.prog { position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--hair); border-radius: 0 0 8px 8px; overflow: hidden; }
+.prog i { display: block; height: 100%; width: 100%; background: var(--teal-900); transform-origin: 0 50%; transform: scaleX(0); }
+
+/* Two-column version: copy on the left, the vertical chart on the right */
+.split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(24px, 5vw, 80px); align-items: center; width: 100%; }
+.split .copy h3 { font-size: clamp(30px, 3.4vw, 48px); font-weight: 300; line-height: 1.15; }
+.split .copy p { margin-top: 20px; color: var(--n700); font-size: 18px; line-height: 1.55; max-width: 52ch; }
+.split .stage { padding: 56px clamp(16px, 2.4vw, 36px) 28px; }
+.split .stage svg { max-height: calc(100vh - 190px); margin: 0 auto; }
+
+/* SVG language: light-card rules (dark teal lines, opacity for hierarchy, pink is the ball only) */
+.ln { fill: none; stroke: var(--teal-900); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.gd { fill: none; stroke: var(--teal-900); stroke-width: 1; }
+.ball { fill: var(--pink); }
+.node { fill: var(--white); stroke: var(--teal-900); stroke-width: 1.5; }
+.lbl { font: 400 17px/1 var(--f-sans); fill: var(--teal-950); }
+.lbl-s { font: 300 14px/1 var(--f-sans); fill: var(--n700); }
+.axis { font: 500 11px/1 var(--f-label); letter-spacing: .16em; text-transform: uppercase; fill: var(--teal-900); }
+
+@media (max-width: 760px) {
+  .opt-head, .split { grid-template-columns: minmax(0, 1fr); }
+  .split .copy p { font-size: 16px; margin-top: 12px; }
+  .split .stage svg { max-height: 56vh; }
+  .stage { padding: 56px 12px 20px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <p class="eyebrow">Intro · Infographic options, round 2</p>
+    <h1>Where trust is lost</h1>
+    <p>Option B pared back. There are no numbers and no reasons, just a trust axis and a line that steps down at each handoff. You get the simplified slope, a stairs variant, and a vertical version that sits beside the copy.</p>
+  </header>
+  <nav class="bar">
+    <a href="#b1">B1 · The slope</a>
+    <a href="#b2">B2 · Down the stairs</a>
+    <a href="#b3">B3 · Vertical, with copy</a>
+  </nav>
+
+  <section class="opt" id="b1">
+    <div class="opt-head">
+      <div><p class="eyebrow">B1 · Horizontal</p><h2>The slope, simplified</h2></div>
+      <div><p>The y axis is trust, with no values on it. The line steps down at each handoff, and a faint hairline marks each new, lower level as it's reached. The ball rides the line, and nothing else is on the chart.</p></div>
+    </div>
+    <div class="track"><div class="pin"><div class="stage"><span class="badge">B1 · The slope</span><svg viewBox="0 0 1000 400" role="img" aria-label="Trust steps down from Source to Prepare, Reconcile, Present and Act."></svg><div class="prog"><i></i></div></div></div></div>
+  </section>
+
+  <section class="opt" id="b2">
+    <div class="opt-head">
+      <div><p class="eyebrow">B2 · Horizontal</p><h2>Down the stairs</h2></div>
+      <div><p>The same idea, made physical. Each stage is a step, and the ball rolls along it, drops off the edge with a small hop and lands on the next, lower step. It's a little more playful, and still no numbers.</p></div>
+    </div>
+    <div class="track"><div class="pin"><div class="stage"><span class="badge">B2 · Down the stairs</span><svg viewBox="0 0 1000 400" role="img" aria-label="Trust steps down like a staircase from Source to Act."></svg><div class="prog"><i></i></div></div></div></div>
+  </section>
+
+  <section class="opt" id="b3">
+    <div class="opt-head">
+      <div><p class="eyebrow">B3 · Vertical, two columns</p><h2>The slope, turned</h2></div>
+      <div><p>The stages run top to bottom next to the copy, and trust runs across the top. As the ball moves down through the process, the line steps to the left, toward less trust. Below about 760px the two columns stack.</p></div>
+    </div>
+    <div class="track"><div class="pin"><div class="split">
+      <div class="copy">
+        <h3>Where trust is lost</h3>
+        <p>Operational information loses trust on its way from source to decision. It’s born in sensors, records and systems. It’s exported and reshaped in spreadsheets. It’s reconciled by hand before meetings. It’s presented in dashboards built by different teams. By the time it reaches a decision, nobody is sure which version to believe.</p>
+      </div>
+      <div class="stage"><span class="badge">B3 · Vertical</span><svg viewBox="0 0 560 700" role="img" aria-label="Trust steps down from Source to Act, top to bottom."></svg><div class="prog"><i></i></div></div>
+    </div></div></div>
+  </section>
+</div>
+
+<script>
+(() => {
+const NS = "http://www.w3.org/2000/svg";
+const el = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; };
+const set = (e, attrs) => { for (const k in attrs) e.setAttribute(k, attrs[k]); };
+const cl = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const sm = (a, b, x) => { const t = cl((x - a) / (b - a)); return t * t * (3 - 2 * t); };
+const lerp = (a, b, t) => a + (b - a) * t;
+const f1 = (n) => n.toFixed(1);
+const REDUCE = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+// Sub-labels are split over two lines so neighbours don't crowd each other.
+const STAGES = [
+  ["Source", "Sensors, records,", "systems"],
+  ["Prepare", "Exported to", "spreadsheets"],
+  ["Reconcile", "By hand,", "before meetings"],
+  ["Present", "Dashboards by", "different teams"],
+  ["Act", "Which version", "to believe?"],
+];
+const X = [100, 300, 500, 700, 900];
+// Relative trust levels. Only the shape is shown; these never appear as numbers.
+const T = [100, 80, 62, 46, 32];
+
+const SPAN = 4.4;
+const travel = (p) => { const u = cl(p * SPAN, 0, 4); if (u >= 4) return 4; const k = Math.floor(u); return k + sm(0.12, 0.88, u - k); };
+
+const labelsH = (svg, y) => {
+  const g = el("g", { "text-anchor": "middle" }, svg);
+  STAGES.forEach(([a, b, c], i) => {
+    el("text", { class: "lbl", x: X[i], y }, g).textContent = a;
+    el("text", { class: "lbl-s", x: X[i], y: y + 25 }, g).textContent = b;
+    el("text", { class: "lbl-s", x: X[i], y: y + 43 }, g).textContent = c;
+  });
+};
+// Trust axis on the left: a hairline and a rotated label, no values.
+const yAxis = (svg, top, bot) => {
+  el("line", { class: "gd", x1: 40, y1: top, x2: 40, y2: bot, "stroke-opacity": .3 }, svg);
+  el("line", { class: "gd", x1: 40, y1: bot, x2: 940, y2: bot, "stroke-opacity": .3 }, svg);
+  el("text", { class: "axis", x: 0, y: 0, "text-anchor": "middle", transform: `translate(26 ${(top + bot) / 2}) rotate(-90)` }, svg).textContent = "Trust";
+};
+
+/* ---------- B1 · The slope, simplified ---------- */
+function optB1(svg) {
+  const top = 50, bot = 280, yv = (v) => bot - (bot - top) * v / 105;
+  const value = (x) => { let v = T[0]; for (let k = 1; k < 5; k++) v -= (T[k - 1] - T[k]) * sm(X[k] - 70, X[k] - 12, x); return v; };
+  yAxis(svg, top - 10, bot);
+  // A hairline per level, drawn out from the axis as the line reaches that level.
+  const guides = T.map((v) => el("line", { class: "gd", x1: 40, x2: 40, y1: yv(v), y2: yv(v), "stroke-opacity": .14, "stroke-dasharray": "3 5" }, svg));
+  const line = el("path", { class: "ln", "stroke-opacity": .6 }, svg);
+  labelsH(svg, 318);
+  const ball = el("circle", { class: "ball", r: 10 }, svg);
+
+  return (p) => {
+    const bx = 100 + 200 * travel(p);
+    let d = "";
+    for (let x = 100; x < bx; x += 4) d += (d ? "L" : "M") + x + " " + f1(yv(value(x)));
+    d += (d ? "L" : "M") + f1(bx) + " " + f1(yv(value(bx)));
+    line.setAttribute("d", d);
+    set(ball, { cx: f1(bx), cy: f1(yv(value(bx))) });
+    guides.forEach((g, k) => {
+      const reach = k ? sm(X[k] - 30, X[k] + 30, bx) : sm(100, 140, bx + 40);
+      g.setAttribute("x2", f1(lerp(40, 940, reach)));
+    });
+  };
+}
+
+/* ---------- B2 · Down the stairs ---------- */
+function optB2(svg) {
+  const top = 50, bot = 280, yv = (v) => bot - (bot - top) * v / 105;
+  yAxis(svg, top - 10, bot);
+  // Treads run from the middle of one gap to the next; the edge is where the ball drops.
+  const edge = (k) => X[k] + 100;
+  let full = `M100 ${f1(yv(T[0]))}`;
+  for (let k = 0; k < 5; k++) { full += `L${k < 4 ? edge(k) : 900} ${f1(yv(T[k]))}`; if (k < 4) full += `L${edge(k)} ${f1(yv(T[k + 1]))}`; }
+  el("path", { class: "gd", d: full, "stroke-opacity": .1 }, svg);
+  const stairs = el("path", { class: "ln", d: full, "stroke-opacity": .55, pathLength: 1, "stroke-dasharray": "1 1", "stroke-dashoffset": 1 }, svg);
+  labelsH(svg, 318);
+  const ball = el("circle", { class: "ball", r: 10 }, svg);
+  const R = 10;
+  // Length fraction of the stairs path at a given x, so the drawn line keeps pace with the ball.
+  const totalLen = 800 + (yv(T[4]) - yv(T[0]));
+  const lenAt = (x) => { let l = x - 100; for (let k = 0; k < 4; k++) if (x >= edge(k)) l += yv(T[k + 1]) - yv(T[k]); return l / totalLen; };
+
+  return (p) => {
+    const s = travel(p), bx = 100 + 200 * s;
+    // On a tread, the ball rolls. Past an edge, it hops a little and falls to the next tread.
+    let y = yv(T[Math.min(4, Math.floor((bx - 100 + 100) / 200))]) - R;
+    for (let k = 0; k < 4; k++) {
+      const e = edge(k);
+      if (bx >= e - 6 && bx <= e + 46) {
+        const g = cl((bx - (e - 6)) / 52);
+        y = lerp(yv(T[k]), yv(T[k + 1]), g * g) - R - Math.sin(Math.PI * Math.min(1, g * 1.6)) * 14 * (1 - g);
+      }
+    }
+    set(ball, { cx: f1(bx), cy: f1(y) });
+    stairs.setAttribute("stroke-dashoffset", f1(1 - cl(lenAt(bx))).replace(/^-?0\.0$/, "0"));
+  };
+}
+
+/* ---------- B3 · Vertical, beside the copy ---------- */
+function optB3(svg) {
+  const YS = [110, 245, 380, 515, 650];
+  // Evenly spaced levels here, so the dotted guides fall at equal intervals.
+  const T = [100, 80, 60, 40, 20];
+  const left = 260, right = 530, xv = (v) => left + (right - left) * (v - 10) / 95;
+  const value = (y) => { let v = T[0]; for (let k = 1; k < 5; k++) v -= (T[k - 1] - T[k]) * sm(YS[k] - 70, YS[k] - 14, y); return v; };
+  const arriveP = (k) => (k ? (k - 0.12) / SPAN : 0.035);
+  // Trust axis across the top: more trust to the right.
+  el("line", { class: "gd", x1: 0, y1: 40, x2: right + 10, y2: 40, "stroke-opacity": .3 }, svg);
+  el("text", { class: "axis", x: right + 10, y: 24, "text-anchor": "end" }, svg).textContent = "Trust";
+  YS.forEach((y) => el("line", { class: "gd", x1: 0, x2: right + 10, y1: y + 46, y2: y + 46, "stroke-opacity": .06 }, svg));
+  const guides = T.map((v) => el("line", { class: "gd", x1: xv(v), x2: xv(v), y1: 40, y2: 40, "stroke-opacity": .14, "stroke-dasharray": "3 5" }, svg));
+  const line = el("path", { class: "ln", "stroke-opacity": .6 }, svg);
+  const g = el("g", {}, svg);
+  // One-line labels. The sub-copy is split into words that rise and fade in, one after another,
+  // as the ball reaches each stage (and fade back out when you scroll up).
+  const subs = STAGES.map(([a, b, c], i) => {
+    el("text", { class: "lbl", x: 0, y: YS[i] - 4 }, g).textContent = a;
+    const t = el("text", { class: "lbl-s", x: 0, y: YS[i] + 20 }, g);
+    const words = `${b} ${c}`.split(" ").map((w, j) => {
+      const s = el("tspan", {}, t); s.textContent = (j ? " " : "") + w; return s;
+    });
+    return { t, words };
+  });
+  const ball = el("circle", { class: "ball", r: 10 }, svg);
+
+  return (p) => {
+    const by = lerp(YS[0], YS[4], travel(p) / 4);
+    let d = "";
+    for (let y = YS[0]; y < by; y += 4) d += (d ? "L" : "M") + f1(xv(value(y))) + " " + y;
+    d += (d ? "L" : "M") + f1(xv(value(by))) + " " + f1(by);
+    line.setAttribute("d", d);
+    set(ball, { cx: f1(xv(value(by))), cy: f1(by) });
+    guides.forEach((gl, k) => {
+      const reach = k ? sm(YS[k] - 30, YS[k] + 30, by) : 1;
+      gl.setAttribute("y2", f1(lerp(40, 690, reach)));
+    });
+    subs.forEach(({ t, words }, i) => {
+      const a = arriveP(i), n = words.length;
+      const r = sm(a - 0.03, a + 0.05, p);
+      t.setAttribute("transform", `translate(0 ${f1(10 * (1 - r) ** 2)})`);
+      words.forEach((w, j) => {
+        const lo = a - 0.03 + j * 0.012, wr = sm(lo, lo + 0.04, p);
+        w.setAttribute("fill-opacity", wr.toFixed(3));
+      });
+    });
+  };
+}
+
+/* ---------- Scroll driver ---------- */
+const builders = { b1: optB1, b2: optB2, b3: optB3 };
+const runs = Object.entries(builders).map(([id, fn]) => {
+  const sec = document.getElementById(id);
+  return { track: sec.querySelector(".track"), bar: sec.querySelector(".prog i"), draw: fn(sec.querySelector("svg")), p: REDUCE ? 1 : 0 };
+});
+const target = (r) => { const b = r.track.getBoundingClientRect(); return cl(-b.top / (b.height - innerHeight)); };
+const frame = () => {
+  runs.forEach((r) => {
+    const b = r.track.getBoundingClientRect();
+    if (b.bottom < -50 || b.top > innerHeight + 50) return;
+    if (!REDUCE) r.p += (target(r) - r.p) * .14;
+    r.bar.style.transform = `scaleX(${r.p.toFixed(4)})`;
+    r.draw(r.p);
+  });
+  requestAnimationFrame(frame);
+};
+runs.forEach((r) => r.draw(r.p));
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
