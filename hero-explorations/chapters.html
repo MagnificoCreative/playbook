@@ -97,9 +97,9 @@ body { background: var(--canvas); color: var(--teal-950); font-family: var(--f-s
 <div class="wrap">
   <header class="top">
     <div>
-      <p class="eyebrow">Hero motion · Round two · Trail motif</p>
-      <h1>The selected heroes, now with a trail</h1>
-      <p>Your picks from round one, plus three new openers for Where to start. Every moving line now leaves a short, fading echo behind it, the same trail the Radar sweep had. Use the Trail button to compare with and without.</p>
+      <p class="eyebrow">Hero motion · Final set · Trail motif</p>
+      <h1>The final hero for each chapter</h1>
+      <p>One hero per chapter, all in the same language: the ball, the lines, and a short fading trail behind every moving line. Use the Trail button to compare with and without.</p>
     </div>
   </header>
 
@@ -112,22 +112,14 @@ body { background: var(--canvas); color: var(--teal-950); font-family: var(--f-s
 (() => {
   const CH = [
     { n: "00", title: "Intro: The dashboard isn’t the problem", note: "This chapter gets its own animation. Send over the brief when it’s ready and it will follow the same language: the ball, the lines, the trail." },
-    { n: "01", title: "Listen before you design", brief: "Live in the chapter today, shown here with the trail added.", one: true,
+    { n: "01", title: "Listen before you design", brief: "Live in the chapter today.",
       o: [["01", "Many voices, taken in", "Voices arrive from every direction and the ball breathes in as each one lands. With the trail, each voice reads like a quick streak of sound, a little comet heading home."]] },
     { n: "02", title: "Know who decides what", o: [["02c", "Passing the baton", "The decision hops from person to person around the ring, and now it leaves a streak on every pass, so you can feel the hurry. The buck still stops in the ball."]] },
-    { n: "03", title: "Follow the data to its source", o: [
-      ["03b", "Roots", "Roots grow out of the ball and branch twice; pulses travel back from every tip. The trail turns each pulse into a little tadpole swimming home."],
-      ["03d", "Breadcrumbs", "A trail of dots spirals inward, crumb by crumb. This one already had a trail built in, so the echo is soft here: it just smooths the path."]] },
+    { n: "03", title: "Follow the data to its source", o: [["03b", "Roots", "Lines run out of the ball like the baton, each finding its own tip at its own pace and leaving a faint root behind. Then they race back, quicker and on a different rhythm, and the ball breathes in as each one lands."]] },
     { n: "04", title: "Agree on what matters", o: [["04b", "Overlap", "Three circles, three priorities, drifting together until all they share is the ball. With the trail, each circle drags a faint wake as it moves, like ripples settling into one."]] },
     { n: "05", title: "Design around decisions", o: [["05d", "Built around it", "Rounded frames twist into place around the ball, one ring at a time. The trail catches every turn, so the build-up feels like a camera shutter closing gently."]] },
-    { n: "06", title: "Test before you build", o: [
-      ["06a", "Blueprint first", "A dashed outline tries a few sizes and spots before the real ball fills in. Now every wrong guess leaves a ghost behind it, which is pretty much what testing looks like."],
-      ["06c", "Wind tunnel", "Air streams around the ball. The trail stretches each dash into a little streak, so the flow finally reads as speed."]] },
-    { n: "07", title: "Where to start", o: [
-      ["07d", "First domino", "The ball taps the first domino and the rest follow. The trail draws each fall as a fan, a tiny motion-blur cascade."],
-      ["07e", "Find your bearing", "A compass needle spins, overshoots, wobbles, and settles. Only then does a route head out. The trail turns the spin into a radar-like sweep, a nice nod to where the motif came from.", true],
-      ["07f", "Making waves", "The ball taps the surface and one ripple travels out through a field of still lines. One small move, felt everywhere.", true],
-      ["07g", "Spiral out", "A line unwinds from the ball, round and round and further out each turn, with a bright little head and a trail behind it. Start at the center, grow from there.", true]] },
+    { n: "06", title: "Test before you build", o: [["06c", "Wind tunnel", "Air streams around the ball. The trail stretches each dash into a little streak, so the flow finally reads as speed."]] },
+    { n: "07", title: "Where to start", o: [["07h", "True north", "A compass rose with a ring of ticks and eight bearings reaching out. A simple needle spins, the ticks light up as it passes, and it overshoots, wobbles and settles on a heading. Then the heading draws out and quietly pulses: this way."]] },
   ];
 
   const bar = document.getElementById("bar"), main = document.getElementById("chapters");
@@ -135,8 +127,8 @@ body { background: var(--canvas); color: var(--teal-950); font-family: var(--f-s
     bar.insertAdjacentHTML("beforeend", `<a href="#ch-${c.n}">${c.n}</a>`);
     let inner;
     if (c.note) inner = `<p class="note">${c.note}</p>`;
-    else inner = `<div class="grid${c.one ? " one" : ""}">` + c.o.map(([key, name, text, isNew]) => `<article>
-        <div class="frame" data-scene="${key}"><span class="badge${isNew ? " new" : ""}">${isNew ? "New" : "Selected"}</span><svg viewBox="0 0 600 600" aria-hidden="true"></svg></div>
+    else inner = `<div class="grid one">` + c.o.map(([key, name, text, isNew]) => `<article>
+        <div class="frame" data-scene="${key}"><span class="badge">Final</span><svg viewBox="0 0 600 600" aria-hidden="true"></svg></div>
         <div class="cap"><span class="l">${key.slice(2).toUpperCase() || "·"}</span><div><h3>${name}</h3><p>${text}</p></div></div>
       </article>`).join("") + `</div>`;
     main.insertAdjacentHTML("beforeend", `<section class="chapter" id="ch-${c.n}">

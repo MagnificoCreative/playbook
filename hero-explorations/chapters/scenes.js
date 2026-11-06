@@ -282,28 +282,59 @@
     };
   };
 
-  S["03b"] = svg => { // Roots
-    const R = rng(5), segs = [], leaves = [];
+  S["03b"] = svg => { // Roots: lines run out to every tip and back, like the baton
+    const R = rng(5), segs = [], leaves = [], P = 9;
     const grow = (x, y, a, len, d, chain) => {
       const x2 = x + len * Math.cos(a), y2 = y + len * Math.sin(a);
-      segs.push({ p: pathOn(svg, `M${f2(x)} ${f2(y)}L${f2(x2)} ${f2(y2)}`, .5 - d * .1), d });
-      const ch = [[x2, y2]].concat(chain);
-      if (d === 2) { leaves.push({ pts: ch }); return; }
+      const seg = { len, p: pathOn(svg, `M${f2(x)} ${f2(y)}L${f2(x2)} ${f2(y2)}`, .16), f: 0 };
+      segs.push(seg);
+      const ch = chain.concat([{ seg, x: x2, y: y2 }]);
+      if (d === 2) { leaves.push({ ch }); return; }
       grow(x2, y2, a - .3 - R() * .3, len * .68, d + 1, ch);
       grow(x2, y2, a + .3 + R() * .3, len * .68, d + 1, ch);
     };
-    for (let i = 0; i < 5; i++) { const a = i / 5 * TAU + (R() - .5) * .5 - Math.PI / 2, sx = C + (B + 4) * Math.cos(a), sy = C + (B + 4) * Math.sin(a); grow(sx, sy, a, 82, 0, [[sx, sy], [C, C]]); }
-    leaves.forEach((l, i) => { l.dot = el("circle", { cx: l.pts[0][0], cy: l.pts[0][1], r: 3, class: "dot", opacity: 0 }, svg); l.pulse = el("circle", { r: 2.5, class: "dot", opacity: 0 }, svg); l.k = i; });
+    for (let i = 0; i < 5; i++) {
+      const a = i / 5 * TAU + (R() - .5) * .5 - Math.PI / 2, sx = C + (B + 4) * Math.cos(a), sy = C + (B + 4) * Math.sin(a);
+      grow(sx, sy, a, 82, 0, [{ seg: null, x: sx, y: sy }]);
+    }
+    const sub = (pts, cum, d0, d1) => {
+      const at = d => { for (let i = 1; i < pts.length; i++) if (d <= cum[i] || i === pts.length - 1) { const k = clamp((d - cum[i - 1]) / (cum[i] - cum[i - 1]), 0, 1); return [lerp(pts[i - 1][0], pts[i][0], k), lerp(pts[i - 1][1], pts[i][1], k)]; } };
+      const r = [at(d0)];
+      for (let i = 1; i < pts.length - 1; i++) if (cum[i] > d0 && cum[i] < d1) r.push(pts[i]);
+      r.push(at(d1));
+      return poly(r);
+    };
+    leaves.forEach(l => {
+      l.pts = l.ch.map(c => [c.x, c.y]);
+      l.cum = [0]; l.ch.slice(1).forEach(c => l.cum.push(l.cum[l.cum.length - 1] + c.seg.len));
+      l.L = l.cum[l.cum.length - 1];
+      l.segs = l.ch.slice(1).map((c, k) => ({ seg: c.seg, start: l.cum[k] }));
+      // each tip keeps its own pace, out and back
+      l.o0 = .02 + R() * .2; l.od = .18 + R() * .14;
+      l.i0 = .5 + R() * .18; l.id = .1 + R() * .12;
+      l.out = el("path", { class: "ln", "stroke-opacity": .6 }, svg);
+      l.back = el("path", { class: "ln", "stroke-opacity": .6 }, svg);
+      l.dot = el("circle", { cx: l.pts[l.pts.length - 1][0], cy: l.pts[l.pts.length - 1][1], r: 3, class: "dot", opacity: 0 }, svg);
+    });
     const b = ball(svg);
     return t => {
-      const p = (t / 8) % 1;
-      segs.forEach(s => drawTo(s.p, out(sm(.04 + s.d * .12, .16 + s.d * .12, p)) * (1 - sm(.8 + (2 - s.d) * .04, .88 + (2 - s.d) * .04, p))));
+      const p = (t / P) % 1, fade = 1 - sm(.88, .97, p);
+      let pulse = 0;
+      segs.forEach(s => { s.f = 0; });
       leaves.forEach(l => {
-        set(l.dot, { opacity: .7 * sm(.4, .45, p) * (1 - sm(.78, .82, p)) });
-        const a = .48 + l.k * .008, q = sm(a, a + .2, p), [x, y] = along(l.pts, q);
-        set(l.pulse, { cx: x, cy: y, opacity: q > 0 && q < 1 ? .8 : 0 });
+        // out: the head leads, the tail catches up and the dash lands on the tip
+        const qo = clamp((p - l.o0) / l.od, 0, 1), head = out(qo) * l.L, tail = out(clamp(qo * 1.35 - .35, 0, 1)) * l.L;
+        l.segs.forEach(s => { s.seg.f = Math.max(s.seg.f, clamp((head - s.start) / s.seg.len, 0, 1)); });
+        set(l.out, { d: qo > 0 && qo < 1 ? sub(l.pts, l.cum, tail, head) : "M0 0" , visibility: qo > 0 && qo < 1 ? "visible" : "hidden" });
+        set(l.dot, { opacity: .75 * sm(0, .02, p - l.o0 - l.od) * fade });
+        // back: a shorter dash that speeds up as it nears the ball
+        const qi = clamp((p - l.i0) / l.id, 0, 1), hb = l.L * (1 - qi * qi), tb = l.L * (1 - Math.pow(clamp(qi * 1.35 - .35, 0, 1), 2));
+        set(l.back, { d: qi > 0 && qi < 1 ? sub(l.pts, l.cum, hb, tb) : "M0 0", visibility: qi > 0 && qi < 1 ? "visible" : "hidden" });
+        const since = (p - l.i0 - l.id) * P;
+        pulse = Math.max(pulse, since > 0 ? Math.exp(-since * 2.9) : sm(-.5, 0, since));
       });
-      set(b, { r: B * (1 + .18 * env(p, .62, .7, .72, .86)) });
+      segs.forEach(s => { drawTo(s.p, s.f); set(s.p, { "stroke-opacity": .16 * fade }); });
+      set(b, { r: B * (1 + .16 * pulse) });
     };
   };
 
@@ -629,19 +660,26 @@
     };
   };
 
-  S["07d"] = svg => { // First domino
-    const GY = C + B;
-    ln(svg, { x1: 60, x2: 560, y1: GY, y2: GY }, .15);
-    const dom = Array.from({ length: 8 }, (_, j) => { const x = C + B + 3 + j * 26; return { x, j, n: ln(svg, { x1: x, x2: x, y1: GY, y2: GY - 66 }, .5) }; });
+  S["07d"] = svg => { // First domino: one fluid chain reaction
+    const GY = C + B, N = 10, GAP = 24, H = 66, W = 5, TF = .42, P = 7, T0 = 1.5, HALF = Math.PI / 2;
+    ln(svg, { x1: 60, x2: 580, y1: GY, y2: GY }, .15);
+    const dom = Array.from({ length: N }, (_, j) => { const x = C + B + 3 + j * GAP; return { x, n: ln(svg, { x1: x, x2: x, y1: GY, y2: GY - H }, .5) }; });
     const b = ball(svg);
+    const contact = Math.asin((GAP - W) / H);                          // tilt at which a domino reaches the next one
+    const lean = phi => phi + Math.asin(clamp((GAP * Math.cos(phi) - W) / H, -1, 1)); // resting on the one in front
+    const fall = u => HALF * (.35 * u + .65 * u * u);                   // pushed, then gravity takes over
+    const uHit = (-.35 + Math.sqrt(.35 * .35 + 4 * .65 * (contact / HALF))) / (2 * .65);
+    const th = new Array(N);
     return t => {
-      const p = (t / 6.5) % 1, all = 1 - sm(.86, .95, p), back = sm(.95, 1, p);
-      dom.forEach(d => {
-        const t0 = .3 + d.j * .045, last = d.j === dom.length - 1, a = (last ? 90 : 68) * io(sm(t0, t0 + .07, p)) * (p < .95 ? 1 : 0);
-        set(d.n, { transform: `rotate(${f2(a)} ${d.x} ${GY})`, "stroke-opacity": .5 * (p < .95 ? all : back) });
-      });
-      const x = lerp(60, C, out(sm(.04, .3, p)));
-      set(b, { cx: x, opacity: sm(0, .05, p) * all });
+      const ls = t % P, show = ls < 6.3;
+      let T = T0;
+      for (let j = 0; j < N; j++) { th[j] = ls < T ? 0 : fall(Math.min(1, (ls - T) / TF)); T += uHit * TF * Math.pow(.94, j); }
+      for (let j = N - 2; j >= 0; j--) th[j] = Math.min(th[j], lean(th[j + 1]));   // nobody passes through the one ahead
+      const op = show ? .5 * (1 - sm(5.6, 6.2, ls)) : .5 * sm(6.4, 6.95, ls);
+      dom.forEach((d, j) => set(d.n, { transform: `rotate(${f2(show ? th[j] / Math.PI * 180 : 0)} ${d.x} ${GY})`, "stroke-opacity": op }));
+      const u = clamp(ls / T0, 0, 1), roll = 1 - Math.pow(1 - u, 1.6);
+      const rebound = ls > T0 ? 5 * Math.sin(Math.min(Math.PI, (ls - T0) * 6)) * Math.exp(-(ls - T0) * 3) : 0;
+      set(b, { cx: lerp(60, C, roll) - rebound, opacity: sm(0, .3, ls) * (1 - sm(5.6, 6.2, ls)) });
     };
   };
 
@@ -697,10 +735,49 @@
     };
   };
 
+  S["07h"] = svg => { // True north: a compass rose with a needle and a heading
+    const RING = 118, toXY = (a, r) => [C + r * Math.cos(a), C + r * Math.sin(a)];
+    // eight bearings reaching out past the rose, cardinals longer
+    for (let i = 0; i < 8; i++) {
+      const a = i * Math.PI / 4 - Math.PI / 2, [x1, y1] = toXY(a, RING + 22), [x2, y2] = toXY(a, i % 2 ? 210 : 290);
+      ln(svg, { x1, y1, x2, y2 }, i % 2 ? .07 : .12);
+    }
+    el("circle", { cx: C, cy: C, r: RING, class: "ln", "stroke-opacity": .28 }, svg);
+    el("circle", { cx: C, cy: C, r: 92, class: "ln", "stroke-opacity": .08 }, svg);
+    const ticks = Array.from({ length: 72 }, (_, i) => {
+      const a = i / 72 * TAU - Math.PI / 2, len = i % 18 === 0 ? 16 : i % 6 === 0 ? 9 : 5;
+      const [x1, y1] = toXY(a, RING + 3), [x2, y2] = toXY(a, RING + 3 + len);
+      return { a, n: ln(svg, { x1, y1, x2, y2 }, .2), base: i % 18 === 0 ? .45 : .2 };
+    });
+    const route = pathOn(svg, "M0 0", .5);
+    const tail = ln(svg, {}, .3), needle = ln(svg, {}, .6);   // the same simple needle as Find your bearing
+    const b = ball(svg);
+    return t => {
+      const P = 7, n = Math.floor(t / P), p = (t / P) % 1;
+      const target = Math.floor(hash(n + 11) * 8) * Math.PI / 4 - Math.PI / 2;
+      const settle = out(sm(0, .42, p));
+      const w = p > .36 ? .28 * Math.exp(-(p - .36) * 15) * Math.sin((p - .36) * 70) : 0;
+      const a = target - (1 - settle) * TAU * 2.4 + w;
+      set(needle, { x1: C, y1: C, x2: C + 104 * Math.cos(a), y2: C + 104 * Math.sin(a) });
+      set(tail, { x1: C, y1: C, x2: C - 28 * Math.cos(a), y2: C - 28 * Math.sin(a) });
+      ticks.forEach(k => {
+        const d = Math.abs(((k.a - a) % TAU + TAU * 1.5) % TAU - Math.PI);
+        set(k.n, { "stroke-opacity": f2(k.base + .6 * Math.exp(-Math.pow(d / .14, 2))) });
+      });
+      // once settled, the heading reaches out and pulses
+      const [rx1, ry1] = toXY(target, RING + 24), [rx2, ry2] = toXY(target, 292);
+      set(route, { d: `M${f2(rx1)} ${f2(ry1)}L${f2(rx2)} ${f2(ry2)}` });
+      drawTo(route, out(sm(.5, .64, p)));
+      const beat = .5 + .5 * Math.cos(TAU * Math.max(0, p - .64) * P / 1.1);   // a slow heartbeat once it's drawn
+      set(route, { "stroke-opacity": f2((.2 + .45 * beat) * (1 - sm(.88, .98, p))) });
+      set(b, { r: B * (1 + .16 * env(p, .46, .52, .56, .72)) });
+    };
+  };
+
   /* ═════════ Trail: the radar echo, as a brand motif ═════════
      Each option is drawn again a few times, slightly in the past, underneath itself.
      Echo copies of anything that isn't moving are hidden, so still lines don't get brighter. */
-  const LAG = { "01": .035, "02c": .035, "03b": .04, "03d": .06, "04b": .06, "05d": .035, "06a": .04, "06c": .03, "07d": .03, "07e": .028, "07f": .035, "07g": .03 };
+  const LAG = { "01": .035, "02c": .035, "03b": .04, "03d": .06, "04b": .06, "05d": .035, "06a": .04, "06c": .03, "07d": .03, "07e": .028, "07f": .035, "07g": .03, "07h": .028 };
   const GEO = ["d", "x1", "y1", "x2", "y2", "cx", "cy", "r", "rx", "ry", "x", "y", "width", "height", "points", "transform", "stroke-dashoffset"];
   const NUM = /-?\d*\.?\d+(?:e-?\d+)?/g;
   const nums = e => { let s = ""; for (const a of GEO) { const v = e.getAttribute(a); if (v != null) s += v + " "; } return s ? (s.match(NUM) || []).map(Number) : null; };
