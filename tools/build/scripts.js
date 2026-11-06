@@ -173,7 +173,7 @@ window.PlaybookChapter = (P) => {
   const mm = P.gsap.matchMedia();
   mm.add("(min-width: 1101px) and (min-height: 620px)", () => {
     P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p),
-      scrollTrigger: { trigger: "#where-trust-is-lost", start: () => `top top+=${P.barH()}`, end: "+=120%", pin: true, scrub: 0.6, anticipatePin: 1, invalidateOnRefresh: true, refreshPriority: 1 } });
+      scrollTrigger: { trigger: "#where-trust-is-lost", start: () => `top top+=${P.barH()}`, end: "+=120%", pin: true, scrub: 0.6, anticipatePin: 1, invalidateOnRefresh: true, refreshPriority: 2 } });  // earlier on the page than #one-truth, so it is measured first
   });
   mm.add("(max-width: 1100px), (max-height: 619px)", () => {
     P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p),

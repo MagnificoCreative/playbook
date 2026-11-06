@@ -1,3 +1,6 @@
+# PARKED (not on any page right now): the roots divider, removed from the Introduction once the CLEAR
+# staircase arrived. Kept for reuse elsewhere: pass ROOTS as the last argument to people(...) to place it.
+# Its scroll animation lives in scripts.js (intro) and its styles in playbook.css (.roots).
 # A quiet divider: the ground line, and a root system growing down into "Where trust is lost".
 # Roots are grown procedurally (seeded, so the drawing is stable): each root bends a little,
 # splits into thinner, fainter roots, and tapers off toward the edges.
@@ -53,7 +56,7 @@ trust_section = <<~'HTML'
 <section class="sec" id="where-trust-is-lost" data-section="where-trust-is-lost" aria-labelledby="t-where-trust-is-lost">
   <div class="panel block">
     <div class="trust-split">
-      <div class="block-intro" data-reveal>
+      <div class="block-intro" data-reveal="top bottom">
         <h2 class="h2" id="t-where-trust-is-lost">Where trust is lost</h2>
         <p>Operational information loses trust on its way from source to decision. It’s born in sensors, records and systems. It’s exported and reshaped in spreadsheets. It’s reconciled by hand before meetings. It’s presented in dashboards built by different teams. By the time it reaches a decision, nobody is sure which version to believe.</p>
       </div>
@@ -138,7 +141,7 @@ page(0, "The Dashboard Isn’t the Problem",
   people("the-meeting", "You know this meeting",
     "If you lead operations at an energy company, you probably know this meeting. <strong>The numbers are on the screen, and nobody agrees on them.</strong>",
     ["One team’s figure doesn’t match another’s. Someone has a spreadsheet that tells a different story. Most of the hour goes to reconciling the numbers, and very little goes to deciding what to do about them.",
-     "The usual response is to ask for a better dashboard: one screen, all the data, finally in one place. It’s a reasonable request, and it rarely works. <strong>Not because the dashboard is badly built, but because the problem it’s meant to solve sits underneath it.</strong>"], ROOTS) +
+     "The usual response is to ask for a better dashboard: one screen, all the data, finally in one place. It’s a reasonable request, and it rarely works. <strong>Not because the dashboard is badly built, but because the problem it’s meant to solve sits underneath it.</strong>"]) +
   trust_section +
   block("one-truth", "One screen isn’t one truth",
     ["That’s the distinction at the heart of this playbook."], nil, truth_spectrum) +

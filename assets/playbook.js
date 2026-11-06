@@ -51,16 +51,40 @@
     say(el.dataset.soon || "The assessment launches soon");
   }));
 
-  /* ───── Drawer (tablet / phone) ───── */
+  /* ───── Contents menu: collapsible rail on wide screens, a drawer below 1100px ───── */
   const menuBtn = $("#menu-btn");
+  const body = document.body;
+  const wide = window.matchMedia("(min-width: 1101px)");
   let lenis = null;
-  const setNav = (open) => {
-    document.body.classList.toggle("nav-open", open);
+  let collapsed = false;
+  try { collapsed = localStorage.getItem("playbook-rail") === "collapsed"; } catch (e) { /* storage unavailable */ }
+  const syncMenu = () => {
+    body.classList.toggle("rail-collapsed", wide.matches && collapsed);
+    const open = wide.matches ? !collapsed : body.classList.contains("nav-open");
+    body.classList.toggle("menu-is-open", open);
     menuBtn.setAttribute("aria-expanded", String(open));
+    menuBtn.setAttribute("aria-label", open ? "Hide contents" : "Show contents");
+  };
+  const setNav = (open) => {
+    body.classList.toggle("nav-open", open);
+    syncMenu();
     if (lenis) open ? lenis.stop() : lenis.start();
     if (open) $(".rail .toc-item.is-current .toc-link")?.focus({ preventScroll: true });
   };
-  menuBtn.addEventListener("click", () => setNav(!document.body.classList.contains("nav-open")));
+  const setCollapsed = (v) => {
+    collapsed = v;
+    try { localStorage.setItem("playbook-rail", v ? "collapsed" : "open"); } catch (e) { /* storage unavailable */ }
+    syncMenu();
+    // The page reflows as the rail slides away; re-measure pinned sections once it settles.
+    setTimeout(() => window.ScrollTrigger && ScrollTrigger.refresh(), 600);
+  };
+  syncMenu();
+  requestAnimationFrame(() => requestAnimationFrame(() => body.classList.add("rail-ready"))); // no slide on first paint
+  wide.addEventListener("change", () => { if (wide.matches) body.classList.remove("nav-open"); syncMenu(); });
+  menuBtn.addEventListener("click", () => {
+    if (wide.matches) setCollapsed(!collapsed);
+    else setNav(!body.classList.contains("nav-open"));
+  });
   $("#scrim").addEventListener("click", () => setNav(false));
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && document.body.classList.contains("nav-open")) { setNav(false); menuBtn.focus(); }
@@ -130,7 +154,11 @@
   const progress = $("#page-progress");
   ScrollTrigger.create({ start: 0, end: "max", onUpdate: (s) => { progress.style.transform = `scaleX(${s.progress})`; } });
   const spyLinks = $$("[data-spy]");
-  const setActive = (id) => spyLinks.forEach((l) => l.classList.toggle("is-active", l.dataset.spy === id));
+  const barSection = $("#bar-section");
+  const setActive = (id) => {
+    spyLinks.forEach((l) => l.classList.toggle("is-active", l.dataset.spy === id));
+    if (barSection) barSection.textContent = spyLinks.find((l) => l.dataset.spy === id)?.textContent || "";  // the hero shows the chapter alone
+  };
   const createSpy = () => {
     const secs = $$("[data-section]");
     secs.forEach((sec, i) => {
