@@ -181,50 +181,6 @@ window.PlaybookChapter = (P) => {
   });
 };
 
-// ==== roles ====
-/* Step 2: choose a role; the same sample view reshapes to that role's level of detail. */
-window.PlaybookChapter = (P) => {
-  const L = {
-    exec:        [[0,0,32,40],[34,0,32,40],[68,0,32,40],[0,44,100,56]],
-    reliability: [[0,0,100,18],[0,22,32,37],[34,22,32,37],[68,22,32,37],[0,63,32,37],[34,63,32,37],[68,63,32,37]],
-    maintenance: [[0,0,34,30],[0,34,34,30],[0,68,34,32],[38,0,62,60],[38,64,30,36],[70,64,30,36]],
-    project:     [[0,0,64,21],[16,26,58,21],[36,52,64,21],[8,78,48,22],[76,0,24,21]],
-    engineering: [[0,0,49,40],[51,0,49,40],[0,44,24,26],[25.3,44,24,26],[50.6,44,24,26],[76,44,24,26],[0,74,32,26],[34,74,32,26],[68,74,32,26]],
-  };
-  const DEPTH = {
-    exec: "Seconds: are operations healthy, and where aren’t they?",
-    reliability: "Asset by asset",
-    maintenance: "The signal, then the detail behind it",
-    project: "Progress, risks and dependencies",
-    engineering: "Down to a single asset’s detail",
-  };
-  const tabs = P.$$(".role-tab"), tiles = P.$$("#board .tile");
-  if (!tabs.length) return;
-  const name = P.$("#role-name"), depth = P.$("#role-depth");
-  const show = (key) => {
-    tabs.forEach((t) => { const on = t.dataset.role === key; t.setAttribute("aria-selected", on); t.tabIndex = on ? 0 : -1; });
-    const lay = L[key];
-    tiles.forEach((tile, i) => {
-      const r = lay[i];
-      tile.classList.toggle("is-off", !r);
-      if (r) Object.assign(tile.style, { left: r[0] + "%", top: r[1] + "%", width: r[2] + "%", height: r[3] + "%" });
-    });
-    name.textContent = P.$(`.role-tab[data-role="${key}"] .r-name`).textContent;
-    depth.textContent = DEPTH[key];
-  };
-  tabs.forEach((t, i) => {
-    t.addEventListener("click", () => show(t.dataset.role));
-    t.addEventListener("keydown", (e) => {
-      const d = e.key === "ArrowDown" || e.key === "ArrowRight" ? 1 : e.key === "ArrowUp" || e.key === "ArrowLeft" ? -1 : 0;
-      if (!d) return;
-      e.preventDefault();
-      const n = tabs[(i + d + tabs.length) % tabs.length];
-      n.focus(); show(n.dataset.role);
-    });
-  });
-  show("exec");
-};
-
 // ==== trace ====
 /* Step 3: one metric splits into conflicting copies and only rejoins where a definition is agreed. */
 window.PlaybookChapter = (P) => {

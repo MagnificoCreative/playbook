@@ -635,38 +635,25 @@ main { min-width: 0; }
 .clear-next > svg { width: 18px; height: 18px; color: var(--pink); transition: transform .35s var(--ease-out); }
 .clear-next:hover > svg { transform: translateX(3px); }
 
-/* Step 2 · roles */
-.roles { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: 24px; align-items: stretch; }
-.role-tabs { display: flex; flex-direction: column; gap: 6px; }
-.role-tab {
-  display: grid; grid-template-columns: 10px minmax(0, 1fr); column-gap: 14px; align-items: start;
-  text-align: left; padding: 16px 18px; border-radius: 4px; background: transparent;
-  transition: background-color .3s var(--ease-out);
+/* Step 2 · roles: one row per role, all copy at 12px */
+.role-table { width: 100%; border-collapse: collapse; }
+.role-table th { text-align: left; font: 500 11px/1.4 var(--f-label); letter-spacing: .16em; text-transform: uppercase; color: var(--text-primary); padding: 0 20px 12px 0; border-bottom: 1px solid var(--text-primary); }
+.role-table td { vertical-align: top; font-size: 12px; line-height: 1.5; color: var(--text-body); padding: 18px 20px 18px 0; border-bottom: 1px solid var(--hairline); }
+.role-table th:last-child, .role-table td:last-child { padding-right: 0; }
+.role-table .rt-role, .role-table .rt-lead { color: var(--text-primary); }
+.role-table .rt-role { font-weight: 400; }
+.role-table .rt-lead { display: block; margin-bottom: 4px; }
+.role-table .rt-l { display: none; }
+@media (max-width: 767px) {
+  /* Each role becomes a stacked block with small labels */
+  .role-table, .role-table tbody, .role-table tr, .role-table td { display: block; width: 100%; }
+  .role-table thead, .role-table colgroup { display: none; }
+  .role-table tr { padding: 18px 0; border-bottom: 1px solid var(--hairline); }
+  .role-table tr:first-child { border-top: 1px solid var(--text-primary); }
+  .role-table td { padding: 0; border: 0; }
+  .role-table td + td { margin-top: 12px; }
+  .role-table .rt-l { display: block; font: 500 11px/1.4 var(--f-label); letter-spacing: .16em; text-transform: uppercase; color: var(--text-primary); opacity: .55; margin-bottom: 2px; }
 }
-.role-tab:hover { background: rgba(7, 23, 27, 0.04); }
-.role-tab .r-dot { width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid var(--n300); margin-top: 6px; transition: background-color .3s var(--ease-out), border-color .3s var(--ease-out); }
-.role-tab .r-name { font-size: 18px; line-height: 1.3; font-weight: 400; color: var(--text-primary); }
-.role-tab .r-need { grid-column: 2; font-size: 15px; line-height: 1.45; color: var(--text-body); max-height: 0; overflow: hidden; opacity: 0; transition: max-height .5s var(--ease-out), opacity .4s var(--ease-out), margin .4s var(--ease-out); }
-.role-tab[aria-selected="true"] { background: var(--bg-surface); }
-.role-tab[aria-selected="true"] .r-dot { background: var(--pink); border-color: var(--pink); }
-.role-tab[aria-selected="true"] .r-need { max-height: 160px; opacity: 1; margin-top: 8px; }
-.r-need b { font-weight: 500; color: var(--text-primary); }
-.role-view { display: flex; flex-direction: column; gap: 16px; }
-.view-head { display: flex; flex-direction: column; gap: 4px; }
-.view-head .v-title { font-size: 15px; color: var(--text-body); }
-.view-head .v-depth { font-size: var(--t-large); line-height: 1.35; color: var(--text-primary); }
-.board { position: relative; flex: 1; min-height: 340px; }
-.tile {
-  position: absolute; border-radius: 6px; background: var(--canvas); overflow: hidden;
-  transition: left .7s var(--ease-out), top .7s var(--ease-out), width .7s var(--ease-out), height .7s var(--ease-out), opacity .5s var(--ease-out);
-  padding: 12px; display: flex; flex-direction: column; gap: 8px;
-}
-.tile i { display: block; height: 6px; border-radius: 3px; background: var(--n200); }
-.tile i.k { height: 14px; width: 46%; background: var(--teal-900); opacity: .85; }
-.tile i.p { background: var(--pink); }
-.tile svg { flex: 1; width: 100%; min-height: 0; }
-.tile svg .ln { fill: none; stroke: var(--teal-900); stroke-opacity: .55; stroke-width: 1.5; stroke-linecap: round; }
-.tile.is-off { opacity: 0; pointer-events: none; }
 
 /* Step 5 · the decision path */
 .pathway { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; }
@@ -726,7 +713,6 @@ main { min-width: 0; }
 
 @media (max-width: 1100px) {
   .block-top, .trust-split { grid-template-columns: minmax(0, 1fr); }
-  .roles { grid-template-columns: minmax(0, 1fr); }
   .views { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .card--text { width: clamp(380px, 60vw, 600px); }
 }
@@ -744,7 +730,6 @@ main { min-width: 0; }
   .card--text { width: 100%; }
   .views { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .path-steps .p-name { font-size: 15px; }
-  .board { min-height: 300px; }
   .cta-art { right: -45%; width: 110vw; opacity: .45; }
 }
 #pyramid { width: 100%; max-width: 360px; justify-self: center; }
@@ -806,7 +791,7 @@ main > .next { padding-block: 0; }
 
 /* Headlines in Syne (Inter is for body copy only). Syne starts at 400, so light titles move up to 400. */
 h1, h2, h3, .h2, .display, .card-label, .card-title, .next-title, .stat-num,
-.r-name, .p-name, .pc-title, .v-depth, .compare-item h3, .group h3, .field-aside h3, .tier-list h3 {
+.p-name, .pc-title, .compare-item h3, .group h3, .field-aside h3, .tier-list h3 {
   font-family: var(--f-display);
   letter-spacing: -0.01em;
 }

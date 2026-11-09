@@ -162,27 +162,25 @@ page(1, "Listen Before You Design",
   next_band("Next · <b>Step 2</b>", "Know who decides what", "../step-2-decide/"))
 
 # ───────────────────────── 02 · Know who decides what ─────────────────────────
+# Ordered by depth, from a glance to a single asset's history: [role, needs, slowed by, sees headline, sees]
 roles = [
-  ["exec", "Operations executive", "A concise, trustworthy view of performance and exceptions.", "Too many measures with too little context.", "Seconds: are operations healthy, and where aren’t they?"],
-  ["reliability", "Reliability specialist", "One reliable view of equipment health.", "Conflicting information and duplicate data entry.", "Asset by asset"],
-  ["maintenance", "Maintenance lead", "Fast access to operational signals and the detail behind them.", "Delayed reporting and disconnected tools.", "Signal, then the detail behind it"],
-  ["project", "Project manager", "Visibility into progress, risks and dependencies.", "Scattered project information.", "Progress across every workstream"],
-  ["engineering", "Engineering manager", "Timely information for proactive decisions.", "Limited access to detail they could depend on.", "Down to a single asset’s history"],
+  ["Operations executive", "A concise, trustworthy view of performance and exceptions.", "Too many measures with too little context.", "Health at a glance", "Are operations healthy, and where aren’t they? Exceptions first, in seconds, with the detail one step away."],
+  ["Project manager", "Visibility into progress, risks and dependencies.", "Scattered project information.", "Progress across every workstream", "Milestones, risks and the dependencies between them, all in one place rather than spread across trackers."],
+  ["Maintenance lead", "Fast access to operational signals and the detail behind them.", "Delayed reporting and disconnected tools.", "The signal, then the detail", "An alert first, then the readings and work orders behind it, fresh enough to plan the next shift."],
+  ["Reliability specialist", "One reliable view of equipment health.", "Conflicting information and duplicate data entry.", "Asset by asset", "The condition of each piece of equipment from one trusted record, entered once and used everywhere."],
+  ["Engineering manager", "Timely information for proactive decisions.", "Limited access to detail they could depend on.", "A single asset’s history", "Readings, changes and failures over time, detailed and dependable enough to act before something breaks."],
 ]
-role_tabs = roles.each_with_index.map { |(k, n, need, fr, _), i|
-  %(<button class="role-tab" type="button" role="tab" id="tab-#{k}" aria-controls="role-view" aria-selected="#{i.zero?}" data-role="#{k}"><span class="r-dot" aria-hidden="true"></span><span class="r-name">#{n}</span><span class="r-need"><b>Needs</b> #{need[0].downcase + need[1..]}<br><b>Slowed by</b> #{fr[0].downcase + fr[1..]}</span></button>)
-}.join("\n        ")
-tiles = (0...9).map { |i| %(<div class="tile" data-t="#{i}"><i class="k#{i == 1 ? ' p' : ''}"></i><i style="width:72%"></i><i style="width:48%"></i><svg viewBox="0 0 100 30" preserveAspectRatio="none" aria-hidden="true"><path class="ln" d="M0 #{22 - i % 3 * 3} C20 #{10 + i % 4 * 4} 35 26 50 #{14 + i % 2 * 6} S80 #{6 + i % 3 * 5} 100 #{12 + i % 4 * 3}" vector-effect="non-scaling-stroke"/></svg></div>) }.join
-roles_viz = <<~HTML
-  <div class="roles" data-reveal="top 80%">
-    <div class="role-tabs" role="tablist" aria-label="Roles">
-      #{role_tabs}
-    </div>
-    <div class="stage role-view" id="role-view" role="tabpanel" aria-live="polite">
-      <div class="view-head"><span class="v-title">One sample view, reshaped for <span id="role-name">Operations executive</span></span><span class="v-depth" id="role-depth">#{roles[0][4]}</span></div>
-      <div class="board" id="board">#{tiles}</div>
-    </div>
-  </div>
+role_rows = roles.map { |n, need, fr, head, sees|
+  %(<tr><td class="rt-role">#{n}</td><td><span class="rt-l">Needs</span>#{need}</td><td><span class="rt-l">Slowed by</span>#{fr}</td><td><span class="rt-l">Sees</span><span class="rt-lead">#{head}</span>#{sees}</td></tr>)
+}.join("\n      ")
+roles_table = <<~HTML
+  <table class="role-table" data-reveal="top 85%">
+    <colgroup><col style="width:18%"><col style="width:25%"><col style="width:23%"><col style="width:34%"></colgroup>
+    <thead><tr><th scope="col">Role</th><th scope="col">Needs</th><th scope="col">Slowed by</th><th scope="col">Sees</th></tr></thead>
+    <tbody>
+      #{role_rows}
+    </tbody>
+  </table>
 HTML
 page(2, "Know Who Decides What",
   [["design-for-decisions", "Design for decisions"], ["how-to-apply", "How to apply it"], ["in-the-field", "In the field"], ["five-roles", "Five roles, one truth"]],
@@ -201,11 +199,10 @@ page(2, "Know Who Decides What",
     [[5, "Roles", 2], [1000, "KPIs in use", 0]],
     quote("[W]e have 1000 KPIs and they’re all over the place. That’s not realistic to do a quick eye shot and say, all right, are we doing good?")) +
   block("five-roles", "Five roles, one truth",
-    ["Choose a role to see its primary need, its typical friction, and how the same view reshapes to its level of detail."],
+    ["Each role’s primary need, its typical friction, and how deep into the same truth it needs to see."],
     pull("Most of the time people tend to gravitate back towards existing tools, legacy systems spreadsheets that they’re already using."),
-    roles_viz) +
-  next_band("Next · <b>Step 3</b>", "Follow the data to its source", "../step-3-source/"),
-  script_key: "roles")
+    roles_table) +
+  next_band("Next · <b>Step 3</b>", "Follow the data to its source", "../step-3-source/"))
 
 # ───────────────────────── 03 · Follow the data to its source ─────────────────────────
 trace_svg = <<~SVG
