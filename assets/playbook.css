@@ -688,11 +688,15 @@ main { min-width: 0; }
 
 /* Step 5 · tiers + context views */
 .tiers { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 64px); align-items: center; }
-.tier-list { display: flex; flex-direction: column; gap: 18px; }
-.tier-list li { display: grid; grid-template-columns: 14px minmax(0, 1fr); column-gap: 14px; }
-.tier-list .t-key { width: 14px; height: 14px; border-radius: 3px; margin-top: 4px; }
-.tier-list h3 { font-size: 18px; font-weight: 400; line-height: 1.3; }
-.tier-list p { grid-column: 2; font-size: 15px; color: var(--text-body); line-height: 1.45; margin-top: 4px; }
+/* The key: small diamonds that fill with their layer, 15px tier names, 14px notes */
+.layers { display: block; width: 100%; max-width: 380px; height: auto; justify-self: center; overflow: visible; }
+.tier-list { display: flex; flex-direction: column; }
+.tier-list li { display: grid; grid-template-columns: 14px minmax(0, 1fr); column-gap: 14px; padding: 16px 0; border-top: 1px solid var(--hairline); transition: opacity .5s var(--ease-out); }
+.tier-list li:last-child { border-bottom: 1px solid var(--hairline); }
+.tier-list li.is-dim { opacity: .3; }
+.tier-list .t-key { width: 14px; height: 14px; margin-top: 2px; }
+.tier-list h3 { font-size: 15px; font-weight: 400; line-height: 1.3; }
+.tier-list p { grid-column: 2; font-size: 14px; font-weight: 300; color: var(--text-body); line-height: 1.45; margin-top: 4px; }
 .views { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; }
 .view { background: var(--bg-surface); border-radius: var(--radius); padding: 20px; display: flex; flex-direction: column; gap: 14px; }
 .view svg { width: 100%; aspect-ratio: 1; }
@@ -735,7 +739,6 @@ main { min-width: 0; }
   .views { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .cta-art { right: -45%; width: 110vw; opacity: .45; }
 }
-#pyramid { width: 100%; max-width: 360px; justify-self: center; }
 @media (max-width: 767px) {
   /* Wide diagrams keep readable labels and pan inside their frame */
   .stage.viz { overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: thin; }

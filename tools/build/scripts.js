@@ -357,9 +357,46 @@ window.PlaybookChapter = (P) => {
     });
   }
 
-  if (P.gsap && !P.reduce) {
-    P.gsap.from("#pyramid .tier", { y: 24, opacity: 0, duration: 1, stagger: 0.12, ease: "expo.out",
-      scrollTrigger: { trigger: "#pyramid", start: "top 80%", toggleActions: "play none none reverse" } });
+  // What goes where: three layers, outlined, fill in turn as you scroll, then draw together into one stack.
+  // The first tier is fully opaque (it's always there); the two below are slightly see-through.
+  const lsvg = P.$("#layers");
+  if (lsvg) {
+    const NS = "http://www.w3.org/2000/svg";
+    const cl = (x) => Math.min(1, Math.max(0, x));
+    const sm = (a, b, x) => { const t = cl((x - a) / (b - a)); return t * t * (3 - 2 * t); };
+    const lerp = (a, b, t) => a + (b - a) * t;
+    const L = [
+      { fill: "#ff0074", line: "#ff0074", lo: .9, w: 96, alpha: 1 },
+      { fill: "#00424f", line: "#002a32", lo: .5, w: 200, alpha: .72 },
+      { fill: "#d5def0", line: "#002a32", lo: .28, w: 300, alpha: .8 },
+    ];
+    const ON = [.08, .3, .52], TIGHT = [.76, .94];               // when each tier fills; when they draw together
+    const SPREAD = [64, 150, 236], CLOSE = [116, 150, 188];      // layer centres, apart and drawn together
+    const plane = (w) => `M${-w / 2} 0 L0 ${-w / 4} L${w / 2} 0 L0 ${w / 4}Z`;
+    // drawn bottom first, so the smaller layers sit on top
+    const planes = [2, 1, 0].map((i) => { const e = document.createElementNS(NS, "path"); e.setAttribute("d", plane(L[i].w)); e.setAttribute("stroke-width", "1"); e.setAttribute("stroke-linejoin", "round"); lsvg.appendChild(e); return { i, e }; });
+    const rows = P.$$(".tier-list li"), marks = rows.map((li) => P.$(".t-key path", li));
+    const drawLayers = (p) => {
+      const tight = sm(TIGHT[0], TIGHT[1], p);
+      planes.forEach(({ i, e }) => {
+        const s = sm(ON[i], ON[i] + 0.08, p), a = (s * L[i].alpha).toFixed(3);
+        const y = lerp(lerp(150, SPREAD[i], sm(0, 0.08, p)), CLOSE[i], tight);
+        e.setAttribute("transform", `translate(160 ${y.toFixed(1)})`);
+        e.setAttribute("fill", L[i].fill); e.setAttribute("fill-opacity", a);
+        e.setAttribute("stroke", L[i].line); e.setAttribute("stroke-opacity", (i === 2 ? lerp(L[i].lo, .35, s) : L[i].lo).toFixed(3));
+        e.setAttribute("stroke-dasharray", i === 2 && s < 0.5 ? "2 4" : "none");
+        marks[i].setAttribute("fill", L[i].fill); marks[i].setAttribute("fill-opacity", a);
+        rows[i].classList.toggle("is-dim", p < ON[i] - 0.02);
+      });
+    };
+    if (!P.gsap || P.reduce) drawLayers(1);
+    else {
+      const lo = { p: 0 };
+      drawLayers(0);
+      P.gsap.to(lo, { p: 1, ease: "none", onUpdate: () => drawLayers(lo.p),
+        // done while the top of the stack is still well inside the screen
+        scrollTrigger: { trigger: ".tiers", start: "top 85%", end: "top 30%", scrub: 0.8 } });
+    }
   }
 };
 

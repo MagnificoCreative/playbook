@@ -313,16 +313,12 @@ views = [
 ]
 views_html = views.map { |cap, art| %(<li class="view"><svg class="viz" viewBox="0 0 110 110" aria-hidden="true">#{art}</svg><h3>#{cap}</h3></li>) }.join
 tiers = <<~HTML
-  <div class="tiers" data-reveal="top 80%">
-    <svg class="viz" id="pyramid" viewBox="0 0 420 300" role="img" aria-label="An information pyramid with three tiers: always visible at the top, on demand in the middle, on investigation at the base.">
-      <path class="tier" d="M210 20L280 110H140Z" fill="#ff0074"/>
-      <path class="tier" d="M134 120H286L346 200H74Z" fill="#00424f"/>
-      <path class="tier" d="M68 210H352L412 290H8Z" fill="#d5def0"/>
-    </svg>
+  <div class="tiers" data-reveal="top 90%">
+    <svg class="layers" id="layers" viewBox="0 0 320 300" role="img" aria-label="Three layers: a small pink one for what’s always visible, a wider teal one for what’s available on demand, and the widest, palest one for what’s revealed during investigation. Each fills in turn, then they draw together into one stack."></svg>
     <ol class="tier-list">
-      <li><span class="t-key" style="background:#ff0074"></span><h3>Always visible</h3><p>Keep the first tier small.</p></li>
-      <li><span class="t-key" style="background:#00424f"></span><h3>Available on demand</h3><p>Useful only on request.</p></li>
-      <li><span class="t-key" style="background:#d5def0"></span><h3>Revealed during investigation</h3><p>Only matters once someone starts investigating.</p></li>
+      <li><svg class="t-key" viewBox="0 0 14 14" aria-hidden="true"><path d="M1 7 L7 4 L13 7 L7 10Z" stroke="#ff0074" stroke-opacity=".9"/></svg><h3>Always visible</h3><p>Keep the first tier small.</p></li>
+      <li><svg class="t-key" viewBox="0 0 14 14" aria-hidden="true"><path d="M1 7 L7 4 L13 7 L7 10Z" stroke="#002a32" stroke-opacity=".5"/></svg><h3>Available on demand</h3><p>Useful only on request.</p></li>
+      <li><svg class="t-key" viewBox="0 0 14 14" aria-hidden="true"><path d="M1 7 L7 4 L13 7 L7 10Z" stroke="#002a32" stroke-opacity=".28"/></svg><h3>Revealed during investigation</h3><p>Only matters once someone starts investigating.</p></li>
     </ol>
   </div>
   <p class="block-sub" data-reveal="top 90%"><span>Context views at the oil and gas company, each added because it made a decision faster or clearer.</span></p>
