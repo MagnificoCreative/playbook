@@ -61,7 +61,7 @@ trust_section = <<~'HTML'
         <p>Operational information loses trust on its way from source to decision. It’s born in sensors, records and systems. It’s exported and reshaped in spreadsheets. It’s reconciled by hand before meetings. It’s presented in dashboards built by different teams. By the time it reaches a decision, nobody is sure which version to believe.</p>
       </div>
 <div class="stage viz trust-viz" id="flow">
-  <svg viewBox="0 0 560 490" role="img" aria-label="Trust steps down as operational information moves from Source to Prepare, Reconcile, Present and Act.">
+  <svg viewBox="-1 12 562 469" role="img" aria-label="Trust steps down as operational information moves from Source to Prepare, Reconcile, Present and Act.">
     <line class="hl" x1="0" y1="40" x2="540" y2="40" stroke-opacity=".3"/>
     <text class="axis" x="540" y="24" text-anchor="end">Trust</text>
     <text class="axis axis-dim" text-anchor="end" transform="translate(556 56) rotate(-90)">High</text>
@@ -99,7 +99,7 @@ HTML
 # One screen isn't one truth: the spectrum, from a dashboard of dots to one source (drawn by scripts.js)
 truth_spectrum = <<~HTML
   <div class="stage viz truth-viz" id="truth">
-    <svg viewBox="0 0 1000 440" role="img" aria-label="A dashboard's data moves along a spectrum, from a single pane of glass that puts all your data on one screen, to a single source of truth, where everyone agrees what each number means, where it comes from and who owns it."></svg>
+    <svg viewBox="69 39 896 353" role="img" aria-label="A dashboard's data moves along a spectrum, from a single pane of glass that puts all your data on one screen, to a single source of truth, where everyone agrees what each number means, where it comes from and who owns it."></svg>
   </div>
   <p class="block-note" data-reveal="top 85%"><span>You can have the first without the second, and then a new dashboard simply shows the disagreement more efficiently.</span></p>
 HTML
@@ -207,7 +207,7 @@ page(2, "Know Who Decides What",
 # ───────────────────────── 03 · Follow the data to its source ─────────────────────────
 trace_svg = <<~SVG
   <div class="stage viz" id="trace">
-    <svg viewBox="0 0 1000 330" role="img" aria-label="One metric leaves its source as a single line, splits into conflicting copies through spreadsheets and dashboards, and only rejoins where a definition is agreed.">
+    <svg viewBox="60 21 882 262" role="img" aria-label="One metric leaves its source as a single line, splits into conflicting copies through spreadsheets and dashboards, and only rejoins where a definition is agreed.">
       <path class="ln t-src" d="M90 165H250" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="1" stroke-opacity=".7"/>
       <path class="ln t-copy" d="M250 165C320 165 330 70 420 70H640C730 70 760 165 830 165" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="1" stroke-opacity=".45"/>
       <path class="ln t-copy" d="M250 165H830" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="1" stroke-opacity=".45"/>
@@ -255,17 +255,10 @@ page(3, "Follow the Data to Its Source",
   script_key: "trace")
 
 # ───────────────────────── 04 · Agree on what matters ─────────────────────────
-qs = ["Changes a decision?", "Several roles rely on it?", "Does the data exist?", "Can it be trusted?", "Matters to the business?"]
-cats = ["Safety", "Quality", "Delivery", "Cost", "People"]
-gates = qs.each_with_index.map { |q, i| x = 300 + i * 105; %(<g class="s-gate"><line class="gd" x1="#{x}" y1="70" x2="#{x}" y2="420" stroke-dasharray="3 5" style="stroke-opacity:.35"/><text class="lbl-s" x="#{x}" y="#{i.even? ? 40 : 58}" text-anchor="middle">#{q}</text></g>) }.join
-catl = cats.each_with_index.map { |c, i| y = 120 + i * 62; %(<g class="s-cat"><text class="lbl" x="905" y="#{y + 5}">#{c}</text></g>) }.join
+# From many measures to a few: five tests applied one at a time (drawn by scripts.js)
 sieve_svg = <<~SVG
-  <div class="stage viz" id="sieve">
-    <svg viewBox="0 0 1000 440" role="img" aria-label="A dense cloud of measures filters through five questions and settles into five categories: Safety, Quality, Delivery, Cost and People.">
-      #{gates}
-      #{catl}
-      <g id="sieve-dots"></g>
-    </svg>
+  <div class="stage viz sieve-viz" id="sieve">
+    <svg viewBox="60 15 880 331" role="img" aria-label="Measures fall through five tests, one at a time: would anyone act on it, do several roles use it, can we measure it today, is the source reliable, and does it move the business. Those that fail are let go; the few that pass all five settle into Safety, Quality, Delivery, Cost and People."></svg>
   </div>
 SVG
 page(4, "Agree on What Matters",
@@ -376,7 +369,7 @@ page(5, "Design Around Decisions",
 # ───────────────────────── 06 · Test before you build ─────────────────────────
 loop_svg = <<~SVG
   <div class="stage viz" id="loop">
-    <svg viewBox="0 0 1000 340" role="img" aria-label="A loop of prototype, test and refine, then a hand-off to a blueprint, a delivered platform and a predictive layer built on it.">
+    <svg viewBox="43 9 929 282" role="img" aria-label="A loop of prototype, test and refine, then a hand-off to a blueprint, a delivered platform and a predictive layer built on it.">
       <circle class="gd" cx="210" cy="170" r="120" style="stroke-opacity:.3"/>
       <path class="ln l-ring" d="M210 50A120 120 0 1 1 209.9 50" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="1" stroke-opacity=".55"/>
       <g text-anchor="middle">

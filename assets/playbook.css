@@ -563,7 +563,9 @@ main { min-width: 0; }
 .bullets li { display: grid; grid-template-columns: 8px minmax(0, 1fr); column-gap: 12px; align-items: start; font-size: 16px; line-height: 1.45; color: var(--text-primary); }
 .bullets { display: flex; flex-direction: column; gap: 12px; }
 
-/* Visual frame: a light stage for the closing visuals */
+/* Visual frame: a light stage for the closing visuals.
+   Spec: the same padding on all four sides, and every drawing's viewBox cropped to its content,
+   so this padding is the only margin around an illustration. */
 .stage {
   position: relative;
   background: var(--bg-surface);
@@ -585,11 +587,16 @@ main { min-width: 0; }
    (toward less trust) as the ball moves down through the stages. Hairlines use .hl so their
    opacity stays an SVG attribute. */
 .trust-split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(32px, 5vw, 96px); align-items: center; }
-.trust-viz { padding: clamp(24px, 2.6vw, 40px) clamp(20px, 2.4vw, 36px); }
 .trust-viz svg { max-height: calc(100svh - var(--bar) - 2 * var(--pad) - 24px); margin: 0 auto; }
 .viz .hl { fill: none; stroke: var(--teal-900); stroke-width: 1; }
 .viz .axis { font: 500 11px/1 var(--f-label); letter-spacing: .16em; text-transform: uppercase; fill: var(--teal-900); }
 .viz .axis-dim { fill: var(--text-body); fill-opacity: .45; }
+
+/* From many measures to a few: 1px lines, a large caption for the test being applied */
+.sieve-viz .ln { stroke-width: 1; }
+.sieve-viz .big { font: 300 26px/1.2 var(--f-sans); fill: var(--text-primary); }
+.sieve-viz .cat { font: 400 15px/1 var(--f-sans); fill: var(--text-primary); }
+.sieve-viz svg { max-height: calc(100svh - var(--bar) - 2 * var(--pad) - 160px); margin: 0 auto; }
 
 /* One screen isn't one truth: the spectrum sits full width under the intro copy */
 .truth-viz svg { max-height: calc(100svh - var(--bar) - 2 * var(--pad) - 160px); margin: 0 auto; }
