@@ -99,31 +99,21 @@
 </section>
 <section class="sec" id="signal-to-action" data-section="signal-to-action" aria-labelledby="t-signal-to-action">
   <div class="panel block">
-    <div class="block-top is-solo" data-reveal>
+    <div class="block-top" data-reveal="top 95%">
       <div class="block-intro">
         <h2 class="h2" id="t-signal-to-action">From signal to action</h2>
         <p>Follow one alert along the path. Most dashboards stop at the first step.</p>
       </div>
-      
-    </div>
-<div class="stage pathway" data-reveal="top 80%">
-  <div class="path-steps" role="tablist" aria-label="Decision path"><span class="path-fill" id="path-fill"></span><button class="path-step is-reached" type="button" role="tab" aria-selected="true" data-i="0"><span class="p-dot" aria-hidden="true"></span><span class="p-name">Signal</span></button><button class="path-step" type="button" role="tab" aria-selected="false" data-i="1"><span class="p-dot" aria-hidden="true"></span><span class="p-name">Context</span></button><button class="path-step" type="button" role="tab" aria-selected="false" data-i="2"><span class="p-dot" aria-hidden="true"></span><span class="p-name">Investigation</span></button><button class="path-step" type="button" role="tab" aria-selected="false" data-i="3"><span class="p-dot" aria-hidden="true"></span><span class="p-name">Action</span></button></div>
-  <div class="path-card" role="tabpanel" aria-live="polite">
-    <div class="path-copy">
-      <span class="pc-label" id="pc-label">Signal · Tells someone that something needs attention.</span>
-      <p class="pc-title" id="pc-title">Gas compression availability on one platform drops below its target.</p>
-      <p class="pc-note">An example alert, followed from first signal to action.</p>
-      <div class="path-nav"><button type="button" id="path-prev" disabled>Back</button><button type="button" class="is-primary" id="path-next">Next: Context</button></div>
-    </div>
-    <svg class="viz" id="path-art" viewBox="0 0 420 260" aria-hidden="true">
-      <rect class="node" x="10" y="10" width="400" height="240" rx="8" style="stroke-opacity:.2"/>
-      <g data-s="0"><rect class="node is-pink" x="30" y="30" width="150" height="72" rx="6"/><circle class="ball" cx="52" cy="52" r="7"/><path class="ln" d="M68 52h86M46 80h70" stroke-opacity=".4"/></g>
-      <g data-s="1"><rect class="node" x="196" y="30" width="194" height="72" rx="6" style="stroke-opacity:.4"/><path class="ln" d="M212 86C240 84 250 50 280 60S330 40 374 46" stroke-opacity=".6"/><circle cx="374" cy="46" r="4" fill="#ff0074"/></g>
-      <g data-s="2"><rect class="node" x="30" y="118" width="360" height="80" rx="6" style="stroke-opacity:.4"/><path class="ln" d="M46 138h120M46 158h220M46 178h160" stroke-opacity=".35"/><path class="ln" d="M280 182l24-30 20 14 26-34" stroke-opacity=".7"/></g>
-      <g data-s="3"><rect class="node is-pink" x="30" y="212" width="220" height="26" rx="13"/><path class="ln" d="M44 225l6 6 12-12" stroke="#ff0074"/><path class="ln" d="M74 225h150" stroke-opacity=".4"/></g>
-    </svg>
-  </div>
+      <div class="stage pathway" data-reveal="top 95%">
+  <ol class="path-rail" aria-label="Decision path"><span class="path-fill" aria-hidden="true"></span>
+    <li class="path-step is-reached is-current"><button class="p-head" type="button" aria-expanded="true" aria-controls="p-more-0"><span class="p-dot" aria-hidden="true"></span><span class="p-name">Signal</span></button><div class="p-more" id="p-more-0"><div><p class="pc-h">Tells someone that something needs attention.</p><p class="pc-b">Gas compression availability on one platform drops below its target.</p></div></div></li>
+      <li class="path-step"><button class="p-head" type="button" aria-expanded="false" aria-controls="p-more-1"><span class="p-dot" aria-hidden="true"></span><span class="p-name">Context</span></button><div class="p-more" id="p-more-1"><div><p class="pc-h">Tells them what it means.</p><p class="pc-b">One compressor has tripped twice in 24 hours, and the other two trains are running near capacity.</p></div></div></li>
+      <li class="path-step"><button class="p-head" type="button" aria-expanded="false" aria-controls="p-more-2"><span class="p-dot" aria-hidden="true"></span><span class="p-name">Investigation</span></button><div class="p-more" id="p-more-2"><div><p class="pc-h">Lets them dig into the cause.</p><p class="pc-b">The trip log points to high discharge temperature, and the cooler was due for cleaning last week.</p></div></div></li>
+      <li class="path-step"><button class="p-head" type="button" aria-expanded="false" aria-controls="p-more-3"><span class="p-dot" aria-hidden="true"></span><span class="p-name">Action</span></button><div class="p-more" id="p-more-3"><div><p class="pc-h">Closes the loop.</p><p class="pc-b">The maintenance lead schedules the cleaning, and production adjusts the plan for the next shift.</p></div></div></li>
+  </ol>
 </div>
+
+    </div>
 
   </div>
 </section>
@@ -204,16 +194,12 @@
       </div>
       
     </div>
-<div class="tiers" data-reveal="top 80%">
-  <svg class="viz" id="pyramid" viewBox="0 0 420 300" role="img" aria-label="An information pyramid with three tiers: always visible at the top, on demand in the middle, on investigation at the base.">
-    <path class="tier" d="M210 20L280 110H140Z" fill="#ff0074"/>
-    <path class="tier" d="M134 120H286L346 200H74Z" fill="#00424f"/>
-    <path class="tier" d="M68 210H352L412 290H8Z" fill="#d5def0"/>
-  </svg>
+<div class="tiers" data-reveal="top 90%">
+  <svg class="layers" id="layers" viewBox="0 0 320 300" role="img" aria-label="Three layers: a small pink one for what’s always visible, a wider teal one for what’s available on demand, and the widest, palest one for what’s revealed during investigation. Each fills in turn, then they draw together into one stack."></svg>
   <ol class="tier-list">
-    <li><span class="t-key" style="background:#ff0074"></span><h3>Always visible</h3><p>Keep the first tier small.</p></li>
-    <li><span class="t-key" style="background:#00424f"></span><h3>Available on demand</h3><p>Useful only on request.</p></li>
-    <li><span class="t-key" style="background:#d5def0"></span><h3>Revealed during investigation</h3><p>Only matters once someone starts investigating.</p></li>
+    <li><svg class="t-key" viewBox="0 0 14 14" aria-hidden="true"><path d="M1 7 L7 4 L13 7 L7 10Z" stroke="#ff0074" stroke-opacity=".9"/></svg><h3>Always visible</h3><p>Keep the first tier small.</p></li>
+    <li><svg class="t-key" viewBox="0 0 14 14" aria-hidden="true"><path d="M1 7 L7 4 L13 7 L7 10Z" stroke="#002a32" stroke-opacity=".5"/></svg><h3>Available on demand</h3><p>Useful only on request.</p></li>
+    <li><svg class="t-key" viewBox="0 0 14 14" aria-hidden="true"><path d="M1 7 L7 4 L13 7 L7 10Z" stroke="#002a32" stroke-opacity=".28"/></svg><h3>Revealed during investigation</h3><p>Only matters once someone starts investigating.</p></li>
   </ol>
 </div>
 <p class="block-sub" data-reveal="top 90%"><span>Context views at the oil and gas company, each added because it made a decision faster or clearer.</span></p>
@@ -241,38 +227,95 @@
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
 <script src="../assets/motion/hero-scenes.js"></script>
 <script>
-/* Step 5: tap through one alert, from signal to action. */
+/* Step 5: one alert, from signal to action. The steps run down a rail beside the section intro; scrolling moves
+   through them (pinned on wide screens) and the current step opens to show what it does and an example.
+   With reduced motion, or without GSAP, each step is a button instead. */
 window.PlaybookChapter = (P) => {
-  const STEPS = [
-    ["Signal", "Tells someone that something needs attention.", "Gas compression availability on one platform drops below its target."],
-    ["Context", "Tells them what it means.", "One compressor has tripped twice in 24 hours, and the other two trains are running near capacity."],
-    ["Investigation", "Lets them dig into the cause.", "The trip log points to high discharge temperature, and the cooler was due for cleaning last week."],
-    ["Action", "Closes the loop.", "The maintenance lead schedules the cleaning, and production adjusts the plan for the next shift."],
-  ];
-  const btns = P.$$(".path-step");
-  if (!btns.length) return;
-  const label = P.$("#pc-label"), title = P.$("#pc-title"), prev = P.$("#path-prev"), next = P.$("#path-next");
-  const fill = P.$("#path-fill"), groups = P.$$("#path-art [data-s]");
-  groups.forEach((g) => { g.style.transition = "opacity .5s cubic-bezier(.22,1,.36,1)"; });
-  let cur = 0;
-  const show = (i) => {
-    cur = i;
-    btns.forEach((b, j) => { b.setAttribute("aria-selected", j === i); b.classList.toggle("is-reached", j <= i); b.tabIndex = j === i ? 0 : -1; });
-    fill.style.width = `${i * 25}%`;  // from the first dot to the current one
-    label.textContent = `${STEPS[i][0]} · ${STEPS[i][1]}`;
-    title.textContent = STEPS[i][2];
-    groups.forEach((g) => { g.style.opacity = +g.dataset.s <= i ? 1 : 0.08; });
-    prev.disabled = i === 0;
-    next.textContent = i < STEPS.length - 1 ? `Next: ${STEPS[i + 1][0]}` : "Start over";
-    if (P.gsap && !P.reduce) P.gsap.fromTo([label, title], { y: 10, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, stagger: 0.05, ease: "expo.out" });
+  const rail = P.$(".path-rail");
+  if (!rail) return;
+  const rows = P.$$(".path-step", rail), heads = P.$$(".p-head", rail), fill = P.$(".path-fill", rail), box = P.$(".pathway");
+  // The line joins the first dot to the last; the open step changes the spacing, so measure the dots every time
+  const centre = (li) => { const d = P.$(".p-dot", li); return li.offsetTop + d.offsetTop + d.offsetHeight / 2; };
+  let cur = -1, f = 0;
+  const layout = () => {
+    const Y = rows.map(centre), k = Math.min(rows.length - 2, Math.floor(f));
+    rail.style.setProperty("--y0", `${Y[0]}px`);
+    rail.style.setProperty("--y1", `${Y[Y.length - 1]}px`);
+    fill.style.height = `${Y[k] + (Y[k + 1] - Y[k]) * (f - k) - Y[0]}px`;
   };
-  btns.forEach((b, i) => b.addEventListener("click", () => show(i)));
-  prev.addEventListener("click", () => show(Math.max(0, cur - 1)));
-  next.addEventListener("click", () => show(cur < STEPS.length - 1 ? cur + 1 : 0));
-  show(0);
-  if (P.gsap && !P.reduce) {
-    P.gsap.from("#pyramid .tier", { y: 24, opacity: 0, duration: 1, stagger: 0.12, ease: "expo.out",
-      scrollTrigger: { trigger: "#pyramid", start: "top 80%", toggleActions: "play none none reverse" } });
+  const show = (i) => {
+    rows.forEach((li, j) => { li.classList.toggle("is-reached", j <= i); li.classList.toggle("is-current", j === i); });
+    if (i === cur) return;
+    cur = i;
+    heads.forEach((h, j) => h.setAttribute("aria-expanded", j === i));
+  };
+  new ResizeObserver(layout).observe(rail); // follows the steps as they open and close
+
+  if (!P.gsap || P.reduce) {
+    heads.forEach((h, i) => h.addEventListener("click", () => { f = i; show(i); layout(); }));
+    show(0); layout();
+  } else {
+    box.classList.add("is-scrubbed"); // the steps follow the scroll, so they aren't clickable
+    heads.forEach((h) => { h.tabIndex = -1; });
+    const draw = (p) => {
+      f = 3 * Math.min(1, Math.max(0, (p - 0.08) / 0.8));
+      show(Math.min(3, Math.floor(f + 0.02)));
+      layout();
+    };
+    draw(0);
+    const o = { p: 0 };
+    const mm = P.gsap.matchMedia();
+    mm.add("(min-width: 1101px) and (min-height: 620px)", () => {
+      P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p),
+        // refreshPriority: lay this pin out before the how-to-apply pin further down, so that one starts after it
+        scrollTrigger: { trigger: "#signal-to-action", start: () => `top top+=${P.barH()}`, end: "+=160%", pin: true, scrub: 0.6, anticipatePin: 1, invalidateOnRefresh: true, refreshPriority: 1 } });
+    });
+    mm.add("(max-width: 1100px), (max-height: 619px)", () => {
+      P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p),
+        scrollTrigger: { trigger: ".pathway", start: "top 75%", end: "+=600", scrub: 0.6 } });
+    });
+  }
+
+  // What goes where: three layers, outlined, fill in turn as you scroll, then draw together into one stack.
+  // The first tier is fully opaque (it's always there); the two below are slightly see-through.
+  const lsvg = P.$("#layers");
+  if (lsvg) {
+    const NS = "http://www.w3.org/2000/svg";
+    const cl = (x) => Math.min(1, Math.max(0, x));
+    const sm = (a, b, x) => { const t = cl((x - a) / (b - a)); return t * t * (3 - 2 * t); };
+    const lerp = (a, b, t) => a + (b - a) * t;
+    const L = [
+      { fill: "#ff0074", line: "#ff0074", lo: .9, w: 96, alpha: 1 },
+      { fill: "#00424f", line: "#002a32", lo: .5, w: 200, alpha: .72 },
+      { fill: "#d5def0", line: "#002a32", lo: .28, w: 300, alpha: .8 },
+    ];
+    const ON = [.08, .3, .52], TIGHT = [.76, .94];               // when each tier fills; when they draw together
+    const SPREAD = [64, 150, 236], CLOSE = [116, 150, 188];      // layer centres, apart and drawn together
+    const plane = (w) => `M${-w / 2} 0 L0 ${-w / 4} L${w / 2} 0 L0 ${w / 4}Z`;
+    // drawn bottom first, so the smaller layers sit on top
+    const planes = [2, 1, 0].map((i) => { const e = document.createElementNS(NS, "path"); e.setAttribute("d", plane(L[i].w)); e.setAttribute("stroke-width", "1"); e.setAttribute("stroke-linejoin", "round"); lsvg.appendChild(e); return { i, e }; });
+    const rows = P.$$(".tier-list li"), marks = rows.map((li) => P.$(".t-key path", li));
+    const drawLayers = (p) => {
+      const tight = sm(TIGHT[0], TIGHT[1], p);
+      planes.forEach(({ i, e }) => {
+        const s = sm(ON[i], ON[i] + 0.08, p), a = (s * L[i].alpha).toFixed(3);
+        const y = lerp(lerp(150, SPREAD[i], sm(0, 0.08, p)), CLOSE[i], tight);
+        e.setAttribute("transform", `translate(160 ${y.toFixed(1)})`);
+        e.setAttribute("fill", L[i].fill); e.setAttribute("fill-opacity", a);
+        e.setAttribute("stroke", L[i].line); e.setAttribute("stroke-opacity", (i === 2 ? lerp(L[i].lo, .35, s) : L[i].lo).toFixed(3));
+        e.setAttribute("stroke-dasharray", i === 2 && s < 0.5 ? "2 4" : "none");
+        marks[i].setAttribute("fill", L[i].fill); marks[i].setAttribute("fill-opacity", a);
+        rows[i].classList.toggle("is-dim", p < ON[i] - 0.02);
+      });
+    };
+    if (!P.gsap || P.reduce) drawLayers(1);
+    else {
+      const lo = { p: 0 };
+      drawLayers(0);
+      P.gsap.to(lo, { p: 1, ease: "none", onUpdate: () => drawLayers(lo.p),
+        // done while the top of the stack is still well inside the screen
+        scrollTrigger: { trigger: ".tiers", start: "top 85%", end: "top 30%", scrub: 0.8 } });
+    }
   }
 };
 

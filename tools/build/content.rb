@@ -61,7 +61,7 @@ trust_section = <<~'HTML'
         <p>Operational information loses trust on its way from source to decision. It’s born in sensors, records and systems. It’s exported and reshaped in spreadsheets. It’s reconciled by hand before meetings. It’s presented in dashboards built by different teams. By the time it reaches a decision, nobody is sure which version to believe.</p>
       </div>
 <div class="stage viz trust-viz" id="flow">
-  <svg viewBox="0 0 560 490" role="img" aria-label="Trust steps down as operational information moves from Source to Prepare, Reconcile, Present and Act.">
+  <svg viewBox="-1 12 562 469" role="img" aria-label="Trust steps down as operational information moves from Source to Prepare, Reconcile, Present and Act.">
     <line class="hl" x1="0" y1="40" x2="540" y2="40" stroke-opacity=".3"/>
     <text class="axis" x="540" y="24" text-anchor="end">Trust</text>
     <text class="axis axis-dim" text-anchor="end" transform="translate(556 56) rotate(-90)">High</text>
@@ -99,7 +99,7 @@ HTML
 # One screen isn't one truth: the spectrum, from a dashboard of dots to one source (drawn by scripts.js)
 truth_spectrum = <<~HTML
   <div class="stage viz truth-viz" id="truth">
-    <svg viewBox="0 0 1000 440" role="img" aria-label="A dashboard's data moves along a spectrum, from a single pane of glass that puts all your data on one screen, to a single source of truth, where everyone agrees what each number means, where it comes from and who owns it."></svg>
+    <svg viewBox="69 39 896 353" role="img" aria-label="A dashboard's data moves along a spectrum, from a single pane of glass that puts all your data on one screen, to a single source of truth, where everyone agrees what each number means, where it comes from and who owns it."></svg>
   </div>
   <p class="block-note" data-reveal="top 85%"><span>You can have the first without the second, and then a new dashboard simply shows the disagreement more efficiently.</span></p>
 HTML
@@ -162,27 +162,25 @@ page(1, "Listen Before You Design",
   next_band("Next · <b>Step 2</b>", "Know who decides what", "../step-2-decide/"))
 
 # ───────────────────────── 02 · Know who decides what ─────────────────────────
+# Ordered by depth, from a glance to a single asset's history: [role, needs, slowed by, sees headline, sees]
 roles = [
-  ["exec", "Operations executive", "A concise, trustworthy view of performance and exceptions.", "Too many measures with too little context.", "Seconds: are operations healthy, and where aren’t they?"],
-  ["reliability", "Reliability specialist", "One reliable view of equipment health.", "Conflicting information and duplicate data entry.", "Asset by asset"],
-  ["maintenance", "Maintenance lead", "Fast access to operational signals and the detail behind them.", "Delayed reporting and disconnected tools.", "Signal, then the detail behind it"],
-  ["project", "Project manager", "Visibility into progress, risks and dependencies.", "Scattered project information.", "Progress across every workstream"],
-  ["engineering", "Engineering manager", "Timely information for proactive decisions.", "Limited access to detail they could depend on.", "Down to a single asset’s history"],
+  ["Operations executive", "A concise, trustworthy view of performance and exceptions.", "Too many measures with too little context.", "Health at a glance", "Are operations healthy, and where aren’t they? Exceptions first, in seconds, with the detail one step away."],
+  ["Project manager", "Visibility into progress, risks and dependencies.", "Scattered project information.", "Progress across every workstream", "Milestones, risks and the dependencies between them, all in one place rather than spread across trackers."],
+  ["Maintenance lead", "Fast access to operational signals and the detail behind them.", "Delayed reporting and disconnected tools.", "The signal, then the detail", "An alert first, then the readings and work orders behind it, fresh enough to plan the next shift."],
+  ["Reliability specialist", "One reliable view of equipment health.", "Conflicting information and duplicate data entry.", "Asset by asset", "The condition of each piece of equipment from one trusted record, entered once and used everywhere."],
+  ["Engineering manager", "Timely information for proactive decisions.", "Limited access to detail they could depend on.", "A single asset’s history", "Readings, changes and failures over time, detailed and dependable enough to act before something breaks."],
 ]
-role_tabs = roles.each_with_index.map { |(k, n, need, fr, _), i|
-  %(<button class="role-tab" type="button" role="tab" id="tab-#{k}" aria-controls="role-view" aria-selected="#{i.zero?}" data-role="#{k}"><span class="r-dot" aria-hidden="true"></span><span class="r-name">#{n}</span><span class="r-need"><b>Needs</b> #{need[0].downcase + need[1..]}<br><b>Slowed by</b> #{fr[0].downcase + fr[1..]}</span></button>)
-}.join("\n        ")
-tiles = (0...9).map { |i| %(<div class="tile" data-t="#{i}"><i class="k#{i == 1 ? ' p' : ''}"></i><i style="width:72%"></i><i style="width:48%"></i><svg viewBox="0 0 100 30" preserveAspectRatio="none" aria-hidden="true"><path class="ln" d="M0 #{22 - i % 3 * 3} C20 #{10 + i % 4 * 4} 35 26 50 #{14 + i % 2 * 6} S80 #{6 + i % 3 * 5} 100 #{12 + i % 4 * 3}" vector-effect="non-scaling-stroke"/></svg></div>) }.join
-roles_viz = <<~HTML
-  <div class="roles" data-reveal="top 80%">
-    <div class="role-tabs" role="tablist" aria-label="Roles">
-      #{role_tabs}
-    </div>
-    <div class="stage role-view" id="role-view" role="tabpanel" aria-live="polite">
-      <div class="view-head"><span class="v-title">One sample view, reshaped for <span id="role-name">Operations executive</span></span><span class="v-depth" id="role-depth">#{roles[0][4]}</span></div>
-      <div class="board" id="board">#{tiles}</div>
-    </div>
-  </div>
+role_rows = roles.map { |n, need, fr, head, sees|
+  %(<tr><td class="rt-role">#{n}</td><td><span class="rt-l">Needs</span>#{need}</td><td><span class="rt-l">Slowed by</span>#{fr}</td><td><span class="rt-l">Sees</span><span class="rt-lead">#{head}</span>#{sees}</td></tr>)
+}.join("\n      ")
+roles_table = <<~HTML
+  <table class="role-table" data-reveal="top 85%">
+    <colgroup><col style="width:18%"><col style="width:25%"><col style="width:23%"><col style="width:34%"></colgroup>
+    <thead><tr><th scope="col">Role</th><th scope="col">Needs</th><th scope="col">Slowed by</th><th scope="col">Sees</th></tr></thead>
+    <tbody>
+      #{role_rows}
+    </tbody>
+  </table>
 HTML
 page(2, "Know Who Decides What",
   [["design-for-decisions", "Design for decisions"], ["how-to-apply", "How to apply it"], ["in-the-field", "In the field"], ["five-roles", "Five roles, one truth"]],
@@ -201,16 +199,15 @@ page(2, "Know Who Decides What",
     [[5, "Roles", 2], [1000, "KPIs in use", 0]],
     quote("[W]e have 1000 KPIs and they’re all over the place. That’s not realistic to do a quick eye shot and say, all right, are we doing good?")) +
   block("five-roles", "Five roles, one truth",
-    ["Choose a role to see its primary need, its typical friction, and how the same view reshapes to its level of detail."],
+    ["Each role’s primary need, its typical friction, and how deep into the same truth it needs to see."],
     pull("Most of the time people tend to gravitate back towards existing tools, legacy systems spreadsheets that they’re already using."),
-    roles_viz) +
-  next_band("Next · <b>Step 3</b>", "Follow the data to its source", "../step-3-source/"),
-  script_key: "roles")
+    roles_table) +
+  next_band("Next · <b>Step 3</b>", "Follow the data to its source", "../step-3-source/"))
 
 # ───────────────────────── 03 · Follow the data to its source ─────────────────────────
 trace_svg = <<~SVG
   <div class="stage viz" id="trace">
-    <svg viewBox="0 0 1000 330" role="img" aria-label="One metric leaves its source as a single line, splits into conflicting copies through spreadsheets and dashboards, and only rejoins where a definition is agreed.">
+    <svg viewBox="60 21 882 262" role="img" aria-label="One metric leaves its source as a single line, splits into conflicting copies through spreadsheets and dashboards, and only rejoins where a definition is agreed.">
       <path class="ln t-src" d="M90 165H250" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="1" stroke-opacity=".7"/>
       <path class="ln t-copy" d="M250 165C320 165 330 70 420 70H640C730 70 760 165 830 165" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="1" stroke-opacity=".45"/>
       <path class="ln t-copy" d="M250 165H830" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="1" stroke-opacity=".45"/>
@@ -258,17 +255,10 @@ page(3, "Follow the Data to Its Source",
   script_key: "trace")
 
 # ───────────────────────── 04 · Agree on what matters ─────────────────────────
-qs = ["Changes a decision?", "Several roles rely on it?", "Does the data exist?", "Can it be trusted?", "Matters to the business?"]
-cats = ["Safety", "Quality", "Delivery", "Cost", "People"]
-gates = qs.each_with_index.map { |q, i| x = 300 + i * 105; %(<g class="s-gate"><line class="gd" x1="#{x}" y1="70" x2="#{x}" y2="420" stroke-dasharray="3 5" style="stroke-opacity:.35"/><text class="lbl-s" x="#{x}" y="#{i.even? ? 40 : 58}" text-anchor="middle">#{q}</text></g>) }.join
-catl = cats.each_with_index.map { |c, i| y = 120 + i * 62; %(<g class="s-cat"><text class="lbl" x="905" y="#{y + 5}">#{c}</text></g>) }.join
+# From many measures to a few: five tests applied one at a time (drawn by scripts.js)
 sieve_svg = <<~SVG
-  <div class="stage viz" id="sieve">
-    <svg viewBox="0 0 1000 440" role="img" aria-label="A dense cloud of measures filters through five questions and settles into five categories: Safety, Quality, Delivery, Cost and People.">
-      #{gates}
-      #{catl}
-      <g id="sieve-dots"></g>
-    </svg>
+  <div class="stage viz sieve-viz" id="sieve">
+    <svg viewBox="60 15 880 331" role="img" aria-label="Measures fall through five tests, one at a time: would anyone act on it, do several roles use it, can we measure it today, is the source reliable, and does it move the business. Those that fail are let go; the few that pass all five settle into Safety, Quality, Delivery, Cost and People."></svg>
   </div>
 SVG
 page(4, "Agree on What Matters",
@@ -303,25 +293,15 @@ path_steps = [
   ["Investigation", "Why it’s happening.", "The trip log points to high discharge temperature, and the cooler was due for cleaning last week.", "Lets them dig into the cause."],
   ["Action", "Close the loop.", "The maintenance lead schedules the cleaning, and production adjusts the plan for the next shift.", "Closes the loop."],
 ]
-pbtns = path_steps.each_with_index.map { |(n, *), i| %(<button class="path-step#{i.zero? ? ' is-reached' : ''}" type="button" role="tab" aria-selected="#{i.zero?}" data-i="#{i}"><span class="p-dot" aria-hidden="true"></span><span class="p-name">#{n}</span></button>) }.join
+# The four steps down a rail; the current one opens to show what it does and an example (scripts.js)
+psteps = path_steps.each_with_index.map { |(n, _, ex, does), i|
+  %(<li class="path-step#{i.zero? ? ' is-reached is-current' : ''}"><button class="p-head" type="button" aria-expanded="#{i.zero?}" aria-controls="p-more-#{i}"><span class="p-dot" aria-hidden="true"></span><span class="p-name">#{n}</span></button><div class="p-more" id="p-more-#{i}"><div><p class="pc-h">#{does}</p><p class="pc-b">#{ex}</p></div></div></li>)
+}.join("\n      ")
 path_viz = <<~HTML
-  <div class="stage pathway" data-reveal="top 80%">
-    <div class="path-steps" role="tablist" aria-label="Decision path"><span class="path-fill" id="path-fill"></span>#{pbtns}</div>
-    <div class="path-card" role="tabpanel" aria-live="polite">
-      <div class="path-copy">
-        <span class="pc-label" id="pc-label">#{path_steps[0][0]} · #{path_steps[0][3]}</span>
-        <p class="pc-title" id="pc-title">#{path_steps[0][2]}</p>
-        <p class="pc-note">An example alert, followed from first signal to action.</p>
-        <div class="path-nav"><button type="button" id="path-prev" disabled>Back</button><button type="button" class="is-primary" id="path-next">Next: Context</button></div>
-      </div>
-      <svg class="viz" id="path-art" viewBox="0 0 420 260" aria-hidden="true">
-        <rect class="node" x="10" y="10" width="400" height="240" rx="8" style="stroke-opacity:.2"/>
-        <g data-s="0"><rect class="node is-pink" x="30" y="30" width="150" height="72" rx="6"/><circle class="ball" cx="52" cy="52" r="7"/><path class="ln" d="M68 52h86M46 80h70" stroke-opacity=".4"/></g>
-        <g data-s="1"><rect class="node" x="196" y="30" width="194" height="72" rx="6" style="stroke-opacity:.4"/><path class="ln" d="M212 86C240 84 250 50 280 60S330 40 374 46" stroke-opacity=".6"/><circle cx="374" cy="46" r="4" fill="#ff0074"/></g>
-        <g data-s="2"><rect class="node" x="30" y="118" width="360" height="80" rx="6" style="stroke-opacity:.4"/><path class="ln" d="M46 138h120M46 158h220M46 178h160" stroke-opacity=".35"/><path class="ln" d="M280 182l24-30 20 14 26-34" stroke-opacity=".7"/></g>
-        <g data-s="3"><rect class="node is-pink" x="30" y="212" width="220" height="26" rx="13"/><path class="ln" d="M44 225l6 6 12-12" stroke="#ff0074"/><path class="ln" d="M74 225h150" stroke-opacity=".4"/></g>
-      </svg>
-    </div>
+  <div class="stage pathway" data-reveal="top 95%">
+    <ol class="path-rail" aria-label="Decision path"><span class="path-fill" aria-hidden="true"></span>
+      #{psteps}
+    </ol>
   </div>
 HTML
 views = [
@@ -333,16 +313,12 @@ views = [
 ]
 views_html = views.map { |cap, art| %(<li class="view"><svg class="viz" viewBox="0 0 110 110" aria-hidden="true">#{art}</svg><h3>#{cap}</h3></li>) }.join
 tiers = <<~HTML
-  <div class="tiers" data-reveal="top 80%">
-    <svg class="viz" id="pyramid" viewBox="0 0 420 300" role="img" aria-label="An information pyramid with three tiers: always visible at the top, on demand in the middle, on investigation at the base.">
-      <path class="tier" d="M210 20L280 110H140Z" fill="#ff0074"/>
-      <path class="tier" d="M134 120H286L346 200H74Z" fill="#00424f"/>
-      <path class="tier" d="M68 210H352L412 290H8Z" fill="#d5def0"/>
-    </svg>
+  <div class="tiers" data-reveal="top 90%">
+    <svg class="layers" id="layers" viewBox="0 0 320 300" role="img" aria-label="Three layers: a small pink one for what’s always visible, a wider teal one for what’s available on demand, and the widest, palest one for what’s revealed during investigation. Each fills in turn, then they draw together into one stack."></svg>
     <ol class="tier-list">
-      <li><span class="t-key" style="background:#ff0074"></span><h3>Always visible</h3><p>Keep the first tier small.</p></li>
-      <li><span class="t-key" style="background:#00424f"></span><h3>Available on demand</h3><p>Useful only on request.</p></li>
-      <li><span class="t-key" style="background:#d5def0"></span><h3>Revealed during investigation</h3><p>Only matters once someone starts investigating.</p></li>
+      <li><svg class="t-key" viewBox="0 0 14 14" aria-hidden="true"><path d="M1 7 L7 4 L13 7 L7 10Z" stroke="#ff0074" stroke-opacity=".9"/></svg><h3>Always visible</h3><p>Keep the first tier small.</p></li>
+      <li><svg class="t-key" viewBox="0 0 14 14" aria-hidden="true"><path d="M1 7 L7 4 L13 7 L7 10Z" stroke="#002a32" stroke-opacity=".5"/></svg><h3>Available on demand</h3><p>Useful only on request.</p></li>
+      <li><svg class="t-key" viewBox="0 0 14 14" aria-hidden="true"><path d="M1 7 L7 4 L13 7 L7 10Z" stroke="#002a32" stroke-opacity=".28"/></svg><h3>Revealed during investigation</h3><p>Only matters once someone starts investigating.</p></li>
     </ol>
   </div>
   <p class="block-sub" data-reveal="top 90%"><span>Context views at the oil and gas company, each added because it made a decision faster or clearer.</span></p>
@@ -357,7 +333,7 @@ page(5, "Design Around Decisions",
     ["The last step of CLEAR is a roadmap: what to tackle now, what comes next, and what can wait.",
      "Then design around a simple path. A signal tells someone that something needs attention. Context tells them what it means. Investigation lets them dig into the cause. Action closes the loop. Most dashboards stop at the signal: a red tile, and then you’re on your own."]) +
   block("signal-to-action", "From signal to action",
-    ["Follow one alert along the path. Most dashboards stop at the first step."], nil, path_viz) +
+    ["Follow one alert along the path. Most dashboards stop at the first step."], path_viz, nil, reveal: "top 95%") +
   howto([
     ["Start", "Choose your starting point.", "Pick the experience people use every day and struggle with most. For many operators, that’s daily reporting and exception handling."],
     ["Focus", "Pick one role and one recurring decision.", "Design that well before designing everything."],
@@ -379,7 +355,7 @@ page(5, "Design Around Decisions",
 # ───────────────────────── 06 · Test before you build ─────────────────────────
 loop_svg = <<~SVG
   <div class="stage viz" id="loop">
-    <svg viewBox="0 0 1000 340" role="img" aria-label="A loop of prototype, test and refine, then a hand-off to a blueprint, a delivered platform and a predictive layer built on it.">
+    <svg viewBox="43 9 929 282" role="img" aria-label="A loop of prototype, test and refine, then a hand-off to a blueprint, a delivered platform and a predictive layer built on it.">
       <circle class="gd" cx="210" cy="170" r="120" style="stroke-opacity:.3"/>
       <path class="ln l-ring" d="M210 50A120 120 0 1 1 209.9 50" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="1" stroke-opacity=".55"/>
       <g text-anchor="middle">

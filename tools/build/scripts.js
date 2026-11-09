@@ -17,10 +17,11 @@ window.PlaybookChapter = (P) => {
     const f1 = (n) => n.toFixed(1);
 
     // Two layouts share one drawing. Spectrum runs from `a` (pane of glass) to `b` (source of truth).
-    const WIDE = { vb: "0 0 1000 440", S: { x: 70, y: 40, w: 260, h: 170 }, ball: { x: 820, y: 125 },
+    const WIDE = { vb: "69 39 896 353", // cropped to the drawing
+      S: { x: 70, y: 40, w: 260, h: 170 }, ball: { x: 820, y: 125 },
       a: { x: 200, y: 300 }, b: { x: 820, y: 300 },
       pane: { x: 200, y: 344 }, truth: { x: 820, y: 344 } };
-    const STACKED = { vb: "0 0 400 640", S: { x: 70, y: 24, w: 260, h: 170 }, ball: { x: 200, y: 404 },
+    const STACKED = { vb: "14 23 330 564", S: { x: 70, y: 24, w: 260, h: 170 }, ball: { x: 200, y: 404 },
       a: { x: 22, y: 109 }, b: { x: 22, y: 404 },
       pane: { x: 200, y: 246 }, truth: { x: 200, y: 540 } };
 
@@ -181,50 +182,6 @@ window.PlaybookChapter = (P) => {
   });
 };
 
-// ==== roles ====
-/* Step 2: choose a role; the same sample view reshapes to that role's level of detail. */
-window.PlaybookChapter = (P) => {
-  const L = {
-    exec:        [[0,0,32,40],[34,0,32,40],[68,0,32,40],[0,44,100,56]],
-    reliability: [[0,0,100,18],[0,22,32,37],[34,22,32,37],[68,22,32,37],[0,63,32,37],[34,63,32,37],[68,63,32,37]],
-    maintenance: [[0,0,34,30],[0,34,34,30],[0,68,34,32],[38,0,62,60],[38,64,30,36],[70,64,30,36]],
-    project:     [[0,0,64,21],[16,26,58,21],[36,52,64,21],[8,78,48,22],[76,0,24,21]],
-    engineering: [[0,0,49,40],[51,0,49,40],[0,44,24,26],[25.3,44,24,26],[50.6,44,24,26],[76,44,24,26],[0,74,32,26],[34,74,32,26],[68,74,32,26]],
-  };
-  const DEPTH = {
-    exec: "Seconds: are operations healthy, and where aren’t they?",
-    reliability: "Asset by asset",
-    maintenance: "The signal, then the detail behind it",
-    project: "Progress, risks and dependencies",
-    engineering: "Down to a single asset’s detail",
-  };
-  const tabs = P.$$(".role-tab"), tiles = P.$$("#board .tile");
-  if (!tabs.length) return;
-  const name = P.$("#role-name"), depth = P.$("#role-depth");
-  const show = (key) => {
-    tabs.forEach((t) => { const on = t.dataset.role === key; t.setAttribute("aria-selected", on); t.tabIndex = on ? 0 : -1; });
-    const lay = L[key];
-    tiles.forEach((tile, i) => {
-      const r = lay[i];
-      tile.classList.toggle("is-off", !r);
-      if (r) Object.assign(tile.style, { left: r[0] + "%", top: r[1] + "%", width: r[2] + "%", height: r[3] + "%" });
-    });
-    name.textContent = P.$(`.role-tab[data-role="${key}"] .r-name`).textContent;
-    depth.textContent = DEPTH[key];
-  };
-  tabs.forEach((t, i) => {
-    t.addEventListener("click", () => show(t.dataset.role));
-    t.addEventListener("keydown", (e) => {
-      const d = e.key === "ArrowDown" || e.key === "ArrowRight" ? 1 : e.key === "ArrowUp" || e.key === "ArrowLeft" ? -1 : 0;
-      if (!d) return;
-      e.preventDefault();
-      const n = tabs[(i + d + tabs.length) % tabs.length];
-      n.focus(); show(n.dataset.role);
-    });
-  });
-  show("exec");
-};
-
 // ==== trace ====
 /* Step 3: one metric splits into conflicting copies and only rejoins where a definition is agreed. */
 window.PlaybookChapter = (P) => {
@@ -245,87 +202,201 @@ window.PlaybookChapter = (P) => {
 };
 
 // ==== sieve ====
-/* Step 4: a cloud of measures filters through five questions and settles into five categories. */
+/* Step 4: measures fall through five tests, one at a time. The ones that pass turn pink; the ones that fail are let go.
+   The few that pass all five settle into Safety, Quality, Delivery, Cost and People. Pinned on wide screens. */
 window.PlaybookChapter = (P) => {
-  const host = P.$("#sieve-dots");
-  if (!host) return;
-  const NS = "http://www.w3.org/2000/svg", N = 48, GATES = [300, 405, 510, 615, 720];
-  let s = 11;
-  const rnd = () => (s = (s * 16807) % 2147483647, (s - 1) / 2147483646);
-  const sm = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
-  const survivors = new Set([3, 9, 14, 20, 25, 31, 36, 40, 44, 47]);
-  let k = 0;
-  const dots = Array.from({ length: N }, (_, i) => {
-    const a = rnd() * Math.PI * 2, r = Math.sqrt(rnd()) * 105;
-    const d = { sx: 140 + Math.cos(a) * r * 0.85, sy: 245 + Math.sin(a) * r, delay: rnd() * 0.18 };
-    if (survivors.has(i)) { const c = Math.floor(k / 2); d.fx = 868 + (k % 2) * 18; d.fy = 120 + c * 62; d.keep = true; k++; }
-    else { d.gate = Math.floor(rnd() * 5); d.gy = 110 + rnd() * 290; }
-    d.el = document.createElementNS(NS, "circle");
-    d.el.setAttribute("r", 5);
-    host.appendChild(d.el);
-    return d;
+  const svg = P.$("#sieve svg");
+  if (!svg) return;
+  const NS = "http://www.w3.org/2000/svg", PINK = "#ff0074", TEAL = "#002a32";
+  const el = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); parent.appendChild(e); return e; };
+  const set = (e, attrs) => { for (const k in attrs) e.setAttribute(k, attrs[k]); };
+  const text = (cls, x, y, str, anchor = "middle", extra = {}) => { const t = el("text", { class: cls, x, y, "text-anchor": anchor, ...extra }, svg); t.textContent = str; return t; };
+  const cl = (x) => Math.min(1, Math.max(0, x));
+  const sm = (a, b, x) => { const t = cl((x - a) / (b - a)); return t * t * (3 - 2 * t); };
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const f1 = (n) => n.toFixed(1), f3 = (n) => n.toFixed(3);
+  let seed = 7; // seeded, so the measures fall the same way on every visit
+  const R = () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+
+  const TESTS = [["Decision", ["Would anyone", "act on it?"]], ["Shared", ["Do several", "roles use it?"]], ["Available", ["Can we measure", "it today?"]], ["Trusted", ["Is the source", "reliable?"]], ["Important", ["Does it move", "the business?"]]];
+  const CATS = ["Safety", "Quality", "Delivery", "Cost", "People"];
+  // Dark gray at the start, pink once a measure has passed every test
+  const GRAY = [74, 84, 88], PK = [255, 0, 116];
+  const tint = (t) => `rgb(${GRAY.map((c, i) => Math.round(lerp(c, PK[i], t))).join(",")})`;
+  const AT = (i) => .14 + i * .15, FINAL = [.8, .93]; // when each test is applied; when the survivors settle
+
+  // One set of margins for the tests, the hairline and the categories; 40 between tests
+  const FX0 = 380, FX1 = 940, TOP = 20, CLOUD = 32, SP = 40; // the viewBox is cropped to exactly this content
+  const BAR = Array.from({ length: 5 }, (_, i) => TOP + CLOUD + 34 + i * SP);
+  const HL = BAR[4] + 64;
+  const binX = (c) => FX0 + (FX1 - FX0) * (c + .5) / 5;
+  // Each test's number, with a hairline ring while it's the one being applied (centred: central baseline, no letter-spacing)
+  const nums = BAR.map((y, i) => ({
+    ring: el("circle", { cx: FX0 - 18, cy: y, r: 9, fill: "none", stroke: PINK, "stroke-width": .5, "stroke-opacity": 0 }, svg),
+    t: text("axis", FX0 - 18, y, String(i + 1), "middle", { "fill-opacity": .4, "dominant-baseline": "central", style: "letter-spacing: 0" }),
+  }));
+  const bars = BAR.map((y) => el("line", { class: "ln", x1: FX0, x2: FX1, y1: y, y2: y, "stroke-dasharray": "3 5", "stroke-opacity": .18 }, svg));
+  // One hairline across every category, a delicate tick above each name
+  el("line", { class: "ln", x1: FX0, x2: FX1, y1: HL, y2: HL, "stroke-opacity": .25 }, svg);
+  CATS.forEach((c, i) => { el("line", { class: "ln", x1: binX(i), x2: binX(i), y1: HL + 4, y2: HL + 9, "stroke-opacity": .35 }, svg); text("cat", binX(i), HL + 30, c); });
+  // The caption: only the test being applied
+  const mid = (BAR[0] + BAR[4]) / 2;
+  const cap = { k: text("axis", 60, mid - 28, "", "start", { "fill-opacity": .6 }), q1: text("big", 60, mid + 6, "", "start"), q2: text("big", 60, mid + 38, "", "start"), cur: null };
+
+  // 60 measures: most fail the first test, fewer each test after, ten survive (two per category)
+  const fails = [];
+  [22, 12, 8, 5, 3, 10].forEach((n, f) => { for (let i = 0; i < n; i++) fails.push(f); });
+  fails.sort(() => R() - .5);
+  let kept = 0;
+  const g = el("g", {}, svg);
+  const M = fails.map((f) => {
+    const m = { f, u: R(), v: R(), d: R() * .05 };
+    if (f === 5) { m.cat = kept % 5; m.row = Math.floor(kept++ / 5); }
+    m.sx = FX0 + 12 + m.u * (FX1 - FX0 - 24); m.sy = TOP + m.v * CLOUD;
+    m.c = el("circle", { r: 4.5, "stroke-width": 1 }, g);
+    return m;
   });
+
   const draw = (p) => {
-    dots.forEach((d) => {
-      const q = Math.min(1, Math.max(0, (p - d.delay) / 0.78));
-      let x, y, op = 0.55, fill = "#002a32";
-      if (d.keep) {
-        const e = q < 0.5 ? 2 * q * q : 1 - Math.pow(-2 * q + 2, 2) / 2;
-        x = d.sx + (d.fx - d.sx) * e; y = d.sy + (d.fy - d.sy) * e;
-        if (q > 0.92) { fill = "#ff0074"; op = 1; }
-      } else {
-        const reach = (d.gate + 1) / 5;              // how far along the sieve this one gets
-        const t = Math.min(1, q / reach);
-        const gx = GATES[d.gate] - 14;
-        x = d.sx + (gx - d.sx) * (1 - Math.pow(1 - t, 2));
-        y = d.sy + (d.gy - d.sy) * t;
-        const fall = sm(0.85, 1, t) * (q >= reach ? 1 : 0);
-        y += 40 * fall; op = 0.55 * (1 - fall);
+    M.forEach((m) => {
+      // how many tests this measure has reached (it rests on each line before going through)
+      let s = 0; for (let i = 0; i <= Math.min(m.f, 4); i++) s += sm(AT(i) - .11 + m.d, AT(i) + m.d, p);
+      if (m.f === 5) s += sm(FINAL[0] + m.d, FINAL[1] + m.d, p);
+      const k = Math.floor(s), fr = s - k, k2 = fr > 0 ? Math.min(k + 1, 6) : k;
+      const Y = (n) => (n === 0 ? m.sy : n <= 5 ? BAR[n - 1] - 5.5 : HL - 7 - m.row * 11);
+      const X = (n) => (n <= 5 ? m.sx : binX(m.cat));
+      let x = lerp(X(k), X(k2), fr);
+      const y = lerp(Y(k), Y(k2), fr);
+      const passed = cl(Math.max(0, s - 1) / 5), col = tint(passed ** .9);
+      let fillO = lerp(.7, 1, passed), strokeO = 0, base = 1;
+      if (m.f < 5) { // let go: turns hollow and slides off to the right
+        const t = AT(m.f) + m.d, r = sm(t + .02, t + .1, p);
+        x = lerp(x, FX1 + 8 + m.u * 20, r); base = 1 - sm(.35, .9, r);
+        fillO *= 1 - r; strokeO = .5 * r;
       }
-      d.el.setAttribute("cx", x.toFixed(1)); d.el.setAttribute("cy", y.toFixed(1));
-      d.el.setAttribute("fill", fill); d.el.setAttribute("opacity", op.toFixed(3));
+      set(m.c, { cx: f1(x), cy: f1(y), fill: col, stroke: col, "fill-opacity": f3(fillO * base), "stroke-opacity": f3(strokeO * base) });
     });
+    // The test being applied: pink line, pink number, ring
+    const active = TESTS.findIndex((_, i) => p < AT(i) + .07);
+    bars.forEach((b, i) => {
+      const on = i === active && p > AT(0) - .12;
+      set(b, { style: `stroke: ${on ? PINK : TEAL}`, "stroke-opacity": on ? .9 : .18 }); // inline, so it beats .viz .ln
+      set(nums[i].ring, { "stroke-opacity": on ? 1 : 0 });
+      set(nums[i].t, { style: `letter-spacing: 0; fill: ${on ? PINK : TEAL}`, "fill-opacity": on ? 1 : .4 });
+    });
+    const key = p < AT(0) - .12 ? "intro" : active === -1 ? "end" : active;
+    if (key !== cap.cur) {
+      cap.cur = key;
+      const [a, b, c] = key === "intro" ? ["Five tests", "Every measure", "must pass all five."]
+        : key === "end" ? ["What’s left", "A few measures,", "each with one owner."]
+        : [`Test ${key + 1} of 5 · ${TESTS[key][0]}`, ...TESTS[key][1]];
+      cap.k.textContent = a; cap.q1.textContent = b; cap.q2.textContent = c;
+    }
   };
+
   if (!P.gsap || P.reduce) { draw(1); return; }
   const o = { p: 0 };
   draw(0);
-  P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p),
-    scrollTrigger: { trigger: "#sieve", start: "top 85%", end: "bottom 85%", scrub: 0.8 } });
+  const mm = P.gsap.matchMedia();
+  mm.add("(min-width: 1101px) and (min-height: 620px)", () => {
+    P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p),
+      scrollTrigger: { trigger: "#few-measures", start: () => `top top+=${P.barH()}`, end: "+=140%", pin: true, scrub: 0.6, anticipatePin: 1, invalidateOnRefresh: true } });
+  });
+  mm.add("(max-width: 1100px), (max-height: 619px)", () => {
+    P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p), scrollTrigger: { trigger: "#sieve", start: "top 75%", end: "bottom 35%", scrub: 0.8 } });
+  });
 };
 
 // ==== path ====
-/* Step 5: tap through one alert, from signal to action. */
+/* Step 5: one alert, from signal to action. The steps run down a rail beside the section intro; scrolling moves
+   through them (pinned on wide screens) and the current step opens to show what it does and an example.
+   With reduced motion, or without GSAP, each step is a button instead. */
 window.PlaybookChapter = (P) => {
-  const STEPS = [
-    ["Signal", "Tells someone that something needs attention.", "Gas compression availability on one platform drops below its target."],
-    ["Context", "Tells them what it means.", "One compressor has tripped twice in 24 hours, and the other two trains are running near capacity."],
-    ["Investigation", "Lets them dig into the cause.", "The trip log points to high discharge temperature, and the cooler was due for cleaning last week."],
-    ["Action", "Closes the loop.", "The maintenance lead schedules the cleaning, and production adjusts the plan for the next shift."],
-  ];
-  const btns = P.$$(".path-step");
-  if (!btns.length) return;
-  const label = P.$("#pc-label"), title = P.$("#pc-title"), prev = P.$("#path-prev"), next = P.$("#path-next");
-  const fill = P.$("#path-fill"), groups = P.$$("#path-art [data-s]");
-  groups.forEach((g) => { g.style.transition = "opacity .5s cubic-bezier(.22,1,.36,1)"; });
-  let cur = 0;
-  const show = (i) => {
-    cur = i;
-    btns.forEach((b, j) => { b.setAttribute("aria-selected", j === i); b.classList.toggle("is-reached", j <= i); b.tabIndex = j === i ? 0 : -1; });
-    fill.style.width = `${i * 25}%`;  // from the first dot to the current one
-    label.textContent = `${STEPS[i][0]} · ${STEPS[i][1]}`;
-    title.textContent = STEPS[i][2];
-    groups.forEach((g) => { g.style.opacity = +g.dataset.s <= i ? 1 : 0.08; });
-    prev.disabled = i === 0;
-    next.textContent = i < STEPS.length - 1 ? `Next: ${STEPS[i + 1][0]}` : "Start over";
-    if (P.gsap && !P.reduce) P.gsap.fromTo([label, title], { y: 10, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, stagger: 0.05, ease: "expo.out" });
+  const rail = P.$(".path-rail");
+  if (!rail) return;
+  const rows = P.$$(".path-step", rail), heads = P.$$(".p-head", rail), fill = P.$(".path-fill", rail), box = P.$(".pathway");
+  // The line joins the first dot to the last; the open step changes the spacing, so measure the dots every time
+  const centre = (li) => { const d = P.$(".p-dot", li); return li.offsetTop + d.offsetTop + d.offsetHeight / 2; };
+  let cur = -1, f = 0;
+  const layout = () => {
+    const Y = rows.map(centre), k = Math.min(rows.length - 2, Math.floor(f));
+    rail.style.setProperty("--y0", `${Y[0]}px`);
+    rail.style.setProperty("--y1", `${Y[Y.length - 1]}px`);
+    fill.style.height = `${Y[k] + (Y[k + 1] - Y[k]) * (f - k) - Y[0]}px`;
   };
-  btns.forEach((b, i) => b.addEventListener("click", () => show(i)));
-  prev.addEventListener("click", () => show(Math.max(0, cur - 1)));
-  next.addEventListener("click", () => show(cur < STEPS.length - 1 ? cur + 1 : 0));
-  show(0);
-  if (P.gsap && !P.reduce) {
-    P.gsap.from("#pyramid .tier", { y: 24, opacity: 0, duration: 1, stagger: 0.12, ease: "expo.out",
-      scrollTrigger: { trigger: "#pyramid", start: "top 80%", toggleActions: "play none none reverse" } });
+  const show = (i) => {
+    rows.forEach((li, j) => { li.classList.toggle("is-reached", j <= i); li.classList.toggle("is-current", j === i); });
+    if (i === cur) return;
+    cur = i;
+    heads.forEach((h, j) => h.setAttribute("aria-expanded", j === i));
+  };
+  new ResizeObserver(layout).observe(rail); // follows the steps as they open and close
+
+  if (!P.gsap || P.reduce) {
+    heads.forEach((h, i) => h.addEventListener("click", () => { f = i; show(i); layout(); }));
+    show(0); layout();
+  } else {
+    box.classList.add("is-scrubbed"); // the steps follow the scroll, so they aren't clickable
+    heads.forEach((h) => { h.tabIndex = -1; });
+    const draw = (p) => {
+      f = 3 * Math.min(1, Math.max(0, (p - 0.08) / 0.8));
+      show(Math.min(3, Math.floor(f + 0.02)));
+      layout();
+    };
+    draw(0);
+    const o = { p: 0 };
+    const mm = P.gsap.matchMedia();
+    mm.add("(min-width: 1101px) and (min-height: 620px)", () => {
+      P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p),
+        // refreshPriority: lay this pin out before the how-to-apply pin further down, so that one starts after it
+        scrollTrigger: { trigger: "#signal-to-action", start: () => `top top+=${P.barH()}`, end: "+=160%", pin: true, scrub: 0.6, anticipatePin: 1, invalidateOnRefresh: true, refreshPriority: 1 } });
+    });
+    mm.add("(max-width: 1100px), (max-height: 619px)", () => {
+      P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p),
+        scrollTrigger: { trigger: ".pathway", start: "top 75%", end: "+=600", scrub: 0.6 } });
+    });
+  }
+
+  // What goes where: three layers, outlined, fill in turn as you scroll, then draw together into one stack.
+  // The first tier is fully opaque (it's always there); the two below are slightly see-through.
+  const lsvg = P.$("#layers");
+  if (lsvg) {
+    const NS = "http://www.w3.org/2000/svg";
+    const cl = (x) => Math.min(1, Math.max(0, x));
+    const sm = (a, b, x) => { const t = cl((x - a) / (b - a)); return t * t * (3 - 2 * t); };
+    const lerp = (a, b, t) => a + (b - a) * t;
+    const L = [
+      { fill: "#ff0074", line: "#ff0074", lo: .9, w: 96, alpha: 1 },
+      { fill: "#00424f", line: "#002a32", lo: .5, w: 200, alpha: .72 },
+      { fill: "#d5def0", line: "#002a32", lo: .28, w: 300, alpha: .8 },
+    ];
+    const ON = [.08, .3, .52], TIGHT = [.76, .94];               // when each tier fills; when they draw together
+    const SPREAD = [64, 150, 236], CLOSE = [116, 150, 188];      // layer centres, apart and drawn together
+    const plane = (w) => `M${-w / 2} 0 L0 ${-w / 4} L${w / 2} 0 L0 ${w / 4}Z`;
+    // drawn bottom first, so the smaller layers sit on top
+    const planes = [2, 1, 0].map((i) => { const e = document.createElementNS(NS, "path"); e.setAttribute("d", plane(L[i].w)); e.setAttribute("stroke-width", "1"); e.setAttribute("stroke-linejoin", "round"); lsvg.appendChild(e); return { i, e }; });
+    const rows = P.$$(".tier-list li"), marks = rows.map((li) => P.$(".t-key path", li));
+    const drawLayers = (p) => {
+      const tight = sm(TIGHT[0], TIGHT[1], p);
+      planes.forEach(({ i, e }) => {
+        const s = sm(ON[i], ON[i] + 0.08, p), a = (s * L[i].alpha).toFixed(3);
+        const y = lerp(lerp(150, SPREAD[i], sm(0, 0.08, p)), CLOSE[i], tight);
+        e.setAttribute("transform", `translate(160 ${y.toFixed(1)})`);
+        e.setAttribute("fill", L[i].fill); e.setAttribute("fill-opacity", a);
+        e.setAttribute("stroke", L[i].line); e.setAttribute("stroke-opacity", (i === 2 ? lerp(L[i].lo, .35, s) : L[i].lo).toFixed(3));
+        e.setAttribute("stroke-dasharray", i === 2 && s < 0.5 ? "2 4" : "none");
+        marks[i].setAttribute("fill", L[i].fill); marks[i].setAttribute("fill-opacity", a);
+        rows[i].classList.toggle("is-dim", p < ON[i] - 0.02);
+      });
+    };
+    if (!P.gsap || P.reduce) drawLayers(1);
+    else {
+      const lo = { p: 0 };
+      drawLayers(0);
+      P.gsap.to(lo, { p: 1, ease: "none", onUpdate: () => drawLayers(lo.p),
+        // done while the top of the stack is still well inside the screen
+        scrollTrigger: { trigger: ".tiers", start: "top 85%", end: "top 30%", scrub: 0.8 } });
+    }
   }
 };
 

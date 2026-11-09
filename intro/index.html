@@ -104,7 +104,7 @@
         <p>Operational information loses trust on its way from source to decision. It’s born in sensors, records and systems. It’s exported and reshaped in spreadsheets. It’s reconciled by hand before meetings. It’s presented in dashboards built by different teams. By the time it reaches a decision, nobody is sure which version to believe.</p>
       </div>
 <div class="stage viz trust-viz" id="flow">
-  <svg viewBox="0 0 560 490" role="img" aria-label="Trust steps down as operational information moves from Source to Prepare, Reconcile, Present and Act.">
+  <svg viewBox="-1 12 562 469" role="img" aria-label="Trust steps down as operational information moves from Source to Prepare, Reconcile, Present and Act.">
     <line class="hl" x1="0" y1="40" x2="540" y2="40" stroke-opacity=".3"/>
     <text class="axis" x="540" y="24" text-anchor="end">Trust</text>
     <text class="axis axis-dim" text-anchor="end" transform="translate(556 56) rotate(-90)">High</text>
@@ -147,7 +147,7 @@
       
     </div>
 <div class="stage viz truth-viz" id="truth">
-  <svg viewBox="0 0 1000 440" role="img" aria-label="A dashboard's data moves along a spectrum, from a single pane of glass that puts all your data on one screen, to a single source of truth, where everyone agrees what each number means, where it comes from and who owns it."></svg>
+  <svg viewBox="69 39 896 353" role="img" aria-label="A dashboard's data moves along a spectrum, from a single pane of glass that puts all your data on one screen, to a single source of truth, where everyone agrees what each number means, where it comes from and who owns it."></svg>
 </div>
 <p class="block-note" data-reveal="top 85%"><span>You can have the first without the second, and then a new dashboard simply shows the disagreement more efficiently.</span></p>
 
@@ -249,10 +249,11 @@ window.PlaybookChapter = (P) => {
     const f1 = (n) => n.toFixed(1);
 
     // Two layouts share one drawing. Spectrum runs from `a` (pane of glass) to `b` (source of truth).
-    const WIDE = { vb: "0 0 1000 440", S: { x: 70, y: 40, w: 260, h: 170 }, ball: { x: 820, y: 125 },
+    const WIDE = { vb: "69 39 896 353", // cropped to the drawing
+      S: { x: 70, y: 40, w: 260, h: 170 }, ball: { x: 820, y: 125 },
       a: { x: 200, y: 300 }, b: { x: 820, y: 300 },
       pane: { x: 200, y: 344 }, truth: { x: 820, y: 344 } };
-    const STACKED = { vb: "0 0 400 640", S: { x: 70, y: 24, w: 260, h: 170 }, ball: { x: 200, y: 404 },
+    const STACKED = { vb: "14 23 330 564", S: { x: 70, y: 24, w: 260, h: 170 }, ball: { x: 200, y: 404 },
       a: { x: 22, y: 109 }, b: { x: 22, y: 404 },
       pane: { x: 200, y: 246 }, truth: { x: 200, y: 540 } };
 
