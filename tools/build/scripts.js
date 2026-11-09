@@ -308,35 +308,55 @@ window.PlaybookChapter = (P) => {
 };
 
 // ==== path ====
-/* Step 5: tap through one alert, from signal to action. */
+/* Step 5: one alert, from signal to action. The steps run down a rail beside the section intro; scrolling moves
+   through them (pinned on wide screens) and the current step opens to show what it does and an example.
+   With reduced motion, or without GSAP, each step is a button instead. */
 window.PlaybookChapter = (P) => {
-  const STEPS = [
-    ["Signal", "Tells someone that something needs attention.", "Gas compression availability on one platform drops below its target."],
-    ["Context", "Tells them what it means.", "One compressor has tripped twice in 24 hours, and the other two trains are running near capacity."],
-    ["Investigation", "Lets them dig into the cause.", "The trip log points to high discharge temperature, and the cooler was due for cleaning last week."],
-    ["Action", "Closes the loop.", "The maintenance lead schedules the cleaning, and production adjusts the plan for the next shift."],
-  ];
-  const btns = P.$$(".path-step");
-  if (!btns.length) return;
-  const label = P.$("#pc-label"), title = P.$("#pc-title"), prev = P.$("#path-prev"), next = P.$("#path-next");
-  const fill = P.$("#path-fill"), groups = P.$$("#path-art [data-s]");
-  groups.forEach((g) => { g.style.transition = "opacity .5s cubic-bezier(.22,1,.36,1)"; });
-  let cur = 0;
-  const show = (i) => {
-    cur = i;
-    btns.forEach((b, j) => { b.setAttribute("aria-selected", j === i); b.classList.toggle("is-reached", j <= i); b.tabIndex = j === i ? 0 : -1; });
-    fill.style.width = `${i * 25}%`;  // from the first dot to the current one
-    label.textContent = `${STEPS[i][0]} · ${STEPS[i][1]}`;
-    title.textContent = STEPS[i][2];
-    groups.forEach((g) => { g.style.opacity = +g.dataset.s <= i ? 1 : 0.08; });
-    prev.disabled = i === 0;
-    next.textContent = i < STEPS.length - 1 ? `Next: ${STEPS[i + 1][0]}` : "Start over";
-    if (P.gsap && !P.reduce) P.gsap.fromTo([label, title], { y: 10, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, stagger: 0.05, ease: "expo.out" });
+  const rail = P.$(".path-rail");
+  if (!rail) return;
+  const rows = P.$$(".path-step", rail), heads = P.$$(".p-head", rail), fill = P.$(".path-fill", rail), box = P.$(".pathway");
+  // The line joins the first dot to the last; the open step changes the spacing, so measure the dots every time
+  const centre = (li) => { const d = P.$(".p-dot", li); return li.offsetTop + d.offsetTop + d.offsetHeight / 2; };
+  let cur = -1, f = 0;
+  const layout = () => {
+    const Y = rows.map(centre), k = Math.min(rows.length - 2, Math.floor(f));
+    rail.style.setProperty("--y0", `${Y[0]}px`);
+    rail.style.setProperty("--y1", `${Y[Y.length - 1]}px`);
+    fill.style.height = `${Y[k] + (Y[k + 1] - Y[k]) * (f - k) - Y[0]}px`;
   };
-  btns.forEach((b, i) => b.addEventListener("click", () => show(i)));
-  prev.addEventListener("click", () => show(Math.max(0, cur - 1)));
-  next.addEventListener("click", () => show(cur < STEPS.length - 1 ? cur + 1 : 0));
-  show(0);
+  const show = (i) => {
+    rows.forEach((li, j) => { li.classList.toggle("is-reached", j <= i); li.classList.toggle("is-current", j === i); });
+    if (i === cur) return;
+    cur = i;
+    heads.forEach((h, j) => h.setAttribute("aria-expanded", j === i));
+  };
+  new ResizeObserver(layout).observe(rail); // follows the steps as they open and close
+
+  if (!P.gsap || P.reduce) {
+    heads.forEach((h, i) => h.addEventListener("click", () => { f = i; show(i); layout(); }));
+    show(0); layout();
+  } else {
+    box.classList.add("is-scrubbed"); // the steps follow the scroll, so they aren't clickable
+    heads.forEach((h) => { h.tabIndex = -1; });
+    const draw = (p) => {
+      f = 3 * Math.min(1, Math.max(0, (p - 0.08) / 0.8));
+      show(Math.min(3, Math.floor(f + 0.02)));
+      layout();
+    };
+    draw(0);
+    const o = { p: 0 };
+    const mm = P.gsap.matchMedia();
+    mm.add("(min-width: 1101px) and (min-height: 620px)", () => {
+      P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p),
+        // refreshPriority: lay this pin out before the how-to-apply pin further down, so that one starts after it
+        scrollTrigger: { trigger: "#signal-to-action", start: () => `top top+=${P.barH()}`, end: "+=160%", pin: true, scrub: 0.6, anticipatePin: 1, invalidateOnRefresh: true, refreshPriority: 1 } });
+    });
+    mm.add("(max-width: 1100px), (max-height: 619px)", () => {
+      P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p),
+        scrollTrigger: { trigger: ".pathway", start: "top 75%", end: "+=600", scrub: 0.6 } });
+    });
+  }
+
   if (P.gsap && !P.reduce) {
     P.gsap.from("#pyramid .tier", { y: 24, opacity: 0, duration: 1, stagger: 0.12, ease: "expo.out",
       scrollTrigger: { trigger: "#pyramid", start: "top 80%", toggleActions: "play none none reverse" } });

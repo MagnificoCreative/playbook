@@ -496,7 +496,7 @@ main { min-width: 0; }
   .nav-open .scrim { opacity: 1; pointer-events: auto; }
   .card { width: clamp(520px, 78vw, 900px); }
   .frag-top { grid-template-columns: minmax(0, 1fr); align-items: start; }
-  .pull { margin-top: 0; }
+  .pull, .block-top > .pathway { margin-top: 0; }
 }
 @media (max-width: 860px) {
   .field-panel { grid-template-columns: minmax(0, 1fr); }
@@ -662,32 +662,29 @@ main { min-width: 0; }
   .role-table .rt-l { display: block; font: 500 11px/1.4 var(--f-label); letter-spacing: .16em; text-transform: uppercase; color: var(--text-primary); opacity: .55; margin-bottom: 2px; }
 }
 
-/* Step 5 · the decision path */
-.pathway { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; }
-.path-steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); position: relative; }
-.path-steps::before { content: ""; position: absolute; left: 12px; right: 12px; top: 11px; height: 1.5px; background: var(--n200); }
-.path-fill { position: absolute; left: 12px; top: 11px; height: 1.5px; background: var(--pink); width: 0; transition: width .6s var(--ease-out); }
-.path-step { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 14px; text-align: left; padding-right: 12px; }
-.path-step .p-dot { width: 24px; height: 24px; border-radius: 50%; background: var(--bg-surface); border: 1.5px solid var(--n300); display: grid; place-items: center; transition: border-color .4s var(--ease-out), background-color .4s var(--ease-out); }
-.path-step .p-dot::after { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--n300); transition: background-color .4s var(--ease-out); }
-.path-step .p-name { font-size: 18px; font-weight: 400; color: var(--text-body); transition: color .3s var(--ease-out); }
-.path-step.is-reached .p-dot { border-color: var(--pink); }
-.path-step.is-reached .p-dot::after { background: var(--pink); }
-.path-step[aria-selected="true"] .p-name { color: var(--text-primary); }
-.path-step[aria-selected="true"] .p-dot { background: var(--pink); }
-.path-step[aria-selected="true"] .p-dot::after { background: var(--white); }
-.path-card { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 64px); align-items: center; min-height: 260px; }
-.path-copy { display: flex; flex-direction: column; gap: 14px; }
-.path-copy .pc-label { font-size: 14px; color: var(--pink); }
-.path-copy .pc-title { font-size: var(--t-h4); line-height: 1.25; font-weight: 300; }
-.path-copy .pc-text { font-size: var(--t-body); line-height: 1.5; color: var(--text-body); }
-.path-copy .pc-note { font-size: 14px; color: var(--text-body); }
-.path-nav { display: flex; gap: 10px; margin-top: 8px; }
-.path-nav button { height: 40px; padding: 0 18px; border-radius: 999px; border: 1px solid var(--hairline); font-size: 14px; font-weight: 400; transition: background-color .25s var(--ease-out), border-color .25s var(--ease-out); }
-.path-nav button:hover { border-color: var(--teal-900); }
-.path-nav button:disabled { opacity: .35; pointer-events: none; }
-.path-nav .is-primary { background: var(--pink); color: var(--white); border-color: var(--pink); }
-.path-nav .is-primary:hover { background: var(--pink-hover); }
+/* Step 5 · the decision path: a delicate rail beside the intro; the current step opens in place.
+   Hierarchy: the step name (18px), then what it does (15px, headline face), then the example (14px body). */
+.pathway { --dot: 9px; --gap: 28px; }
+.block-top > .pathway { margin-top: calc(var(--t-h2) * 0.22 + 9px); }  /* level with the headline, like the pull quotes */
+.path-rail { position: relative; }
+.path-rail::before, .path-fill { content: ""; position: absolute; left: calc(var(--dot) / 2 - .5px); width: 1px; top: var(--y0, 0); }
+.path-rail::before { height: calc(var(--y1, 0px) - var(--y0, 0px)); background: var(--n200); }
+.path-fill { height: 0; background: var(--pink); }
+.path-step { position: relative; display: grid; grid-template-columns: var(--dot) minmax(0, 1fr); column-gap: 16px; padding: calc(var(--gap) / 2) 0; }
+.path-step:first-child { padding-top: 0; }
+.path-step:last-child { padding-bottom: 0; }
+.p-head { grid-column: 1 / -1; display: grid; grid-template-columns: var(--dot) minmax(0, 1fr); column-gap: 16px; align-items: center; text-align: left; }
+.path-step .p-dot { position: relative; z-index: 1; width: var(--dot); height: var(--dot); border-radius: 50%; background: var(--bg-surface); border: 1px solid var(--n300); transition: background-color .35s var(--ease-out), border-color .35s var(--ease-out), box-shadow .35s var(--ease-out); }
+.path-step .p-name { font-size: 18px; line-height: 1.2; color: var(--text-body); transition: color .3s var(--ease-out); }
+.path-step.is-reached .p-dot { background: var(--pink); border-color: var(--pink); }
+.path-step.is-current .p-dot { box-shadow: 0 0 0 4px var(--bg-surface), 0 0 0 5px var(--pink); }
+.path-step.is-current .p-name { color: var(--text-primary); }
+.p-more { grid-column: 2; display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows .6s var(--ease-out), opacity .4s var(--ease-out); }
+.p-more > div { overflow: hidden; display: flex; flex-direction: column; gap: 6px; }
+.path-step.is-current .p-more { grid-template-rows: 1fr; opacity: 1; }
+.p-more .pc-h { padding-top: 10px; font-size: 15px; line-height: 1.35; color: var(--text-primary); }
+.p-more .pc-b { font-size: 14px; line-height: 1.5; font-weight: 300; color: var(--text-body); max-width: 48ch; }
+.pathway.is-scrubbed .p-head { pointer-events: none; cursor: default; }
 
 /* Step 5 · tiers + context views */
 .tiers { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 64px); align-items: center; }
@@ -724,7 +721,7 @@ main { min-width: 0; }
   .card--text { width: clamp(380px, 60vw, 600px); }
 }
 @media (max-width: 860px) {
-  .compare, .tiers, .path-card { grid-template-columns: minmax(0, 1fr); }
+  .compare, .tiers { grid-template-columns: minmax(0, 1fr); }
   .moves { grid-template-columns: minmax(0, 1fr); }
   /* Stacked: each step is wider than the one before, so they still build on each other */
   .stairs { grid-template-columns: minmax(0, 1fr); gap: 8px; }
@@ -736,7 +733,6 @@ main { min-width: 0; }
 @media (max-width: 767px) {
   .card--text { width: 100%; }
   .views { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .path-steps .p-name { font-size: 15px; }
   .cta-art { right: -45%; width: 110vw; opacity: .45; }
 }
 #pyramid { width: 100%; max-width: 360px; justify-self: center; }
@@ -798,8 +794,8 @@ main > .next { padding-block: 0; }
 
 /* Headlines in Syne (Inter is for body copy only). Syne starts at 400, so light titles move up to 400. */
 h1, h2, h3, .h2, .display, .card-label, .card-title, .next-title, .stat-num,
-.p-name, .pc-title, .compare-item h3, .group h3, .field-aside h3, .tier-list h3 {
+.p-name, .pc-h, .compare-item h3, .group h3, .field-aside h3, .tier-list h3 {
   font-family: var(--f-display);
   letter-spacing: -0.01em;
 }
-.card-title, .next-title, .stat-num, .pc-title, .compare-item h3 { font-weight: 400; }
+.card-title, .next-title, .stat-num, .pc-h, .compare-item h3 { font-weight: 400; }

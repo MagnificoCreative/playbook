@@ -158,12 +158,13 @@ def pull(text)
   %(<figure class="pull">\n          <span class="qmark" aria-hidden="true">“</span>\n          <blockquote><p>#{text}</p></blockquote>\n          <figcaption>From the interviews</figcaption>\n        </figure>)
 end
 
-def block(id, title, paras, right, body)
+def block(id, title, paras, right, body, reveal: nil)
   top_cls = right ? "block-top" : "block-top is-solo"
+  reveal_attr = reveal ? %(data-reveal="#{reveal}") : "data-reveal"
   <<~HTML
     <section class="sec" id="#{id}" data-section="#{id}" aria-labelledby="t-#{id}">
       <div class="panel block">
-        <div class="#{top_cls}" data-reveal>
+        <div class="#{top_cls}" #{reveal_attr}>
           <div class="block-intro">
             <h2 class="h2" id="t-#{id}">#{title}</h2>
             #{paras.map { |p| "<p>#{p}</p>" }.join("\n        ")}

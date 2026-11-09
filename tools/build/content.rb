@@ -293,25 +293,15 @@ path_steps = [
   ["Investigation", "Why it’s happening.", "The trip log points to high discharge temperature, and the cooler was due for cleaning last week.", "Lets them dig into the cause."],
   ["Action", "Close the loop.", "The maintenance lead schedules the cleaning, and production adjusts the plan for the next shift.", "Closes the loop."],
 ]
-pbtns = path_steps.each_with_index.map { |(n, *), i| %(<button class="path-step#{i.zero? ? ' is-reached' : ''}" type="button" role="tab" aria-selected="#{i.zero?}" data-i="#{i}"><span class="p-dot" aria-hidden="true"></span><span class="p-name">#{n}</span></button>) }.join
+# The four steps down a rail; the current one opens to show what it does and an example (scripts.js)
+psteps = path_steps.each_with_index.map { |(n, _, ex, does), i|
+  %(<li class="path-step#{i.zero? ? ' is-reached is-current' : ''}"><button class="p-head" type="button" aria-expanded="#{i.zero?}" aria-controls="p-more-#{i}"><span class="p-dot" aria-hidden="true"></span><span class="p-name">#{n}</span></button><div class="p-more" id="p-more-#{i}"><div><p class="pc-h">#{does}</p><p class="pc-b">#{ex}</p></div></div></li>)
+}.join("\n      ")
 path_viz = <<~HTML
-  <div class="stage pathway" data-reveal="top 80%">
-    <div class="path-steps" role="tablist" aria-label="Decision path"><span class="path-fill" id="path-fill"></span>#{pbtns}</div>
-    <div class="path-card" role="tabpanel" aria-live="polite">
-      <div class="path-copy">
-        <span class="pc-label" id="pc-label">#{path_steps[0][0]} · #{path_steps[0][3]}</span>
-        <p class="pc-title" id="pc-title">#{path_steps[0][2]}</p>
-        <p class="pc-note">An example alert, followed from first signal to action.</p>
-        <div class="path-nav"><button type="button" id="path-prev" disabled>Back</button><button type="button" class="is-primary" id="path-next">Next: Context</button></div>
-      </div>
-      <svg class="viz" id="path-art" viewBox="0 0 420 260" aria-hidden="true">
-        <rect class="node" x="10" y="10" width="400" height="240" rx="8" style="stroke-opacity:.2"/>
-        <g data-s="0"><rect class="node is-pink" x="30" y="30" width="150" height="72" rx="6"/><circle class="ball" cx="52" cy="52" r="7"/><path class="ln" d="M68 52h86M46 80h70" stroke-opacity=".4"/></g>
-        <g data-s="1"><rect class="node" x="196" y="30" width="194" height="72" rx="6" style="stroke-opacity:.4"/><path class="ln" d="M212 86C240 84 250 50 280 60S330 40 374 46" stroke-opacity=".6"/><circle cx="374" cy="46" r="4" fill="#ff0074"/></g>
-        <g data-s="2"><rect class="node" x="30" y="118" width="360" height="80" rx="6" style="stroke-opacity:.4"/><path class="ln" d="M46 138h120M46 158h220M46 178h160" stroke-opacity=".35"/><path class="ln" d="M280 182l24-30 20 14 26-34" stroke-opacity=".7"/></g>
-        <g data-s="3"><rect class="node is-pink" x="30" y="212" width="220" height="26" rx="13"/><path class="ln" d="M44 225l6 6 12-12" stroke="#ff0074"/><path class="ln" d="M74 225h150" stroke-opacity=".4"/></g>
-      </svg>
-    </div>
+  <div class="stage pathway" data-reveal="top 95%">
+    <ol class="path-rail" aria-label="Decision path"><span class="path-fill" aria-hidden="true"></span>
+      #{psteps}
+    </ol>
   </div>
 HTML
 views = [
@@ -347,7 +337,7 @@ page(5, "Design Around Decisions",
     ["The last step of CLEAR is a roadmap: what to tackle now, what comes next, and what can wait.",
      "Then design around a simple path. A signal tells someone that something needs attention. Context tells them what it means. Investigation lets them dig into the cause. Action closes the loop. Most dashboards stop at the signal: a red tile, and then you’re on your own."]) +
   block("signal-to-action", "From signal to action",
-    ["Follow one alert along the path. Most dashboards stop at the first step."], nil, path_viz) +
+    ["Follow one alert along the path. Most dashboards stop at the first step."], path_viz, nil, reveal: "top 95%") +
   howto([
     ["Start", "Choose your starting point.", "Pick the experience people use every day and struggle with most. For many operators, that’s daily reporting and exception handling."],
     ["Focus", "Pick one role and one recurring decision.", "Design that well before designing everything."],
