@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Context view: cost per barrel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;500&family=Syne:wght@400;500;600&family=Inter:wght@300;400;500&family=Poppins:wght@400;500;600&display=swap">
+<style>
+/* The playbook's tokens, copied here so the app's class names can't collide with playbook.css */
+:root { --pink: #ff0074; --bg-canvas: #f6f6f6; --text-primary: #07171b; --text-body: #3c4a4e; --hairline: rgba(7, 23, 27, .1); --f-label: "IBM Plex Sans", "Inter", ui-sans-serif, system-ui, sans-serif; --f-display: "Syne", "Inter", ui-sans-serif, system-ui, sans-serif; }
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; background: var(--bg-canvas); color: var(--text-primary); font-family: "Inter", ui-sans-serif, system-ui, sans-serif; }
+h1, p { margin: 0; }
+button { cursor: pointer; }
+.wrap { max-width: 1240px; margin: 0 auto; padding: 56px max(16px, 3vw) 96px; }
+.eyebrow-x { font: 500 12px/1 var(--f-label); letter-spacing: .16em; text-transform: uppercase; color: var(--pink); }
+.top h1 { margin-top: 20px; font-family: var(--f-display); font-size: clamp(34px, 4.4vw, 56px); font-weight: 400; line-height: 1.08; }
+.top p { margin-top: 18px; color: var(--text-body); font-size: 18px; line-height: 1.5; max-width: 66ch; }
+
+/* ── The player ── */
+.vp { position: relative; margin-top: 40px; width: 100%; aspect-ratio: 1728 / 1117; overflow: hidden; border-radius: 14px; background: #111519; box-shadow: 0 30px 80px -40px rgba(0, 42, 50, .55); }
+.ctl { display: flex; align-items: center; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
+.ctl button { font: 500 12px/1 var(--f-label); letter-spacing: .12em; text-transform: uppercase; color: var(--text-primary); border: 1px solid var(--hairline); background: #fff; padding: 11px 14px; border-radius: 999px; }
+.ctl button.is-on { background: #002a32; color: #fff; border-color: #002a32; }
+.ctl .play { min-width: 84px; }
+.prog { flex: 1 1 120px; height: 2px; background: var(--hairline); border-radius: 2px; overflow: hidden; min-width: 80px; }
+.prog i { display: block; height: 100%; width: 100%; background: var(--pink); transform-origin: 0 50%; transform: scaleX(0); }
+
+/* ── The stage: the Figma frame, 1728 × 1117, scaled to fit ── */
+.stage { position: absolute; left: 0; top: 0; width: 1728px; height: 1117px; transform-origin: 0 0; overflow: hidden; background: #0d1c2a; color: #fff; font-family: "Poppins", ui-sans-serif, system-ui, sans-serif; font-size: 12px; line-height: 1; -webkit-font-smoothing: antialiased; user-select: none; }
+.stage * { box-sizing: border-box; margin: 0; }
+.stage img, .stage svg { display: block; max-width: none; }
+.stage .a { position: absolute; }
+.stage .c { position: absolute; transform: translate(-50%, -50%); white-space: nowrap; }
+.layer { position: absolute; inset: 0; }
+.g { color: #8d9097; }
+.num { font-variant-numeric: tabular-nums; }
+
+/* Left rail */
+.rail { position: absolute; left: 0; top: 0; width: 156px; height: 1117px; background: #1c1d22; font-size: 10px; color: #d9dbdf; z-index: 30; }
+.rail .logo { position: absolute; left: 36px; top: 19px; width: 84px; height: 50px; background: #2b2c32; }
+.rail p { position: absolute; left: 34px; white-space: nowrap; }
+.rail hr { position: absolute; left: 34px; width: 88px; border: 0; border-top: 1px solid #34363c; }
+.rail .box { position: absolute; left: 28px; top: 286px; width: 100px; height: 189px; border: 1px solid #2e3036; border-radius: 4px; }
+.rail .box p { left: 12px; }
+.rail .up { color: #52c41a; } .rail .dn { color: #ff4d4f; }
+.rail .nav { left: 19px; font-size: 13px; color: #fff; }
+.rail .act { position: absolute; left: 0; top: 667px; width: 156px; height: 33px; background: #36373d; border-right: 6px solid #52c41a; }
+.rail .ico { display: inline-block; width: 10px; height: 10px; border: 1.2px solid #9b9ea5; border-radius: 50%; margin-right: 8px; vertical-align: -1px; }
+#boeRing { position: absolute; left: 28px; top: 286px; width: 100px; height: 189px; border-radius: 4px; border: 1.5px solid #ffe01b; }
+
+/* Platforms */
+.col { position: absolute; top: 0; width: 524px; height: 1117px; overflow: hidden; background: #1a2c3d; }
+.col img { position: absolute; left: 0; top: 0; width: 524px; height: 1117px; }
+#sea { left: 156px; top: 796px; width: 1572px; height: 321px; background: linear-gradient(rgba(13, 30, 46, 0), rgba(13, 30, 46, .9)); }
+.ttl { top: 72px; font-size: 40px; font-weight: 600; line-height: 46px; color: #f3f4f5; }
+.status { top: 79px; width: 92px; height: 32px; border-radius: 16px; background: #16181c; border: 1px solid #2b2d33; }
+.status .ok { position: absolute; left: 5px; top: 5px; width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid #52c41a; }
+.status .ok::after { content: ""; position: absolute; left: 6px; top: 3.5px; width: 5px; height: 8px; border: solid #52c41a; border-width: 0 1.5px 1.5px 0; transform: rotate(40deg); }
+.status .more { position: absolute; right: 5px; top: 4px; width: 30px; height: 22px; border-radius: 11px; background: #0d0e11; }
+.status .more::before, .status .more::after { content: ""; position: absolute; left: 10px; top: 10px; width: 10px; height: 1.5px; background: #ffe01b; }
+.status .more::after { transform: rotate(90deg); }
+.toggle { left: 826px; top: 909px; width: 232px; height: 40px; border-radius: 20px; background: #1c1d22; }
+.toggle span { position: absolute; top: 20px; transform: translate(-50%, -50%); white-space: nowrap; font-weight: 500; color: #9b9ea5; }
+.toggle b { position: absolute; left: 104px; top: 4px; width: 124px; height: 32px; border-radius: 16px; background: #52c41a; font-weight: 600; display: grid; place-items: center; }
+.tabbar { left: 216px; top: 980px; width: 1454px; height: 66px; border-radius: 33px; background: #15171c; border: 1px solid #2c2e35; font-size: 16px; z-index: 6; }
+.tabbar b { position: absolute; left: 1257px; top: 12px; width: 183px; height: 40px; border-radius: 20px; background: #52c41a; }
+.tabbar span { position: absolute; top: 33px; transform: translate(-50%, -50%); font-weight: 500; }
+
+/* Cost panel */
+#clip { left: 256px; top: 81px; width: 1372px; height: 932px; overflow: hidden; z-index: 5; }
+#panel { position: absolute; left: 0; top: 0; width: 1372px; height: 960px; background: #27272a; border-radius: 6px 6px 0 0; }
+#panel .hd { left: 0; top: 0; width: 1372px; height: 71px; background: #303034; border-radius: 6px 6px 0 0; }
+#panel .tb { top: 36px; font-size: 16px; font-weight: 500; color: #eceded; }
+#panel .tb.on { color: #52c41a; }
+#ul { left: 160px; top: 69px; width: 324px; height: 2px; background: #52c41a; }
+.minus { width: 38px; height: 22px; border-radius: 11px; background: #111316; border: 1px solid #3a3c42; }
+.minus::after { content: ""; position: absolute; left: 13px; top: 9px; width: 10px; height: 1.5px; background: #ffe01b; }
+.big { font-size: 40px; font-weight: 500; line-height: 44px; white-space: nowrap; }
+.sl { font-size: 14px; color: #b4b7bd; }
+.sv { font-size: 36px; letter-spacing: .02em; color: #e3e4e6; white-space: nowrap; }
+.up-a { display: inline-block; width: 12px; height: 12px; border: solid #52c41a; border-width: 2px 0 0 2px; transform: rotate(45deg); position: relative; top: -3px; margin-right: 14px; }
+.up-a::after { content: ""; position: absolute; left: -1px; top: -1px; width: 18px; height: 2px; background: #52c41a; transform-origin: 0 50%; transform: rotate(45deg); }
+.dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 9px; flex: none; }
+.lgs { display: flex; gap: 8px; }
+.lg { height: 24px; padding: 0 11px; border: 1px solid #5a5d64; border-radius: 12px; display: flex; align-items: center; white-space: nowrap; color: #e3e4e6; font-weight: 500; }
+.ax { position: absolute; font-size: 12px; color: #c6c9ce; text-align: right; width: 60px; transform: translateY(-50%); }
+.gl { position: absolute; border-top: 1px dotted #4a4c53; height: 0; }
+.bar { position: absolute; bottom: 383px; width: 32px; transform-origin: 50% 100%; }
+.mo { position: absolute; top: 603px; transform: translate(-50%, -50%); color: #c6c9ce; }
+#fade { left: 0; top: 780px; width: 1372px; height: 180px; background: linear-gradient(rgba(39, 39, 42, 0), #27272a 62%); }
+
+/* $/BOE overlay */
+#veil { background: rgba(8, 9, 12, .62); z-index: 14; }
+#boe { left: 302px; top: 163px; width: 1280px; height: 790px; border-radius: 8px; background: #262628; z-index: 15; transform-origin: -224px 217px; box-shadow: 0 40px 90px -30px rgba(0, 0, 0, .75); overflow: hidden; }
+#boe .bar0 { left: 0; top: 0; width: 1280px; height: 56px; border-bottom: 1px solid #323338; }
+.crd { position: absolute; border-radius: 6px; background: #29292c; border: 1px solid #323338; }
+.seg { position: absolute; border: 1px solid #36383d; border-radius: 6px; }
+.seg span { position: absolute; top: 50%; transform: translate(-50%, -50%); font-weight: 600; color: #c6c9ce; white-space: nowrap; }
+.seg b { position: absolute; top: 7px; height: 22px; width: 56px; border-radius: 11px; border: 1px solid #52c41a; background: rgba(82, 196, 26, .14); }
+.tag { position: absolute; height: 24px; padding: 0 10px; border: 1px solid; border-radius: 3px; font-weight: 600; display: grid; place-items: center; white-space: nowrap; }
+.pv { font-size: 36px; font-weight: 500; letter-spacing: .01em; }
+.xl { position: absolute; top: 322px; font-size: 12px; color: #c6c9ce; transform: translate(-50%, -50%); white-space: nowrap; }
+.dv { position: absolute; height: 16px; border-radius: 3px; }
+.bm { position: absolute; top: 254px; width: 154px; height: 62px; border-radius: 4px; background: #222224; border: 1px solid #323338; }
+
+#cursor { position: absolute; left: 0; top: 0; z-index: 50; width: 28px; height: 28px; transform-origin: 3px 2px; filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .5)); }
+#ripple { position: absolute; left: -24px; top: -24px; width: 48px; height: 48px; border-radius: 50%; border: 2px solid #fff; z-index: 49; opacity: 0; }
+/* Embed mode (?embed): just the player, filling the frame, driven by the page that holds it */
+.embed body { background: #111519; overflow: hidden; }
+.embed .top, .embed .ctl { display: none; }
+.embed .wrap { max-width: none; padding: 0; }
+.embed .vp { margin: 0; border-radius: 0; box-shadow: none; }
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header class="top">
+    <span class="eyebrow-x">Step 5 · Context views</span>
+    <h1>What each barrel costs, platform by platform</h1>
+    <p>A ten-second replay of the cost context view at the oil and gas company: total, operating and capital spend against budget, then the $/BOE card in the side rail opens to show which platform’s barrels cost more, which cost less, and how that moved over time.</p>
+  </header>
+
+  <div class="vp" id="vp" role="img" aria-label="Animated replay of the cost context view: three platforms, a cost panel with total, OPEX and CAPEX spend against budget by month, and a cost-per-barrel overlay comparing the three platforms over the past seven days and the past month, with WTI and Brent for reference.">
+    <div class="stage" id="stage" aria-hidden="true">
+
+      <div class="col" style="left:157px"><img src="flare/p1.jpg" alt=""></div>
+      <div class="col" style="left:681px;width:523px"><img src="flare/p2.jpg" alt="" style="left:-1px"></div>
+      <div class="col" style="left:1205px;width:523px"><img src="flare/p3.jpg" alt="" style="left:-1px"></div>
+      <div class="a" id="sea"></div>
+      <div class="a ttl" style="left:197px">Platform 1</div><div class="a ttl" style="left:720px">Platform 2</div><div class="a ttl" style="left:1244px">Platform 3</div>
+      <div class="a status" style="left:549px"><i class="ok"></i><i class="more"></i></div><div class="a status" style="left:1072px"><i class="ok"></i><i class="more"></i></div><div class="a status" style="left:1596px"><i class="ok"></i><i class="more"></i></div>
+      <div class="a toggle" id="toggle"><span style="left:52px">◎ &nbsp;Map view</span><b>Platform view</b></div>
+
+      <!-- Cost panel: rises from behind the tab bar -->
+      <div class="a" id="clip"><div id="panel">
+        <i class="a hd"></i>
+        <span class="c tb" style="left:321px">Total Spend</span><span class="c tb" style="left:685px">OPEX Spend</span><span class="c tb" style="left:1049px">CAPEX Spend</span>
+        <i class="a" id="ul"></i><i class="a minus" style="left:1313px;top:25px"></i>
+        <span class="a big hT" style="left:60px;top:133px">Total Spend</span><span class="a big hT" style="left:60px;top:133px">OPEX Project Spend</span><span class="a big hT" style="left:60px;top:133px">CAPEX Project Spend</span>
+        <span class="a sl" style="left:639px;top:123px">Actual YTD</span><span class="a sv num" id="vAct" style="left:639px;top:150px"></span>
+        <i class="a" style="left:839px;top:119px;height:72px;border-left:1px solid #3f3f46"></i>
+        <span class="a sl" style="left:879px;top:123px">Budget YTD</span><span class="a sv num" id="vBud" style="left:879px;top:150px"></span>
+        <i class="a" style="left:1079px;top:119px;height:72px;border-left:1px solid #3f3f46"></i>
+        <span class="a sl" style="left:1119px;top:123px">Gap</span><span class="a sv num" style="left:1119px;top:150px"><i class="up-a"></i><span id="vGap"></span></span>
+        <i class="a" style="left:0;top:239px;width:1372px;border-top:1px solid #45464c"></i>
+        <span class="a sT" style="left:60px;top:291px;font-size:16px;font-weight:500">Total Spend (CAPEX + OPEX)</span><span class="a sT" style="left:60px;top:291px;font-size:16px;font-weight:500">OPEX Project Spend</span><span class="a sT" style="left:60px;top:291px;font-size:16px;font-weight:500">CAPEX Project Spend</span>
+        <span class="a g" style="left:60px;top:321px">Updated: 06/03/2024 @ 06:30</span>
+        <div class="a lgs" style="right:60px;top:301px"><span class="lg"><i class="dot" style="background:#f5e6a8"></i>Forecast</span><span class="lg"><i class="dot" style="background:#1faa4f"></i>Actual</span><span class="lg"><i class="dot" style="background:#3d95ff"></i>Budget</span></div>
+        <span class="c g" style="left:70px;top:475px;transform:translate(-50%,-50%) rotate(-90deg)">Spend in Millions</span>
+        <div id="plot"></div>
+        <span class="c g" style="left:733px;top:635px">Months</span>
+        <i class="a" style="left:1356px;top:387px;width:6px;height:410px;border-radius:3px;background:#45474d"></i>
+        <span class="a" style="left:60px;top:698px;font-size:16px;font-weight:500">Spend Comparison</span>
+        <span class="a g" style="left:60px;top:727px">Updated: 06/03/2024 @ 06:30</span>
+        <div class="a lgs" style="right:60px;top:707px"><span class="lg"><i class="dot" style="background:#f5e6a8"></i>Forecast</span><span class="lg"><i class="dot" style="background:#ff4d57"></i>Forecast Variance</span><span class="lg"><i class="dot" style="background:#3d95ff"></i>Budget</span><span class="lg"><i class="dot" style="background:#fca311"></i>Budget Variance</span></div>
+        <span class="ax" style="left:60px;top:793px">$8.0</span><i class="gl" style="left:138px;top:793px;width:1174px"></i><span class="ax" style="left:60px;top:836px">$6.0</span>
+        <span class="c g num" id="cv1" style="left:441px"></span><i class="a" id="cb1" style="left:177px;width:527px;height:120px;background:#c2434c"></i>
+        <span class="c g num" id="cv2" style="left:1008px"></span><i class="a" id="cb2" style="left:744px;width:528px;height:120px;background:#c98a1c"></i>
+        <i class="a" id="fade"></i>
+      </div></div>
+      <div class="a tabbar"><b id="tabPill"></b><span style="left:104px">Safety</span><span style="left:519px">Quality</span><span style="left:934px">Delivery</span><span style="left:1349px">Cost</span></div>
+
+      <!-- $/BOE overlay -->
+      <div class="layer" id="veil"></div>
+      <div class="a" id="boe">
+        <i class="a bar0"></i><i class="a minus" style="left:1224px;top:17px"></i>
+        <span class="a g ok" style="left:60px;top:82px;font-size:16px">GOA · $/BOE</span>
+        <span class="a big ok" style="left:60px;top:109px">Cost per Barrel</span>
+        <span class="a g ok" style="left:60px;top:164px">Operating cost per barrel of oil equivalent, by platform. Lower is better.</span>
+        <div class="seg ok" style="left:868px;top:112px;width:351px;height:38px"><span class="g" style="left:52px;font-weight:500">Timeframe</span><b id="tfPill" style="left:108px"></b><span class="tf" style="left:136px">7D</span><span class="tf" style="left:196px">1M</span><span class="tf" style="left:256px">3M</span><span class="tf" style="left:316px">YTD</span></div>
+        <div id="pcards"></div>
+        <div class="crd ok" style="left:60px;top:370px;width:766px;height:360px">
+          <span class="a" style="left:24px;top:26px;font-size:16px;font-weight:500">Cost per barrel by platform</span>
+          <span class="a g" style="left:24px;top:52px">Updated: 06/03/2024 @ 18:53</span>
+          <div class="a lgs" id="lgB" style="right:24px;top:30px"></div>
+          <div id="lplot"></div>
+        </div>
+        <div class="crd ok" style="left:846px;top:370px;width:373px;height:360px">
+          <span class="a" style="left:24px;top:26px;font-size:16px;font-weight:500">Against the GOA average</span>
+          <span class="a g" style="left:24px;top:52px">GOA average <span class="num" id="goaAvg" style="color:#e3e4e6;font-weight:600"></span> per barrel</span>
+          <div id="div"></div>
+          <i class="a" style="left:24px;top:214px;width:325px;border-top:1px solid #3a3a40"></i>
+          <span class="a g" style="left:24px;top:230px">Market benchmarks</span>
+          <div class="bm" style="left:24px"><span class="a g" style="left:12px;top:11px">WTI</span><span class="a num" style="left:12px;top:32px;font-size:18px">$135.00</span><span class="a" style="right:12px;top:37px;color:#52c41a">↑ .05%</span></div>
+          <div class="bm" style="left:195px"><span class="a g" style="left:12px;top:11px">Brent</span><span class="a num" style="left:12px;top:32px;font-size:18px">$135.00</span><span class="a" style="right:12px;top:37px;color:#52c41a">↑ .05%</span></div>
+          <span class="a g" style="left:24px;top:333px">Margin at WTI <span class="num" id="mrg" style="color:#e3e4e6;font-weight:600"></span> · cost is <span class="num" id="shr" style="color:#e3e4e6;font-weight:600"></span> of WTI</span>
+        </div>
+      </div>
+
+      <!-- App rail -->
+      <div class="rail">
+        <div class="logo"></div>
+        <p style="top:105px">Mon 03 Jun 18:53</p><p style="top:128px">GMT-05:00</p><p style="top:152px">America/Chicago</p>
+        <hr style="top:172px"><p style="top:182px"><b>WTI</b></p><p style="top:199px">▤ &nbsp;<b>$135</b> &nbsp;&nbsp;<span class="up">↑</span> <span class="g">.05%</span></p>
+        <hr style="top:218px"><p style="top:229px"><b>Brent</b></p><p style="top:246px">▤ &nbsp;<b>$135</b> &nbsp;&nbsp;<span class="up">↑</span> <span class="g">.05%</span></p>
+        <div class="box" id="boeBox"><p style="top:15px"><b>$/BOE</b></p><p class="g" style="top:33px">Past 7 days</p><p class="g" style="top:59px">Platform 1</p><p class="up" style="top:76px">$9.50</p><p class="g" style="top:103px">Platform 2</p><p class="dn" style="top:120px">$10.05</p><p class="g" style="top:147px">Platform 3</p><p class="dn" style="top:164px">$10.00</p></div>
+        <i id="boeRing"></i>
+        <div class="act"></div><p class="nav" style="top:677px;font-weight:500">GOA</p><p class="nav" style="top:716px">Platform 1</p><p class="nav" style="top:755px">Platform 2</p><p class="nav" style="top:794px">Platform 3</p>
+        <p style="left:30px;top:1028px;font-weight:500"><i class="ico"></i>Help</p><p style="left:30px;top:1074px;font-weight:500"><i class="ico"></i>Logout</p>
+      </div>
+
+      <div id="ripple"></div>
+      <svg id="cursor" viewBox="0 0 28 28"><path d="M3 2l0 19 5.2-4.6 3.4 8 3.2-1.4-3.4-7.8 6.9-.4z" fill="#fff" stroke="#111519" stroke-width="1.4" stroke-linejoin="round"/></svg>
+    </div>
+  </div>
+
+  <div class="ctl" id="ctl">
+    <button class="play" id="play" type="button" aria-pressed="true">Pause</button>
+    <button type="button" data-t="0.4">1 · Platforms</button>
+    <button type="button" data-t="2.2">2 · Total spend</button>
+    <button type="button" data-t="3.3">3 · OPEX</button>
+    <button type="button" data-t="4.4">4 · CAPEX</button>
+    <button type="button" data-t="7.8">5 · Cost per barrel</button>
+    <button type="button" data-t="9.35">6 · Past month</button>
+    <span class="prog" aria-hidden="true"><i id="prog"></i></span>
+  </div>
+</main>
+
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const DUR = 10;
+  // Clicks: Cost tab, OPEX, CAPEX, the $/BOE card, the 1M timeframe
+  const C1 = .8, C2 = 2.5, C3 = 3.6, HOV = 4.75, C4 = 5.25, MON = C4 + .1, C5 = 8.0, END = DUR - .55;
+
+  /* ── Spend data, $ millions by month: actuals to May, forecast from June ── */
+  const OPEX = { act: [27.6, 28.9, 28.1, 28.4, 28.8, 28.6, 29.2, 29.8, 30.4, 29.1, 28.3, 28.0], bud: Array(12).fill(28), max: 36, cmp: [1.2, 1.8] };
+  const CAPEX = { act: [12.8, 13.6, 14.9, 14.2, 15.1, 15.4, 14.8, 13.9, 12.6, 12.2, 11.8, 11.5], bud: Array(12).fill(13), max: 18, cmp: [4.2, 5.6] };
+  const TOTAL = { act: OPEX.act.map((v, i) => v + CAPEX.act[i]), bud: OPEX.bud.map((v, i) => v + CAPEX.bud[i]), max: 60, cmp: [5.4, 7.4] };
+  const TABS = [TOTAL, OPEX, CAPEX];
+  TABS.forEach((d) => { d.ytdA = d.act.slice(0, 5).reduce((a, b) => a + b, 0); d.ytdB = d.bud.slice(0, 5).reduce((a, b) => a + b, 0); d.gap = (d.ytdA / d.ytdB - 1) * 100; });
+  const MO = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  $('plot').innerHTML = Array.from({ length: 7 }, (_, i) => `<span class="ax yl" style="left:63px;top:${373 + i * 34}px"></span><i class="gl" style="left:155px;top:${373 + i * 34}px;width:1157px"></i>`).join('')
+    + MO.map((m, i) => `<i class="bar ba" style="left:${155 + i * 99}px;background:${i < 5 ? '#1faa4f' : '#f5e6a8'}"></i><i class="bar bb" style="left:${191 + i * 99}px;background:#3d95ff"></i><span class="mo" style="left:${189 + i * 99}px">${m}</span>`).join('');
+
+  /* ── Cost per barrel, $/BOE by day: the last seven days average to the figures in the rail ── */
+  const PLAT = [['Platform 1', '#3b8bff'], ['Platform 2', '#b37feb'], ['Platform 3', '#fca311']], TARGET = 9.75, WTI = 135;
+  const WEEK = [[9.62, 9.58, 9.55, 9.49, 9.46, 9.42, 9.38], [9.88, 9.93, 9.98, 10.04, 10.10, 10.18, 10.24], [9.97, 10.02, 9.96, 10.03, 9.99, 10.04, 9.99]];
+  let seed = 23; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const START = [9.86, 9.84, 9.9];
+  const MONTH = WEEK.map((w, p) => [...Array.from({ length: 23 }, (_, i) => +(START[p] + (w[0] - START[p]) * (i / 23) + (rnd() - .5) * .07).toFixed(2)), ...w]);
+  const avg = (a) => a.reduce((x, y) => x + y, 0) / a.length;
+  const SETS = [{ data: WEEK, delta: [-.21, .23, .03], prior: 'prior 7 days', days: ['05/28', '05/29', '05/30', '05/31', '06/01', '06/02', '06/03'] }, { data: MONTH, delta: [-.19, .12, .04], prior: 'prior month', days: ['05/05', '05/12', '05/19', '05/26', '06/03'] }];
+  SETS.forEach((s) => { s.avg = s.data.map(avg); s.goa = avg(s.avg); });
+  const LX = 74, LY = 96, LW = 650, LH = 200, YMAX = 10.5, YMIN = 9.25;
+  const yv = (v) => LH * (YMAX - v) / (YMAX - YMIN);
+  const path = (arr) => 'M' + arr.map((v, i) => `${(i * LW / (arr.length - 1)).toFixed(1)} ${yv(v).toFixed(1)}`).join('L');
+  $('pcards').innerHTML = PLAT.map((p, i) => `<div class="crd ok" style="left:${60 + i * 393}px;top:208px;width:373px;height:142px">
+    <span class="a" style="left:20px;top:20px;font-size:14px;font-weight:500;display:flex;align-items:center"><i class="dot" style="background:${p[1]}"></i>${p[0]}</span>
+    <span class="tag" style="right:20px;top:15px"></span>
+    <span class="a pv num" style="left:20px;top:50px"></span>
+    <span class="a g pd" style="left:20px;top:108px"></span>
+    <span class="a g" style="right:20px;top:108px">Target $${TARGET.toFixed(2)}</span></div>`).join('');
+  $('lgB').innerHTML = PLAT.map((p) => `<span class="lg"><i class="dot" style="background:${p[1]}"></i>${p[0]}</span>`).join('') + '<span class="lg"><i class="dot" style="background:none;border-top:2px dashed #52c41a;border-radius:0;height:0;width:12px"></i>Target</span>';
+  $('lplot').innerHTML = `${[10.5, 10.25, 10, 9.75, 9.5, 9.25].map((v, i) => `<span class="ax" style="left:${LX - 72}px;top:${LY + i * 40}px">$${v.toFixed(2)}</span><i class="gl" style="left:${LX}px;top:${LY + i * 40}px;width:${LW}px"></i>`).join('')}
+    <svg class="a" id="lchart" width="${LW + 80}" height="${LH + 16}" viewBox="-8 -8 ${LW + 80} ${LH + 16}" style="left:${LX - 8}px;top:${LY - 8}px">
+      <path id="tgt" pathLength="1" d="M0 ${yv(TARGET)}H${LW}" stroke="#52c41a" stroke-width="1.5" stroke-dasharray=".012 .008" fill="none"/>
+      ${SETS.map((s, k) => `<g class="set">${s.data.map((d, i) => `<path pathLength="1" stroke-dasharray="1" stroke-dashoffset="1" fill="none" stroke="${PLAT[i][1]}" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" d="${path(d)}"/><circle cx="${LW}" cy="${yv(d[d.length - 1])}" r="5" fill="${PLAT[i][1]}" stroke="#29292c" stroke-width="2"/>`).join('')}</g>`).join('')}
+      ${WEEK.map((d, i) => `<text x="${LW + 12}" y="${yv(d[6]) + 4}" fill="${PLAT[i][1]}" font-size="12" font-weight="600" class="endv">$${d[6].toFixed(2)}</text>`).join('')}
+    </svg>
+    ${SETS.map((s, k) => s.days.map((d, i) => `<span class="xl x${k}" style="left:${LX + i * LW / (s.days.length - 1)}px">${d}</span>`).join('')).join('')}`;
+  $('div').innerHTML = PLAT.map((p, i) => `<span class="a" style="left:24px;top:${92 + i * 40}px;font-weight:500">${p[0]}</span><i class="dv" style="top:${90 + i * 40}px"></i><span class="a num dvv" style="top:${92 + i * 40}px;font-weight:600"></span>`).join('') + '<i class="a" style="left:262px;top:82px;height:112px;border-left:1px solid #5a5d64"></i>';
+
+  /* ── Timeline helpers ── */
+  const cl = (x) => x < 0 ? 0 : x > 1 ? 1 : x;
+  const seg = (t, a, b) => cl((t - a) / (b - a));
+  const io = (x) => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+  const out = (x) => 1 - Math.pow(1 - x, 3);
+  const back = (x) => { const c = 1.9; return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); };
+  const mix = (a, b, p) => a + (b - a) * p;
+  const set = (el, o, tf) => {
+    el.style.opacity = o;
+    el.style.visibility = o < .004 ? 'hidden' : 'visible';
+    if (tf !== undefined) el.style.transform = tf;
+  };
+  const rise = (el, t, a, d = .5, dy = 14) => { const p = out(seg(t, a, a + d)); set(el, p, `translateY(${(1 - p) * dy}px)`); };
+  const txt = (el, s) => { if (el.textContent !== s) el.textContent = s; };
+  const money = (v) => (v < 0 ? '−' : '') + '$' + Math.abs(v).toFixed(2);
+
+  const el = {};
+  ['stage', 'vp', 'toggle', 'panel', 'ul', 'vAct', 'vBud', 'vGap', 'cv1', 'cv2', 'cb1', 'cb2', 'tabPill', 'veil', 'boe', 'tfPill', 'goaAvg', 'mrg', 'shr', 'tgt', 'boeBox', 'boeRing', 'cursor', 'ripple', 'prog', 'play'].forEach((k) => el[k] = $(k));
+  const q = (root, s) => [...root.querySelectorAll(s)];
+  const tbs = q(el.panel, '.tb'), hT = q(el.panel, '.hT'), sT = q(el.panel, '.sT'), yl = q(el.panel, '.yl'), ba = q(el.panel, '.ba'), bb = q(el.panel, '.bb');
+  const oks = q(el.boe, '.ok'), tfs = q(el.boe, '.tf'), pvs = q(el.boe, '.pv'), pds = q(el.boe, '.pd'), tags = q(el.boe, '.tag');
+  const sets = q($('lchart'), '.set').map((g) => ({ g, lines: q(g, 'path'), dots: q(g, 'circle') })), endv = q($('lchart'), '.endv');
+  const xls = [q(el.boe, '.x0'), q(el.boe, '.x1')], dvs = q($('div'), '.dv'), dvv = q($('div'), '.dvv');
+
+  const CLICKS = [[C1, 1565, 1013], [C2, 941, 117], [C3, 1305, 117], [C4, 78, 380], [C5, 1366, 294]];
+  const CUR = [[0, 1100, 620], [.15, 1100, 620], [C1 - .08, 1569, 1017], [1.7, 1569, 1017], [C2 - .1, 945, 121], [C2 + .5, 945, 121], [C3 - .1, 1309, 121], [C3 + .45, 1309, 121], [HOV, 82, 384], [C4 + .35, 82, 384], [6.4, 1180, 420], [7.2, 1180, 420], [C5 - .1, 1370, 298], [C5 + .35, 1370, 298], [9.0, 1300, 900], [DUR, 1300, 900]];
+
+  /* ── One pure frame: everything is a function of t ── */
+  function draw(t) {
+    const e = 1 - io(seg(t, END, DUR)); // everything folds back to the first frame at the end of the loop
+
+    // 1 · Cost: the tab fills and the spend panel rises from behind the bar
+    set(el.tabPill, out(seg(t, C1, C1 + .35)) * e, `scaleX(${.55 + .45 * back(seg(t, C1, C1 + .4))})`);
+    const up = out(seg(t, C1 + .05, C1 + .75)) * e;
+    el.panel.style.transform = `translateY(${(1 - up) * 940}px)`;
+    set(el.toggle, 1 - seg(t, C1, C1 + .3) * e);
+
+    // 2 · Total → OPEX → CAPEX: one set of weights drives the title, the numbers, the axis and every bar
+    const s1 = io(seg(t, C2, C2 + .55)), s2 = io(seg(t, C3, C3 + .55));
+    const w = [1 - s1, s1 * (1 - s2), s2], tab = s2 > .5 ? 2 : s1 > .5 ? 1 : 0;
+    const blend = (f) => w[0] * f(TABS[0]) + w[1] * f(TABS[1]) + w[2] * f(TABS[2]);
+    el.ul.style.transform = `translateX(${(s1 + s2) * 364}px) scaleX(${1 + .12 * Math.sin(Math.PI * (s1 < 1 ? s1 : s2))})`;
+    tbs.forEach((b, i) => { if (b.classList.contains('on') !== (i === tab)) b.classList.toggle('on', i === tab); });
+    [hT, sT].forEach((group) => group.forEach((h, i) => set(h, cl(w[i] * 2 - 1), `translateY(${(1 - w[i]) * (i === tab ? 10 : -10)}px)`)));
+    const cnt = out(seg(t, C1 + .5, C1 + 1.3));
+    txt(el.vAct, '$' + (blend((d) => d.ytdA) * cnt).toFixed(1) + 'M');
+    txt(el.vBud, '$' + (blend((d) => d.ytdB) * cnt).toFixed(1) + 'M');
+    txt(el.vGap, (blend((d) => d.gap) * cnt).toFixed(2) + '%');
+    const dip = 1 - .85 * Math.max(Math.sin(Math.PI * s1), Math.sin(Math.PI * s2));
+    yl.forEach((y, i) => { txt(y, '$' + (TABS[tab].max * (6 - i) / 6).toFixed(0)); y.style.opacity = dip; });
+    for (let i = 0; i < 12; i++) {
+      const grow = out(seg(t, C1 + .55 + i * .045, C1 + 1.15 + i * .045));
+      ba[i].style.height = (blend((d) => d.act[i] / d.max) * 204 * grow).toFixed(1) + 'px';
+      bb[i].style.height = (blend((d) => d.bud[i] / d.max) * 204 * out(seg(t, C1 + .62 + i * .045, C1 + 1.22 + i * .045))).toFixed(1) + 'px';
+    }
+    const c1 = blend((d) => d.cmp[0]), c2 = blend((d) => d.cmp[1]);
+    txt(el.cv1, c1.toFixed(1)); txt(el.cv2, c2.toFixed(1));
+    el.cb1.style.top = (964 - c1 * 21.5) + 'px'; el.cv1.style.top = (950 - c1 * 21.5) + 'px';
+    el.cb2.style.top = (964 - c2 * 21.5) + 'px'; el.cv2.style.top = (950 - c2 * 21.5) + 'px';
+
+    // 3 · The $/BOE card in the rail: lights up under the cursor, then opens
+    // Hover is a yellow glow; once clicked the glow goes and only the app's green active hairline stays
+    const glow = seg(t, HOV - .12, HOV + .12) * (1 - seg(t, C4, C4 + .35)) * e, active = seg(t, C4 + .05, C4 + .4) * e;
+    el.boeBox.style.background = glow > 0 ? `rgba(255,224,27,${(.08 * glow).toFixed(3)})` : 'transparent';
+    el.boeBox.style.transform = `scale(${1 + .03 * glow - .04 * Math.sin(Math.PI * seg(t, C4 - .05, C4 + .2))})`;
+    set(el.boeRing, Math.max(glow, active), `scale(${1 + .03 * glow})`);
+    el.boeRing.style.borderColor = active > .5 ? '#52c41a' : '#ffe01b';
+    el.boeRing.style.borderWidth = active > .5 ? '1px' : '1.5px';
+    el.boeRing.style.boxShadow = glow > .01 ? `0 0 ${(16 * glow).toFixed(1)}px rgba(255,224,27,.45)` : 'none';
+
+    // 4 · Cost per barrel overlay: grows out of the card
+    const mp = out(seg(t, MON, MON + .6));
+    set(el.veil, t < MON ? 0 : seg(t, MON, MON + .4) * e);
+    set(el.boe, t < MON ? 0 : seg(t, MON, MON + .26) * e, `translateX(${(1 - mp) * -30}px) translateY(${(1 - e) * 16}px) scale(${.8 + .2 * mp})`);
+    if (t >= MON) {
+      oks.forEach((k, i) => rise(k, t, MON + .25 + i * .06, .5, 14));
+      // 5 · Timeframe: 7D → 1M. Numbers roll to the new averages, the old lines fade and the new ones draw
+      const sw = io(seg(t, C5, C5 + .5)), cur = sw > .5 ? 1 : 0, S = SETS[cur];
+      el.tfPill.style.transform = `translateX(${sw * 60}px) scaleX(${1 + .15 * Math.sin(Math.PI * sw)})`;
+      tfs.forEach((f, i) => { f.style.color = i === cur ? '#fff' : '#c6c9ce'; });
+      const first = out(seg(t, MON + .6, MON + 1.4));
+      const avgs = [0, 1, 2].map((i) => mix(SETS[0].avg[i], SETS[1].avg[i], sw)), goa = avg(avgs);
+      const hi = avgs.indexOf(Math.max(...avgs)), lo = avgs.indexOf(Math.min(...avgs));
+      avgs.forEach((a, i) => {
+        const good = a <= TARGET, col = good ? '#52c41a' : '#ff4d4f';
+        txt(pvs[i], money(a * first)); pvs[i].style.color = col;
+        txt(pds[i], `${S.delta[i] < 0 ? '▼' : '▲'} $${Math.abs(S.delta[i]).toFixed(2)} vs ${S.prior}`);
+        txt(tags[i], i === hi ? 'Highest' : i === lo ? 'Lowest' : good ? 'Below target' : 'Above target');
+        tags[i].style.color = col; tags[i].style.borderColor = col; tags[i].style.background = good ? 'rgba(82,196,26,.1)' : 'rgba(255,77,79,.1)';
+        const tp = seg(t, MON + .9 + i * .1, MON + 1.3 + i * .1); set(tags[i], out(tp), `scale(${.7 + .3 * back(tp)})`);
+        // Diverging bars: left of the line costs less than the GOA average, right costs more
+        const d = a - goa, wpx = Math.abs(d) * 150 * out(seg(t, MON + 1.0 + i * .1, MON + 1.6 + i * .1));
+        dvs[i].style.left = (d < 0 ? 262 - wpx : 262) + 'px'; dvs[i].style.width = wpx + 'px'; dvs[i].style.background = d < 0 ? '#52c41a' : '#ff4d4f';
+        txt(dvv[i], money(d)); dvv[i].style.left = (d < 0 ? 262 - wpx - 52 : 262 + wpx + 8) + 'px'; dvv[i].style.color = d < 0 ? '#52c41a' : '#ff4d4f';
+        dvv[i].style.opacity = seg(t, MON + 1.3 + i * .1, MON + 1.6 + i * .1);
+      });
+      txt(el.goaAvg, money(goa * first)); txt(el.mrg, money(WTI - goa)); txt(el.shr, (goa / WTI * 100).toFixed(1) + '%');
+      el.tgt.style.strokeDasharray = `.012 .008`; el.tgt.style.opacity = seg(t, MON + .8, MON + 1.2);
+      sets.forEach((s, k) => {
+        const a = k ? C5 + .25 : MON + .85, vis = k ? 1 : 1 - seg(t, C5, C5 + .3);
+        s.g.style.opacity = vis;
+        s.lines.forEach((l, i) => { const lin = seg(t, a + i * .1, a + (k ? .7 : 1.0) + i * .1), p = .4 * lin + .6 * io(lin); l.style.strokeDashoffset = 1 - p; l.style.visibility = p > .002 ? 'visible' : 'hidden'; s.dots[i].setAttribute('r', 5 * cl(back(seg(lin, .92, 1)))); });
+      });
+      endv.forEach((v, i) => { v.style.opacity = seg(t, MON + 1.85 + i * .1, MON + 2.1 + i * .1) * (1 - seg(t, C5, C5 + .2)) + seg(t, C5 + .95 + i * .1, C5 + 1.15 + i * .1); });
+      xls[0].forEach((x) => { x.style.opacity = seg(t, MON + .7, MON + 1.0) * (1 - seg(t, C5, C5 + .25)); });
+      xls[1].forEach((x) => { x.style.opacity = seg(t, C5 + .25, C5 + .5); });
+    }
+
+    // Cursor and click ripple
+    let c = 0; while (c < CUR.length - 2 && t >= CUR[c + 1][0]) c++;
+    const A = CUR[c], B = CUR[c + 1], cp = io(seg(t, A[0], B[0]));
+    let press = 1, rip = 0, rx = 0, ry = 0;
+    CLICKS.forEach(([ct, x, y]) => {
+      press -= .16 * Math.sin(Math.PI * seg(t, ct - .07, ct + .16));
+      const p = seg(t, ct, ct + .5);
+      if (p > 0 && p < 1) { rip = p; rx = x; ry = y; }
+    });
+    set(el.cursor, seg(t, .08, .28) * (1 - seg(t, END - .15, END + .1)), `translate(${mix(A[1], B[1], cp)}px,${mix(A[2], B[2], cp)}px) scale(${press})`);
+    set(el.ripple, rip ? (1 - rip) * .6 : 0, `translate(${rx}px,${ry}px) scale(${.4 + out(rip) * 1.3})`);
+
+    el.prog.style.transform = `scaleX(${t / DUR})`;
+    const sc = t < C1 ? 0 : t < C2 ? 1 : t < C3 ? 2 : t < MON ? 3 : t < C5 ? 4 : 5;
+    chips.forEach((ch, i) => { if (ch.classList.contains('is-on') !== (i === sc)) ch.classList.toggle('is-on', i === sc); });
+  }
+
+  /* ── Clock, controls, sizing ── */
+  const chips = q($('ctl'), 'button[data-t]');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let t = reduce ? 7.8 : 0, playing = !reduce, onScreen = true, last0 = 0;
+  const label = () => { el.play.textContent = playing ? 'Pause' : 'Play'; el.play.setAttribute('aria-pressed', playing); };
+  function tick(now) {
+    const dt = Math.min(.05, (now - last0) / 1000 || 0); last0 = now;
+    if (playing && onScreen) { t = (t + dt) % DUR; draw(t); }
+    requestAnimationFrame(tick);
+  }
+  el.play.addEventListener('click', () => { playing = !playing; label(); });
+  chips.forEach((ch) => ch.addEventListener('click', () => { t = +ch.dataset.t; playing = false; label(); draw(t); }));
+  const fit = () => { el.stage.style.transform = `scale(${el.vp.clientWidth / 1728})`; };
+  new ResizeObserver(fit).observe(el.vp); fit();
+  new IntersectionObserver((en) => { onScreen = en[0].isIntersecting; }).observe(el.vp);
+  window.__cost = { draw, seek: (x) => { t = x; playing = false; label(); draw(x); } };
+  label(); draw(t); requestAnimationFrame(tick);
+  // Embed mode: start still on a poster frame (?t=) and take play / pause / seek messages from the host page
+  if (/[?&]embed/.test(location.search)) {
+    document.documentElement.classList.add('embed');
+    const m = location.search.match(/[?&]t=([\d.]+)/);
+    playing = false; if (m) t = +m[1]; label(); draw(t);
+    addEventListener('message', (ev) => {
+      const d = ev.data || {};
+      if (d.seek !== undefined) { t = +d.seek; draw(t); }
+      if (d.play !== undefined) { playing = !!d.play && !reduce; label(); }
+    });
+  }
+})();
+</script>
+</body>
+</html>
