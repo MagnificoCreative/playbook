@@ -102,7 +102,7 @@ window.PlaybookChapter = (P) => {
     const mm = P.gsap.matchMedia();
     mm.add("(min-width: 1101px) and (min-height: 620px)", () => {
       P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p),
-        scrollTrigger: { trigger: "#one-truth", start: () => `top top+=${P.barH()}`, end: "+=120%", pin: true, scrub: 0.6, anticipatePin: 1, invalidateOnRefresh: true, refreshPriority: 1 } });
+        scrollTrigger: { trigger: "#one-truth", start: () => `top top+=${P.pinTop()}`, end: "+=120%", pin: true, scrub: 0.6, anticipatePin: 1, invalidateOnRefresh: true, refreshPriority: 1 } });
     });
     mm.add("(max-width: 1100px), (max-height: 619px)", () => {
       P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p), scrollTrigger: { trigger: "#truth", start: "top 70%", end: "bottom 45%", scrub: 0.8 } });
@@ -174,7 +174,7 @@ window.PlaybookChapter = (P) => {
   const mm = P.gsap.matchMedia();
   mm.add("(min-width: 1101px) and (min-height: 620px)", () => {
     P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p),
-      scrollTrigger: { trigger: "#where-trust-is-lost", start: () => `top top+=${P.barH()}`, end: "+=120%", pin: true, scrub: 0.6, anticipatePin: 1, invalidateOnRefresh: true, refreshPriority: 2 } });  // earlier on the page than #one-truth, so it is measured first
+      scrollTrigger: { trigger: "#where-trust-is-lost", start: () => `top top+=${P.pinTop()}`, end: "+=120%", pin: true, scrub: 0.6, anticipatePin: 1, invalidateOnRefresh: true, refreshPriority: 2 } });  // earlier on the page than #one-truth, so it is measured first
   });
   mm.add("(max-width: 1100px), (max-height: 619px)", () => {
     P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p),
@@ -300,7 +300,7 @@ window.PlaybookChapter = (P) => {
   const mm = P.gsap.matchMedia();
   mm.add("(min-width: 1101px) and (min-height: 620px)", () => {
     P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p),
-      scrollTrigger: { trigger: "#few-measures", start: () => `top top+=${P.barH()}`, end: "+=140%", pin: true, scrub: 0.6, anticipatePin: 1, invalidateOnRefresh: true } });
+      scrollTrigger: { trigger: "#few-measures", start: () => `top top+=${P.pinTop()}`, end: "+=140%", pin: true, scrub: 0.6, anticipatePin: 1, invalidateOnRefresh: true } });
   });
   mm.add("(max-width: 1100px), (max-height: 619px)", () => {
     P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p), scrollTrigger: { trigger: "#sieve", start: "top 75%", end: "bottom 35%", scrub: 0.8 } });
@@ -339,7 +339,7 @@ window.PlaybookChapter = (P) => {
     box.classList.add("is-scrubbed"); // the steps follow the scroll, so they aren't clickable
     heads.forEach((h) => { h.tabIndex = -1; });
     const draw = (p) => {
-      f = 3 * Math.min(1, Math.max(0, (p - 0.08) / 0.8));
+      f = 3 * Math.min(1, Math.max(0, p / 0.92));
       show(Math.min(3, Math.floor(f + 0.02)));
       layout();
     };
@@ -347,9 +347,10 @@ window.PlaybookChapter = (P) => {
     const o = { p: 0 };
     const mm = P.gsap.matchMedia();
     mm.add("(min-width: 1101px) and (min-height: 620px)", () => {
+      // Holds where it stops until all four steps have opened (Signal → Action), then the page scrolls on to How to apply it.
+      // refreshPriority: lay this pin out before the how-to-apply pin further down, so that one starts after it
       P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p),
-        // refreshPriority: lay this pin out before the how-to-apply pin further down, so that one starts after it
-        scrollTrigger: { trigger: "#signal-to-action", start: () => `top top+=${P.barH()}`, end: "+=160%", pin: true, scrub: 0.6, anticipatePin: 1, invalidateOnRefresh: true, refreshPriority: 1 } });
+        scrollTrigger: { trigger: "#signal-to-action", start: () => `top top+=${P.pinTop()}`, end: "+=90%", pin: true, scrub: 0.6, anticipatePin: 1, invalidateOnRefresh: true, refreshPriority: 1 } });
     });
     mm.add("(max-width: 1100px), (max-height: 619px)", () => {
       P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p),

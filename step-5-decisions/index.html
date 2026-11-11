@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;500&family=Syne:wght@400;500;600&family=Inter:ital,wght@0,300;0,400;0,500;1,300&display=swap">
-<link rel="stylesheet" href="../assets/playbook.css">
+<link rel="stylesheet" href="../assets/playbook.css?v=b88c0bf6">
 
 <a class="skip" href="#main">Skip to content</a>
 
@@ -228,8 +228,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
-<script src="../assets/motion/hero-scenes.js"></script>
-<script src="../assets/motion/context-views.js"></script>
+<script src="../assets/motion/hero-scenes.js?v=b88c0bf6"></script>
+<script src="../assets/motion/context-views.js?v=b88c0bf6"></script>
 <script>
 /* Step 5: one alert, from signal to action. The steps run down a rail beside the section intro; scrolling moves
    through them (pinned on wide screens) and the current step opens to show what it does and an example.
@@ -262,7 +262,7 @@ window.PlaybookChapter = (P) => {
     box.classList.add("is-scrubbed"); // the steps follow the scroll, so they aren't clickable
     heads.forEach((h) => { h.tabIndex = -1; });
     const draw = (p) => {
-      f = 3 * Math.min(1, Math.max(0, (p - 0.08) / 0.8));
+      f = 3 * Math.min(1, Math.max(0, p / 0.92));
       show(Math.min(3, Math.floor(f + 0.02)));
       layout();
     };
@@ -270,9 +270,10 @@ window.PlaybookChapter = (P) => {
     const o = { p: 0 };
     const mm = P.gsap.matchMedia();
     mm.add("(min-width: 1101px) and (min-height: 620px)", () => {
+      // Holds where it stops until all four steps have opened (Signal → Action), then the page scrolls on to How to apply it.
+      // refreshPriority: lay this pin out before the how-to-apply pin further down, so that one starts after it
       P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p),
-        // refreshPriority: lay this pin out before the how-to-apply pin further down, so that one starts after it
-        scrollTrigger: { trigger: "#signal-to-action", start: () => `top top+=${P.barH()}`, end: "+=160%", pin: true, scrub: 0.6, anticipatePin: 1, invalidateOnRefresh: true, refreshPriority: 1 } });
+        scrollTrigger: { trigger: "#signal-to-action", start: () => `top top+=${P.pinTop()}`, end: "+=90%", pin: true, scrub: 0.6, anticipatePin: 1, invalidateOnRefresh: true, refreshPriority: 1 } });
     });
     mm.add("(max-width: 1100px), (max-height: 619px)", () => {
       P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p),
@@ -324,5 +325,5 @@ window.PlaybookChapter = (P) => {
 };
 
 </script>
-<script src="../assets/playbook.js"></script>
+<script src="../assets/playbook.js?v=b88c0bf6"></script>
 </html>

@@ -10,6 +10,9 @@
   const hasGsap = typeof window.gsap !== "undefined" && typeof window.ScrollTrigger !== "undefined";
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const barH = () => $(".bar").getBoundingClientRect().height;
+  // Where pinned sections stop: a breathing gap below the top bar (40–88px, 9% of the viewport), never flush against it.
+  // Not used by How to apply it: its title sits inside a padded card, which already gives that gap.
+  const pinTop = () => barH() + Math.round(Math.min(88, Math.max(40, window.innerHeight * 0.09)));
 
   /* A requestAnimationFrame clock that only runs while the element is on screen. */
   const loop = (target, draw, start = 0, still = start) => {
@@ -134,7 +137,7 @@
     if (total) total.textContent = String(cards.length).padStart(2, "0");
   }
 
-  const P = { $, $$, gsap: window.gsap, ScrollTrigger: window.ScrollTrigger, reduce, barH, loop, say, get lenis() { return lenis; } };
+  const P = { $, $$, gsap: window.gsap, ScrollTrigger: window.ScrollTrigger, reduce, barH, pinTop, loop, say, get lenis() { return lenis; } };
   const runChapter = () => { if (typeof window.PlaybookChapter === "function") window.PlaybookChapter(P); };
 
   if (!hasGsap) { runChapter(); return; } // The page still reads fully without the libraries.
