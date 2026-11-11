@@ -598,6 +598,12 @@ main { min-width: 0; }
 .sieve-viz .cat { font: 400 15px/1 var(--f-sans); fill: var(--text-primary); }
 .sieve-viz svg { max-height: calc(100svh - var(--bar) - 2 * var(--pad) - 160px); margin: 0 auto; }
 
+/* From prototype to platform: two weights only. 1px for structure, 0.5px for every detail inside a shape */
+.proto-viz .ln { stroke-width: 1; }
+.proto-viz .hair { fill: none; stroke: var(--teal-900); stroke-width: .5; }
+.proto-viz .lbl-s { transition: fill .3s var(--ease-out); }
+.proto-viz .lbl-s.on { fill: var(--text-primary); }
+
 /* One screen isn't one truth: the spectrum sits full width under the intro copy */
 .truth-viz svg { max-height: calc(100svh - var(--bar) - 2 * var(--pad) - 160px); margin: 0 auto; }
 

@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;500&family=Syne:wght@400;500;600&family=Inter:ital,wght@0,300;0,400;0,500;1,300&display=swap">
-<link rel="stylesheet" href="../assets/playbook.css?v=b88c0bf6">
+<link rel="stylesheet" href="../assets/playbook.css?v=7725dda7">
 
 <a class="skip" href="#main">Skip to content</a>
 
@@ -177,37 +177,8 @@
       </div>
       
     </div>
-<div class="stage viz" id="loop">
-  <svg viewBox="43 9 929 282" role="img" aria-label="A loop of prototype, test and refine, then a hand-off to a blueprint, a delivered platform and a predictive layer built on it.">
-    <circle class="gd" cx="210" cy="170" r="120" style="stroke-opacity:.3"/>
-    <path class="ln l-ring" d="M210 50A120 120 0 1 1 209.9 50" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="1" stroke-opacity=".55"/>
-    <g text-anchor="middle">
-      <circle class="node" cx="210" cy="50" r="8"/><text class="lbl" x="210" y="26">Prototype</text>
-      <circle class="node" cx="314" cy="230" r="8"/><text class="lbl" x="350" y="268">Test</text>
-      <circle class="node" cx="106" cy="230" r="8"/><text class="lbl" x="70" y="268">Refine</text>
-    </g>
-    <path class="ln l-out" d="M330 170H520" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="1" stroke-opacity=".55"/>
-    <text class="lbl-s l-hand" x="425" y="156" text-anchor="middle">Hand off</text>
-    <g class="l-blue">
-      <rect class="node" x="530" y="110" width="96" height="120" rx="6"/>
-      <path class="ln" d="M548 136h60M548 156h44M548 176h56M548 196h36" stroke-opacity=".35"/>
-      <text class="lbl" x="578" y="262" text-anchor="middle">Blueprint</text>
-    </g>
-    <path class="ln l-out2" d="M636 170H690" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="1" stroke-opacity=".55"/>
-    <g class="l-plat">
-      <rect class="node" x="700" y="150" width="270" height="80" rx="6"/>
-      <path class="ln" d="M718 172h70M718 192h120M718 212h90" stroke-opacity=".35"/>
-      <text class="lbl" x="835" y="262" text-anchor="middle">Delivered platform</text>
-    </g>
-    <g class="l-pred">
-      <rect class="node is-pink" x="700" y="70" width="270" height="64" rx="6"/>
-      <path class="ln" d="M716 112C760 112 770 86 800 92S860 80 900 96" stroke-opacity=".5"/>
-      <path class="ln" d="M900 96C920 104 936 90 954 84" stroke="#ff0074" stroke-dasharray="3 5"/>
-      <circle class="ball" cx="954" cy="84" r="6"/>
-      <text class="lbl" x="835" y="54" text-anchor="middle">Predictive layer</text>
-    </g>
-    <circle class="ball" id="loop-ball" cx="210" cy="50" r="11"/>
-  </svg>
+<div class="stage viz proto-viz" id="loop">
+  <svg viewBox="20 74 931 243" role="img" aria-label="A loop of prototype, test and refine, run twice, then a hand-off to a blueprint, a delivered platform, and a predictive layer built on top of it."></svg>
 </div>
 
   </div>
@@ -230,41 +201,160 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
-<script src="../assets/motion/hero-scenes.js?v=b88c0bf6"></script>
+<script src="../assets/motion/hero-scenes.js?v=7725dda7"></script>
 <script>
-/* Step 6: prototype, test, refine (twice round), then hand off to blueprint, platform and the predictive layer. */
+/* Step 6: from prototype to platform. A pink dot laps prototype, test and refine twice (the dotted ring goes solid),
+   follows the dotted hand-off path into the blueprint and breaks into an ordered grid, travels on along the same
+   centre line and fades where the platform begins; the platform draws in perspective, and the predictive layer
+   rises above it as a lattice of linked diamonds, one over each tile. Pinned on wide screens.
+   Two weights only: 1px for structure, 0.5px for every detail inside a shape. */
 window.PlaybookChapter = (P) => {
   const svg = P.$("#loop svg");
   if (!svg) return;
-  const ring = P.$(".l-ring", svg), out = P.$(".l-out", svg), out2 = P.$(".l-out2", svg);
-  const ball = P.$("#loop-ball", svg), hand = P.$(".l-hand", svg);
-  const blue = P.$(".l-blue", svg), plat = P.$(".l-plat", svg), pred = P.$(".l-pred", svg);
-  const sm = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
-  const draw = (p) => {
-    const r = sm(0, 0.5, p);
-    ring.setAttribute("stroke-dashoffset", (1 - Math.min(1, r * 2)).toFixed(3));
-    const a = -Math.PI / 2 + r * Math.PI * 4;                 // twice round the loop
-    let x = 210 + 120 * Math.cos(a), y = 170 + 120 * Math.sin(a);
-    const leave = sm(0.5, 0.62, p);
-    if (leave > 0) { x = 330 + (520 - 330) * leave; y = 170; }
-    if (p >= 0.5 && leave === 0) { x = 330; y = 170; }
-    ball.setAttribute("cx", x.toFixed(1)); ball.setAttribute("cy", y.toFixed(1));
-    ball.setAttribute("opacity", (1 - sm(0.6, 0.66, p)).toFixed(3));
-    out.setAttribute("stroke-dashoffset", (1 - leave).toFixed(3));
-    hand.setAttribute("opacity", leave.toFixed(3));
-    blue.setAttribute("opacity", sm(0.58, 0.68, p).toFixed(3));
-    out2.setAttribute("stroke-dashoffset", (1 - sm(0.68, 0.74, p)).toFixed(3));
-    plat.setAttribute("opacity", sm(0.72, 0.82, p).toFixed(3));
-    pred.setAttribute("opacity", sm(0.84, 0.96, p).toFixed(3));
-    pred.setAttribute("transform", `translate(0 ${(12 * (1 - sm(0.84, 0.96, p))).toFixed(1)})`);
+  const NS = "http://www.w3.org/2000/svg", PINK = "#ff0074", TEAL = "#002a32", D2R = Math.PI / 180;
+  const el = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); parent.appendChild(e); return e; };
+  const set = (e, attrs) => { for (const k in attrs) e.setAttribute(k, attrs[k]); };
+  const cl = (x) => Math.min(1, Math.max(0, x));
+  const sm = (a, b, x) => { const t = cl((x - a) / (b - a)); return t * t * (3 - 2 * t); };
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const ease = (t) => (t < .5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
+  const f1 = (n) => n.toFixed(1), f3 = (n) => n.toFixed(3);
+  const poly = (pts) => (pts.length ? "M" + pts.map((p) => f1(p[0]) + " " + f1(p[1])).join(" L") : "");
+  const text = (x, y, s, anchor = "middle") => { const t = el("text", { class: "lbl-s", x, y, "text-anchor": anchor }, svg); t.textContent = s; return t; };
+  // A rhombus in perspective: map(u, v) runs u toward the top corner, v toward the bottom corner
+  const rhombus = (cx, cy, hw, hh) => (u, v) => [cx - hw + u * hw + v * hw, cy - u * hh + v * hh];
+  const quad = (m, u0, v0, u1, v1) => poly([m(u0, v0), m(u1, v0), m(u1, v1), m(u0, v1)]) + "Z";
+
+  // ── Layout: everything sits on one centre line
+  const LINE = 200, LABY = 313;                                   // the centre line; one baseline for Blueprint and Delivered platform
+  const LOOP = { cx: 165, cy: LINE, R: 92 };
+  const BP = { x: 430, y: 135, w: 150, h: 130 };
+  const PL = { cx: 800, cy: LINE + 41, hw: 150, hh: 46, lift: 82 }; // the platform and its layer, as a pair, centred on the line
+
+  // ── The loop: dotted, then a faint first lap, then a solid second; each node lights as the dot passes
+  const NODES = [-90, 30, 150], TOTAL = 810;                     // two laps, then a quarter round to leave on the right
+  const ring = (d) => { const a = (-90 + d) * D2R; return [LOOP.cx + Math.cos(a) * LOOP.R, LOOP.cy + Math.sin(a) * LOOP.R]; };
+  el("circle", { class: "ln", cx: LOOP.cx, cy: LOOP.cy, r: LOOP.R, "stroke-opacity": .35, "stroke-dasharray": "1 5" }, svg);
+  const lap1 = el("path", { class: "ln", "stroke-opacity": .22 }, svg), lap2 = el("path", { class: "ln", "stroke-opacity": .6 }, svg);
+  const LBL = [[165, 88, "middle"], [268, 266, "start"], [62, 266, "end"]];
+  const nodes = NODES.map((deg, i) => {
+    const [x, y] = ring(deg + 90);
+    return { deg, n: el("circle", { cx: f1(x), cy: f1(y), r: 4, fill: "#fff", stroke: TEAL, "stroke-width": 1, "stroke-opacity": .55 }, svg), t: text(LBL[i][0], LBL[i][1], ["Prototype", "Test", "Refine"][i], LBL[i][2]) };
+  });
+  const arc = (d0, d1) => { const pts = []; for (let d = d0; d <= d1; d += 4) pts.push(ring(d)); pts.push(ring(d1)); return pts; };
+  const loop = (t) => {
+    const d = TOTAL * t;
+    set(lap1, { d: d > 0 ? poly(arc(0, Math.min(d, 360))) : "" });
+    set(lap2, { d: d > 360 ? poly(arc(360, Math.min(d, 720))) : "" });
+    nodes.forEach(({ deg, n, t: lab }) => {
+      let near = 0;
+      for (const k of [0, 1]) near = Math.max(near, 1 - cl(Math.abs(d - (deg + 90 + k * 360)) / 28));
+      set(n, { stroke: near > .05 ? PINK : TEAL, "stroke-opacity": f3(lerp(.55, 1, near)), r: f1(4 + near * 1.5) });
+      lab.classList.toggle("on", near > .2);
+    });
+    return ring(d);
   };
+
+  // ── A dotted path the dot travels along
+  const path = (a, b, label, lpos) => {
+    const l = el("line", { class: "ln", x1: a[0], y1: a[1], x2: a[0], y2: a[1], "stroke-opacity": .55, "stroke-dasharray": "1 4" }, svg);
+    const lab = label ? text(lpos[0], lpos[1], label) : null;
+    return (t) => { const x = lerp(a[0], b[0], t), y = lerp(a[1], b[1], t); set(l, { x2: f1(x), y2: f1(y) }); if (lab) lab.setAttribute("opacity", f3(sm(.1, .5, t))); return [x, y]; };
+  };
+
+  // ── The blueprint: the dot breaks into an ordered grid, four of its dots pink
+  const bEntry = [BP.x, LINE], bExit = [BP.x + BP.w + 8, LINE];
+  const frame = el("rect", { class: "hair", x: BP.x, y: BP.y, width: BP.w, height: BP.h, rx: 3, "stroke-opacity": 0 }, svg);
+  const ticks = el("path", { class: "hair", d: [[BP.x, BP.y, 1, 1], [BP.x + BP.w, BP.y, -1, 1], [BP.x, BP.y + BP.h, 1, -1], [BP.x + BP.w, BP.y + BP.h, -1, -1]].map(([X, Y, sx, sy]) => `M${X + sx * 10} ${Y}H${X}V${Y + sy * 10}`).join(""), "stroke-opacity": 0 }, svg);
+  const guides = el("g", { opacity: 0 }, svg);
+  const COLS = 6, ROWS = 5, PX = 22, GX = (BP.w - (COLS - 1) * PX) / 2, GY = (BP.h - (ROWS - 1) * PX) / 2;
+  for (let r = 0; r < ROWS; r++) el("line", { class: "hair", x1: BP.x + GX, x2: BP.x + BP.w - GX, y1: BP.y + GY + r * PX, y2: BP.y + GY + r * PX, "stroke-opacity": .12 }, guides);
+  for (let c = 0; c < COLS; c++) el("line", { class: "hair", x1: BP.x + GX + c * PX, x2: BP.x + GX + c * PX, y1: BP.y + GY, y2: BP.y + BP.h - GY, "stroke-opacity": .12 }, guides);
+  const PINKS = new Set(["1,1", "4,1", "1,3", "4,3"]), grid = [];
+  for (let c = 0; c < COLS; c++) for (let r = 0; r < ROWS; r++) {
+    const pink = PINKS.has(`${c},${r}`);
+    grid.push({ c, r, pink, tx: BP.x + GX + c * PX, ty: BP.y + GY + r * PX, e: el("circle", { r: pink ? 3 : 2.2, fill: pink ? PINK : TEAL, "fill-opacity": 0 }, svg) });
+  }
+  const bLab = text(BP.x + BP.w / 2, LABY, "Blueprint");
+  const blueprint = (t) => {
+    const f = sm(0, .25, t);
+    set(frame, { "stroke-opacity": f3(.22 * f) }); set(ticks, { "stroke-opacity": f3(.5 * f) });
+    bLab.setAttribute("opacity", f3(f));
+    guides.setAttribute("opacity", f3(sm(.6, 1, t)));
+    grid.forEach((d) => {
+      const k = d.c / (COLS - 1) * .5 + d.r / (ROWS - 1) * .12, u = ease(cl((t - .05 - k * .8) / .35));
+      set(d.e, { cx: f1(lerp(bEntry[0], d.tx, u)), cy: f1(lerp(bEntry[1], d.ty, u)), "fill-opacity": f3(u > 0 ? (d.pink ? 1 : .55) * Math.min(1, u * 3) : 0) });
+    });
+  };
+
+  // ── The platform in perspective, and the predictive layer: a lattice of diamonds, one over each tile
+  const m = rhombus(PL.cx, PL.cy, PL.hw, PL.hh), pm = rhombus(PL.cx, PL.cy - PL.lift, PL.hw, PL.hh);
+  const plEntry = [PL.cx - PL.hw - 14, LINE];                    // the path stops just short of the pair
+  const base = el("path", { class: "ln", d: quad(m, 0, 0, 1, 1), "stroke-opacity": .5, fill: "#fff", pathLength: 1, "stroke-dasharray": 1, "stroke-dashoffset": 1 }, svg);
+  const tiles = [];
+  [[.08, .3], [.36, .62], [.68, .92]].forEach(([u0, u1], i) => [[.08, .36], [.42, .64], [.7, .92]].forEach(([v0, v1], j) => tiles.push({ k: i + j, e: el("path", { class: "hair", d: quad(m, u0, v0, u1, v1), fill: TEAL, "fill-opacity": 0, "stroke-opacity": 0 }, svg) })));
+  const marks = [[.12, .24, .5], [.12, .2, .55], [.72, .84, .2]].map(([u0, u1, v]) => el("line", { class: "hair", x1: m(u0, v)[0], y1: m(u0, v)[1], x2: m(u1, v)[0], y2: m(u1, v)[1], "stroke-opacity": 0 }, svg));
+  const pLab = text(PL.cx, LABY, "Delivered platform");
+  const posts = [[0, 0], [1, 0], [1, 1], [0, 1]].map(([u, v]) => el("line", { class: "hair", x1: m(u, v)[0], y1: m(u, v)[1], x2: m(u, v)[0], y2: m(u, v)[1], "stroke-opacity": .25, "stroke-dasharray": "2 3" }, svg));
+  const layer = el("g", { opacity: 0 }, svg);
+  el("path", { d: quad(pm, 0, 0, 1, 1), fill: "#fff", "fill-opacity": .85, stroke: PINK, "stroke-width": 1, "stroke-opacity": .9 }, layer);
+  const TILE = [.19, .49, .8], DL = .036, lat = [], links = [];
+  TILE.forEach((u, i) => TILE.forEach((v, j) => {
+    const b = m(u, v), t = pm(u, v);
+    el("line", { class: "post", x1: f1(b[0]), y1: f1(b[1]), x2: f1(t[0]), y2: f1(t[1]), stroke: TEAL, "stroke-width": .5, "stroke-dasharray": "1 3", "stroke-opacity": .25 }, layer);
+    lat[i * 3 + j] = { k: (i + j) / 4, p: t, e: el("path", { d: quad(pm, u - DL, v - DL, u + DL, v + DL), fill: "#fff", stroke: TEAL, "stroke-width": .5, "stroke-opacity": .75, opacity: 0 }, layer) };
+  }));
+  const join = (a, b) => links.push({ k: Math.max(a.k, b.k), e: el("line", { x1: f1(a.p[0]), y1: f1(a.p[1]), x2: f1(b.p[0]), y2: f1(b.p[1]), stroke: TEAL, "stroke-width": .5, "stroke-linecap": "round", opacity: 0 }, layer) });
+  for (let i = 0; i < 3; i++) for (let j = 0; j < 3; j++) { if (i < 2) join(lat[i * 3 + j], lat[(i + 1) * 3 + j]); if (j < 2) join(lat[i * 3 + j], lat[i * 3 + j + 1]); }
+  lat.forEach((n) => layer.appendChild(n.e));                       // diamonds over their links
+  const layerPosts = [...layer.querySelectorAll(".post")];
+  const lLab = text(PL.cx, PL.cy - PL.lift - PL.hh - 14, "Predictive layer");
+  const platform = (t, tp) => {
+    set(base, { "stroke-dashoffset": f3(1 - sm(0, .45, t)) });
+    pLab.setAttribute("opacity", f3(sm(.1, .5, t)));
+    tiles.forEach(({ k, e }) => { const v = sm(.25 + k * .1, .55 + k * .1, t); set(e, { "fill-opacity": f3(.07 * v), "stroke-opacity": f3(.4 * v) }); });
+    marks.forEach((l, i) => set(l, { "stroke-opacity": f3(.5 * sm(.6 + i * .08, .9, t)) }));
+    posts.forEach((l) => set(l, { y2: f1(+l.getAttribute("y1") - PL.lift * sm(0, .5, tp)) }));
+    const rise = ease(sm(.15, .7, tp)), q = sm(.35, 1, tp);
+    set(layer, { opacity: f3(sm(.15, .45, tp)), transform: `translate(0 ${f1((1 - rise) * PL.lift * .6)})` });
+    lat.forEach(({ e, k }) => e.setAttribute("opacity", f3(sm(k * .5, k * .5 + .2, q))));
+    links.forEach(({ e, k }) => e.setAttribute("opacity", f3(.35 * sm(.25 + k * .5, .45 + k * .5, q))));
+    layerPosts.forEach((l) => l.setAttribute("opacity", f3(sm(0, .3, q))));
+    lLab.setAttribute("opacity", f3(sm(.4, .7, tp)));
+  };
+
+  // ── The journey, as one scroll
+  const hand = path(ring(TOTAL), [bEntry[0] - 8, LINE], "Hand off", [(ring(TOTAL)[0] + bEntry[0]) / 2, LINE - 14]);
+  const onward = path(bExit, plEntry, null);
+  const ball = el("circle", { r: 6.5, fill: PINK }, svg);
+  const T = { loop: [.03, .42], hand: [.42, .5], bp: [.5, .64], out: [.64, .7], plat: [.7, .84], pred: [.84, .97] };
+  const draw = (p) => {
+    const tt = (k) => cl((p - T[k][0]) / (T[k][1] - T[k][0]));
+    let pos = loop(ease(tt("loop"))), show = 1;
+    const th = tt("hand"), hp = hand(th); if (th > 0) pos = hp;
+    const tb = tt("bp"), to = tt("out");
+    blueprint(tb);
+    if (tb > 0 && to === 0) { show = 1 - sm(0, .12, tb); pos = show > 0 ? pos : bEntry; }   // the dot becomes the grid
+    const op = onward(to); if (to > 0) { pos = op; show = 1; }
+    const tp = tt("plat");
+    if (tp > 0) { pos = plEntry; show = 1 - sm(0, .3, tp); }                                  // and fades where the platform begins
+    platform(tp, tt("pred"));
+    set(ball, { cx: f1(pos[0]), cy: f1(pos[1]), opacity: f3(show) });
+  };
+
   if (!P.gsap || P.reduce) { draw(1); return; }
   const o = { p: 0 };
   draw(0);
-  P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p),
-    scrollTrigger: { trigger: "#loop", start: "top 85%", end: "bottom 85%", scrub: 0.8 } });
+  const mm = P.gsap.matchMedia();
+  mm.add("(min-width: 1101px) and (min-height: 620px)", () => {
+    P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p),
+      scrollTrigger: { trigger: "#prototype-to-platform", start: () => `top top+=${P.pinTop()}`, end: "+=160%", pin: true, scrub: 0.6, anticipatePin: 1, invalidateOnRefresh: true } });  // after how-to-apply on the page, so no refreshPriority: it is measured in page order
+  });
+  mm.add("(max-width: 1100px), (max-height: 619px)", () => {
+    P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p), scrollTrigger: { trigger: "#loop", start: "top 75%", end: "bottom 30%", scrub: 0.8 } });
+  });
 };
 
 </script>
-<script src="../assets/playbook.js?v=b88c0bf6"></script>
+<script src="../assets/playbook.js?v=7725dda7"></script>
 </html>
