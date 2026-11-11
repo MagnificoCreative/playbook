@@ -339,7 +339,7 @@ window.PlaybookChapter = (P) => {
     box.classList.add("is-scrubbed"); // the steps follow the scroll, so they aren't clickable
     heads.forEach((h) => { h.tabIndex = -1; });
     const draw = (p) => {
-      f = 3 * Math.min(1, Math.max(0, (p - 0.08) / 0.8));
+      f = 3 * Math.min(1, Math.max(0, p / 0.92));
       show(Math.min(3, Math.floor(f + 0.02)));
       layout();
     };
@@ -349,7 +349,7 @@ window.PlaybookChapter = (P) => {
     mm.add("(min-width: 1101px) and (min-height: 620px)", () => {
       P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p),
         // refreshPriority: lay this pin out before the how-to-apply pin further down, so that one starts after it
-        scrollTrigger: { trigger: "#signal-to-action", start: () => `top top+=${P.barH()}`, end: "+=160%", pin: true, scrub: 0.6, anticipatePin: 1, invalidateOnRefresh: true, refreshPriority: 1 } });
+        scrollTrigger: { trigger: "#signal-to-action", start: () => `top top+=${P.barH()}`, end: "+=80%", pin: true, scrub: 0.6, anticipatePin: 1, invalidateOnRefresh: true, refreshPriority: 1 } });
     });
     mm.add("(max-width: 1100px), (max-height: 619px)", () => {
       P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p),
