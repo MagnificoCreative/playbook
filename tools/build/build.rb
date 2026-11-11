@@ -3,6 +3,9 @@
 # Edit copy in content.rb, chapter visuals in scripts.js, and Step 1's body in step-1-body.html.
 ROOT = File.expand_path("../..", __dir__)
 DIR = File.dirname(__FILE__)
+require "digest"
+# Changes whenever any CSS/JS asset changes; appended to asset links so browsers never mix new and cached files
+ASSET_STAMP = Digest::SHA1.hexdigest(Dir[File.join(ROOT, "assets/**/*.{css,js}")].sort.map { |f| File.binread(f) }.join)[0, 8]
 BAR = File.read(File.join(DIR, "bar.html")).sub('href="#top"', 'href="#top"')
 S1_BODY = File.read(File.join(DIR, "step-1-body.html"))
 SCRIPTS = File.read(File.join(DIR, "scripts.js")).split(/^\/\/ ==== (\S+) ====\n/).drop(1).each_slice(2).to_h
@@ -237,6 +240,7 @@ def page(i, title, subnav, body, script_key: nil)
     </html>
   HTML
   Dir.mkdir(File.join(ROOT, p[:slug])) unless Dir.exist?(File.join(ROOT, p[:slug]))
+  html = html.gsub(/((?:href|src)="\.\.\/assets\/[^"?]+\.(?:css|js))"/) { "#{$1}?v=#{ASSET_STAMP}\"" }
   File.write(File.join(ROOT, p[:slug], "index.html"), html)
   puts "wrote #{p[:slug]}"
 end
