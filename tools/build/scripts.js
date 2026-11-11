@@ -102,7 +102,7 @@ window.PlaybookChapter = (P) => {
     const mm = P.gsap.matchMedia();
     mm.add("(min-width: 1101px) and (min-height: 620px)", () => {
       P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p),
-        scrollTrigger: { trigger: "#one-truth", start: () => `top top+=${P.barH()}`, end: "+=120%", pin: true, scrub: 0.6, anticipatePin: 1, invalidateOnRefresh: true, refreshPriority: 1 } });
+        scrollTrigger: { trigger: "#one-truth", start: () => `top top+=${P.pinTop()}`, end: "+=120%", pin: true, scrub: 0.6, anticipatePin: 1, invalidateOnRefresh: true, refreshPriority: 1 } });
     });
     mm.add("(max-width: 1100px), (max-height: 619px)", () => {
       P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p), scrollTrigger: { trigger: "#truth", start: "top 70%", end: "bottom 45%", scrub: 0.8 } });
@@ -174,7 +174,7 @@ window.PlaybookChapter = (P) => {
   const mm = P.gsap.matchMedia();
   mm.add("(min-width: 1101px) and (min-height: 620px)", () => {
     P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p),
-      scrollTrigger: { trigger: "#where-trust-is-lost", start: () => `top top+=${P.barH()}`, end: "+=120%", pin: true, scrub: 0.6, anticipatePin: 1, invalidateOnRefresh: true, refreshPriority: 2 } });  // earlier on the page than #one-truth, so it is measured first
+      scrollTrigger: { trigger: "#where-trust-is-lost", start: () => `top top+=${P.pinTop()}`, end: "+=120%", pin: true, scrub: 0.6, anticipatePin: 1, invalidateOnRefresh: true, refreshPriority: 2 } });  // earlier on the page than #one-truth, so it is measured first
   });
   mm.add("(max-width: 1100px), (max-height: 619px)", () => {
     P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p),
@@ -300,7 +300,7 @@ window.PlaybookChapter = (P) => {
   const mm = P.gsap.matchMedia();
   mm.add("(min-width: 1101px) and (min-height: 620px)", () => {
     P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p),
-      scrollTrigger: { trigger: "#few-measures", start: () => `top top+=${P.barH()}`, end: "+=140%", pin: true, scrub: 0.6, anticipatePin: 1, invalidateOnRefresh: true } });
+      scrollTrigger: { trigger: "#few-measures", start: () => `top top+=${P.pinTop()}`, end: "+=140%", pin: true, scrub: 0.6, anticipatePin: 1, invalidateOnRefresh: true } });
   });
   mm.add("(max-width: 1100px), (max-height: 619px)", () => {
     P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p), scrollTrigger: { trigger: "#sieve", start: "top 75%", end: "bottom 35%", scrub: 0.8 } });
@@ -347,9 +347,12 @@ window.PlaybookChapter = (P) => {
     const o = { p: 0 };
     const mm = P.gsap.matchMedia();
     mm.add("(min-width: 1101px) and (min-height: 620px)", () => {
+      // A short hold covers Signal → Context; then the page scrolls on while Investigation and Action open,
+      // so How to apply it is already rising into view by the time Context is reached.
+      // refreshPriority: lay this pin out before the how-to-apply pin further down, so that one starts after it
+      P.ScrollTrigger.create({ trigger: "#signal-to-action", start: () => `top top+=${P.pinTop()}`, end: "+=20%", pin: true, anticipatePin: 1, invalidateOnRefresh: true, refreshPriority: 1 });
       P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p),
-        // refreshPriority: lay this pin out before the how-to-apply pin further down, so that one starts after it
-        scrollTrigger: { trigger: "#signal-to-action", start: () => `top top+=${P.barH()}`, end: "+=80%", pin: true, scrub: 0.6, anticipatePin: 1, invalidateOnRefresh: true, refreshPriority: 1 } });
+        scrollTrigger: { trigger: "#signal-to-action", start: () => `top top+=${P.pinTop()}`, end: "+=50%", scrub: 0.6, invalidateOnRefresh: true, refreshPriority: 1 } });
     });
     mm.add("(max-width: 1100px), (max-height: 619px)", () => {
       P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p),
