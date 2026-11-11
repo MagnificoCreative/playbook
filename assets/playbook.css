@@ -800,7 +800,7 @@ h1, h2, h3, .h2, .display, .card-label, .card-title, .next-title, .stat-num,
 /* ───── Step 5 · Context views: five strips that open into their animations (assets/motion/context-views.js) ───── */
 .cvs { --cvs-e: cubic-bezier(.45, 0, .15, 1); --cvs-r: 8px; padding-top: 32px; border-top: 1px solid var(--hairline); }
 .cvs-title { margin: 0 0 28px; font-family: var(--f-display); font-size: var(--t-h4); font-weight: 400; letter-spacing: -0.01em; line-height: 1.2; color: var(--text-primary); }
-.cvs-row { display: flex; justify-content: center; gap: 12px; transition: height .85s var(--cvs-e); }
+.cvs-row { display: flex; justify-content: flex-start; gap: 12px; transition: height .85s var(--cvs-e); }
 .cvs-strip { all: unset; position: relative; flex: none; overflow: hidden; border-radius: var(--cvs-r); background: #0b1418; cursor: pointer; transition: width .85s var(--cvs-e), height .85s var(--cvs-e); }
 .cvs-strip.is-on { cursor: default; }
 .cvs-strip:focus-visible { outline: 2px solid var(--pink); outline-offset: 4px; }

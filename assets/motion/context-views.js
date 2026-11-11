@@ -60,7 +60,9 @@
     const W = row.clientWidth, narrow = W < 640, gap = narrow && cur >= 0 ? 0 : narrow ? 8 : 12;
     const thin = narrow ? 0 : W < 900 ? 44 : 72;                 // on a phone the open view takes the whole row
     const we = W - 4 * thin - 4 * gap, he = we * 1117 / 1728;      // the opened strip
-    const wi = Math.min(200, (W - 4 * gap) / 5), hi = narrow ? Math.max(wi * 2, 176) : wi * 2;   // an idle strip (never too short for its name on a phone)
+    // Idle strips share the row's full width, so the first lines up with the title and the last with the row's right edge.
+    // They stand twice as tall as wide, up to 440 px on big screens, and never too short for a name on a phone
+    const wi = (W - 4 * gap) / 5, hi = narrow ? Math.max(wi * 2, 176) : Math.min(wi * 2, 440);
     row.style.gap = gap + "px";
     row.style.height = (cur < 0 ? hi : he) + "px"; row.classList.toggle("has-on", cur >= 0); row.classList.toggle("is-narrow", narrow);
     items.forEach((x, i) => {
