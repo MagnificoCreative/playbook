@@ -205,7 +205,7 @@ end
 def page(i, title, subnav, body, script_key: nil)
   p = PAGES[i]
   chapter_js = script_key && SCRIPTS[script_key] ? "<script>\n#{SCRIPTS[script_key]}</script>\n" : ""
-  howto_js = i == 1 ? %(<script src="../assets/motion/howto-scenes.js"></script>\n) : ""
+  howto_js = "" # Step 1 card animations retired 2026-11-11; kept in assets/motion/howto-scenes.js, catalogued in animations/index.html
   html = <<~HTML
     <!doctype html>
     <html lang="en">

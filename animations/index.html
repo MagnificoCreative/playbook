@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Animation Library</title>
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;500&family=Syne:wght@400;500;600&family=Inter:wght@300;400;500&display=swap">
+<!--
+  Animation library for the playbook "From Data Sprawl to a Single Source of Truth".
+  Every animation we've made is listed in CATALOG below, whether it's on a page, parked or retired.
+
+  To add one: append an entry to CATALOG.
+    status   "live" (on a page) · "parked" (kept for later) · "retired" (taken off a page, kept) · "exploration"
+    preview  { hero: "01" }   plays a chapter hero scene (assets/motion/hero-scenes.js)
+             { howto: "m3" }  plays a card scene (assets/motion/howto-scenes.js)
+             { frame: "path" } embeds a page that animates by itself
+             omit it to show the card without a live preview
+  Visual rules for heroes and scenes: hero-explorations/ANIMATION-RULES.md
+-->
+<style>
+  :root {
+    --pink: #ff0074; --teal: #002a32; --slate: #d5def0;
+    --bg: #f4f4f4; --card: #ffffff; --text: #07171b; --body: #4a5a5e; --muted: #7b8a8e; --hair: #e3e6e8;
+    --f-display: "Syne", "Inter", system-ui, sans-serif; --f-sans: "Inter", system-ui, sans-serif; --f-label: "IBM Plex Sans", "Inter", system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 300 16px/1.5 var(--f-sans); -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  .wrap { max-width: 1240px; margin: 0 auto; padding: 72px 32px 120px; }
+  @media (max-width: 640px) { .wrap { padding: 48px 16px 80px; } }
+
+  header h1 { font: 400 clamp(36px, 5vw, 64px)/1.08 var(--f-display); letter-spacing: -0.01em; margin: 0 0 16px; }
+  header p { max-width: 62ch; color: var(--body); margin: 0 0 8px; font-size: 18px; }
+  .kicker { font: 500 12px/1 var(--f-label); letter-spacing: .16em; text-transform: uppercase; color: var(--pink); margin-bottom: 20px; }
+
+  .filters { display: flex; flex-wrap: wrap; gap: 8px; margin: 40px 0 32px; }
+  .filters button { font: 400 14px/1 var(--f-sans); padding: 10px 16px; border-radius: 999px; border: 1px solid var(--hair); background: var(--card); color: var(--body); cursor: pointer; }
+  .filters button[aria-pressed="true"] { background: var(--teal); color: #fff; border-color: var(--teal); }
+  .filters .n { color: var(--muted); margin-left: 6px; font-family: var(--f-label); }
+  .filters button[aria-pressed="true"] .n { color: var(--slate); }
+
+  .group { margin-top: 56px; }
+  .group h2 { font: 400 28px/1.2 var(--f-display); margin: 0 0 6px; }
+  .group > p { color: var(--body); margin: 0 0 24px; max-width: 70ch; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+
+  .item { background: var(--card); border-radius: 4px; overflow: hidden; display: flex; flex-direction: column; }
+  .item[hidden] { display: none; }
+  .pv { aspect-ratio: 4 / 3; display: grid; place-items: center; background: #f7f8f9; border-bottom: 1px solid var(--hair); position: relative; }
+  .pv.dark { background: var(--teal); border-bottom: 0; }
+  .pv svg { width: 72%; height: 92%; overflow: visible; }
+  .pv iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .pv .none { font: 500 12px/1 var(--f-label); letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+  .pv.dark .ln { fill: none; stroke: var(--slate); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  .pv.dark .echo .ball, .pv.dark .echo .gd, .pv.dark .echo .glow { display: none; }
+  .pv:not(.dark) .ln { fill: none; stroke: var(--teal); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  .pv:not(.dark) .gd { fill: none; stroke: var(--teal); stroke-opacity: .07; stroke-width: 1; }
+  .pv:not(.dark) .dot { fill: var(--teal); }
+  .pv .ball { fill: var(--pink); }
+
+  .meta { padding: 20px 20px 22px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+  .meta h3 { font: 400 20px/1.25 var(--f-display); margin: 0; }
+  .meta p { margin: 0; color: var(--body); font-size: 15px; }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  .badge { font: 500 11px/1 var(--f-label); letter-spacing: .14em; text-transform: uppercase; padding: 6px 8px; border-radius: 4px; }
+  .badge.live { background: #e6f4ee; color: #0f6b45; }
+  .badge.parked { background: #fff3d6; color: #8a5a00; }
+  .badge.retired { background: #ffe3ef; color: #b0004f; }
+  .badge.exploration { background: #eef0f2; color: #4a5a5e; }
+  .where { font: 400 13px/1.3 var(--f-label); color: var(--muted); }
+  dl { margin: 4px 0 0; display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; font-size: 13px; }
+  dt { color: var(--muted); font-family: var(--f-label); }
+  dd { margin: 0; color: var(--body); word-break: break-word; }
+  dd code { font: 12px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .links { margin-top: auto; padding-top: 8px; display: flex; flex-wrap: wrap; gap: 14px; font-size: 14px; }
+  .links a { color: var(--pink); text-decoration: none; }
+  .links a:hover { text-decoration: underline; }
+
+  .howto { margin-top: 80px; background: var(--card); border-radius: 4px; padding: 40px; }
+  .howto h2 { font: 400 28px/1.2 var(--f-display); margin: 0 0 16px; }
+  .howto ol { margin: 0; padding-left: 20px; color: var(--body); max-width: 72ch; }
+  .howto li + li { margin-top: 8px; }
+  .howto code { font: 13px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; background: #f3f4f5; padding: 1px 5px; border-radius: 3px; }
+  @media (max-width: 640px) { .howto { padding: 24px 20px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="kicker">Magnifico playbook</div>
+    <h1>Animation library</h1>
+    <p>Every animation made for <em>From Data Sprawl to a Single Source of Truth</em>: what’s on the pages now, what’s parked for later and what’s been retired. Nothing gets deleted; it gets listed here.</p>
+    <p>Hero and card scenes play live below. Section animations open on their page.</p>
+  </header>
+
+  <nav class="filters" aria-label="Filter by status"></nav>
+  <main id="lib"></main>
+
+  <section class="howto">
+    <h2>Adding an animation</h2>
+    <ol>
+      <li>Follow the visual rules in <a href="../hero-explorations/ANIMATION-RULES.md"><code>hero-explorations/ANIMATION-RULES.md</code></a>: one pink ball, slate or teal lines, opacity for hierarchy, calm motion.</li>
+      <li>Explore options in <code>hero-explorations/</code>, one HTML page per idea.</li>
+      <li>Move the pick into the playbook: hero and card scenes go in <code>assets/motion/</code>; section animations go in <code>tools/build/scripts.js</code>, under the chapter’s <code>// ==== key ====</code> block.</li>
+      <li>Add an entry to <code>CATALOG</code> at the bottom of this page with its status, where it’s used and its source.</li>
+      <li>When something comes off a page, don’t delete it. Set its status to <code>retired</code> or <code>parked</code>, note the date and what replaced it, and keep the code.</li>
+    </ol>
+  </section>
+</div>
+
+<script src="../assets/motion/hero-scenes.js"></script>
+<script src="../assets/motion/howto-scenes.js"></script>
+<script>
+const GROUPS = [
+  { id: "hero", title: "Chapter heroes", text: "The opening scene of each chapter, on deep teal. One ball, a few lines. Source: assets/motion/hero-scenes.js (HeroMount)." },
+  { id: "section", title: "Section animations", text: "Scroll-driven diagrams inside the chapters. Source: tools/build/scripts.js, built into each page; shared motion lives in assets/playbook.js." },
+  { id: "card", title: "Card scenes", text: "Small looping scenes for the How to apply it cards, on a light card. Source: assets/motion/howto-scenes.js (HowtoScenes)." },
+  { id: "context", title: "Context views", text: "Full-screen operational views that open from Step 5. Source: assets/context-views/ and assets/motion/context-views.js." },
+  { id: "explore", title: "Explorations", text: "Option boards and drafts that led to the picks above. Kept as a starting point for new work." },
+];
+
+const CATALOG = [
+  // ── Chapter heroes ──
+  { group: "hero", name: "Placeholder", status: "live", where: "Introduction", preview: { hero: "00" }, src: "assets/motion/hero-scenes.js · S[\"00\"]", page: "../intro/" },
+  { group: "hero", name: "Voices coming in", status: "live", where: "Step 1 · Listen before you design", preview: { hero: "01" }, src: "assets/motion/hero-scenes.js · S[\"01\"]", page: "../step-1-listen/" },
+  { group: "hero", name: "Passing the baton", status: "live", where: "Step 2 · Know who decides what", preview: { hero: "02c" }, src: "assets/motion/hero-scenes.js · S[\"02c\"]", page: "../step-2-decide/" },
+  { group: "hero", name: "Roots", status: "live", where: "Step 3 · Follow the data to its source", preview: { hero: "03b" }, note: "Lines run out to every tip and back.", src: "assets/motion/hero-scenes.js · S[\"03b\"]", page: "../step-3-source/" },
+  { group: "hero", name: "Overlap", status: "live", where: "Step 4 · Agree on what matters", preview: { hero: "04b" }, src: "assets/motion/hero-scenes.js · S[\"04b\"]", page: "../step-4-align/" },
+  { group: "hero", name: "Built around it", status: "live", where: "Step 5 · Design around decisions", preview: { hero: "05d" }, src: "assets/motion/hero-scenes.js · S[\"05d\"]", page: "../step-5-decisions/" },
+  { group: "hero", name: "Wind tunnel", status: "live", where: "Step 6 · Test before you build", preview: { hero: "06c" }, src: "assets/motion/hero-scenes.js · S[\"06c\"]", page: "../step-6-test/" },
+  { group: "hero", name: "True north", status: "live", where: "Where to start", preview: { hero: "07h" }, note: "A compass rose with a line needle and a pulse.", src: "assets/motion/hero-scenes.js · S[\"07h\"]", page: "../where-to-start/" },
+
+  // ── Section animations ──
+  { group: "section", name: "Where trust is lost", status: "live", where: "Introduction", note: "The ball moves down Source → Act and the line steps toward less trust. Pinned.", src: "tools/build/scripts.js · intro", page: "../intro/#where-trust-is-lost" },
+  { group: "section", name: "One screen isn’t one truth", status: "live", where: "Introduction", note: "A dashboard of dots empties along a spectrum, from a single pane of glass to a single source of truth. Pinned.", src: "tools/build/scripts.js · intro", page: "../intro/#one-truth" },
+  { group: "section", name: "CLEAR staircase", status: "live", where: "Introduction", note: "The base draws, each step rises in turn, then its contents settle in.", src: "tools/build/scripts.js · intro", page: "../intro/#how-it-works" },
+  { group: "section", name: "Roots divider", status: "parked", where: "Was in the Introduction, removed 2026-11-06", note: "Organic roots drawn downward on scroll, pink tip leading. Removed because it competed with the CLEAR staircase. Suits a “going deeper” moment, such as Step 3. Place it by passing ROOTS as the last argument to people(...).", src: "tools/build/content.rb · ROOTS · scripts.js intro · playbook.css .roots" },
+  { group: "section", name: "One number, many copies", status: "live", where: "Step 3", note: "One metric splits into conflicting copies and only rejoins where a definition is agreed.", src: "tools/build/scripts.js · trace", page: "../step-3-source/#one-number" },
+  { group: "section", name: "Five tests", status: "live", where: "Step 4", note: "Sixty measures fall through five tests; the survivors turn pink. Pinned.", src: "tools/build/scripts.js · sieve", page: "../step-4-align/#few-measures" },
+  { group: "section", name: "From signal to action", status: "live", where: "Step 5", note: "One alert moves down a rail: Signal, Context, Investigation, Action. Short hold, then scrolls on.", src: "tools/build/scripts.js · path", page: "../step-5-decisions/#signal-to-action" },
+  { group: "section", name: "What goes where", status: "live", where: "Step 5", note: "Three layers fill in turn, then draw together into one stack.", src: "tools/build/scripts.js · path", page: "../step-5-decisions/#what-goes-where" },
+  { group: "section", name: "Prototype loop", status: "live", where: "Step 6", note: "Prototype, test, refine twice round, then hand off to blueprint, platform and the predictive layer.", src: "tools/build/scripts.js · loop", page: "../step-6-test/#prototype-to-platform" },
+  { group: "section", name: "Breathing rings", status: "live", where: "Where to start", note: "Rings breathe behind the assessment call to action.", src: "tools/build/scripts.js · start", page: "../where-to-start/#assessment" },
+  { group: "section", name: "How to apply it travel", status: "live", where: "Every step", note: "The cards pin and travel sideways; each card’s copy rises in as it arrives.", src: "assets/playbook.js · How to apply", page: "../step-2-decide/#how-to-apply" },
+
+  // ── Card scenes (retired from Step 1 on 2026-11-11, so Step 1 matches the other steps) ──
+  { group: "card", name: "Map · Every layer", status: "retired", where: "Was on Step 1, card 1, until 2026-11-11", note: "Leadership, managers and the front line, layer by layer.", preview: { howto: "m3" }, src: "assets/motion/howto-scenes.js · m3 · markup in animations/archive/step-1-howto-cards.html" },
+  { group: "card", name: "Ask · The bubble", status: "retired", where: "Was on Step 1, card 2, until 2026-11-11", note: "They talk; it comes home.", preview: { howto: "a1" }, src: "assets/motion/howto-scenes.js · a1" },
+  { group: "card", name: "Evidence · The lens", status: "retired", where: "Was on Step 1, card 3, until 2026-11-11", note: "Looking closely until it finds the ball.", preview: { howto: "e1" }, src: "assets/motion/howto-scenes.js · e1" },
+  { group: "card", name: "Patterns · Orbits fall into step", status: "retired", where: "Was on Step 1, card 4, until 2026-11-11", preview: { howto: "p1" }, src: "assets/motion/howto-scenes.js · p1" },
+
+  // ── Context views ──
+  { group: "context", name: "Context view strips", status: "live", where: "Step 5 · What goes where", note: "Five strips; click one to open its view, which can grow to full screen.", src: "assets/motion/context-views.js", page: "../step-5-decisions/#what-goes-where" },
+  { group: "context", name: "Storm tracking", status: "live", where: "Step 5 context views", preview: { frame: "../assets/context-views/storm-context.html" }, src: "assets/context-views/storm-context.html", page: "../assets/context-views/storm-context.html" },
+  { group: "context", name: "Price per barrel", status: "live", where: "Step 5 context views", preview: { frame: "../assets/context-views/cost-context.html" }, src: "assets/context-views/cost-context.html", page: "../assets/context-views/cost-context.html" },
+  { group: "context", name: "Flare monitoring", status: "live", where: "Step 5 context views", preview: { frame: "../assets/context-views/flare-context.html" }, src: "assets/context-views/flare-context.html", page: "../assets/context-views/flare-context.html" },
+  { group: "context", name: "Booster gas compressor", status: "live", where: "Step 5 context views", preview: { frame: "../assets/context-views/compressor-context.html" }, src: "assets/context-views/compressor-context.html", page: "../assets/context-views/compressor-context.html" },
+  { group: "context", name: "Underwater pipelines and wells", status: "live", where: "Step 5 context views", preview: { frame: "../assets/context-views/subsea-context.html" }, src: "assets/context-views/subsea-context.html", page: "../assets/context-views/subsea-context.html" },
+
+  // ── Explorations ──
+  { group: "explore", name: "Chapter hero options", status: "exploration", src: "hero-explorations/chapters.html", page: "../hero-explorations/chapters.html" },
+  { group: "explore", name: "Listen hero options", status: "exploration", src: "hero-explorations/01-listen.html", page: "../hero-explorations/01-listen.html" },
+  { group: "explore", name: "How to apply options", status: "exploration", note: "Alternatives for the card scenes.", src: "hero-explorations/howto.html", page: "../hero-explorations/howto.html" },
+  { group: "explore", name: "Where trust is lost", status: "exploration", src: "hero-explorations/trust.html · trust-b.html", page: "../hero-explorations/trust.html" },
+  { group: "explore", name: "One truth options", status: "exploration", src: "hero-explorations/truth.html · truth-in-context.html", page: "../hero-explorations/truth.html" },
+  { group: "explore", name: "Five roles options", status: "exploration", src: "hero-explorations/roles.html · roles-table.html · roles-in-context.html", page: "../hero-explorations/roles.html" },
+  { group: "explore", name: "Many copies options", status: "exploration", src: "hero-explorations/copies.html · copies-a.html", page: "../hero-explorations/copies.html" },
+  { group: "explore", name: "Many measures options", status: "exploration", src: "hero-explorations/measures.html · measures-d.html", page: "../hero-explorations/measures.html" },
+  { group: "explore", name: "Signal to action options", status: "exploration", src: "hero-explorations/signal-to-action.html", page: "../hero-explorations/signal-to-action.html" },
+  { group: "explore", name: "What goes where options", status: "exploration", src: "hero-explorations/what-goes-where.html · what-goes-where-b.html", page: "../hero-explorations/what-goes-where.html" },
+  { group: "explore", name: "Context view display options", status: "exploration", src: "hero-explorations/context-views-options.html", page: "../hero-explorations/context-views-options.html" },
+];
+
+const LABEL = { all: "All", live: "Live", parked: "Parked", retired: "Retired", exploration: "Explorations" };
+const NS = "http://www.w3.org/2000/svg";
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+// Plays a scene only while it's on screen
+const play = (svg, draw, start, still) => {
+  let t = reduce ? still : start, on = false, last = performance.now();
+  draw(t);
+  if (reduce) return;
+  new IntersectionObserver(([e]) => { on = e.isIntersecting; }).observe(svg);
+  const tick = (now) => { const dt = Math.min(.05, (now - last) / 1000); last = now; if (on) { t += dt; draw(t); } requestAnimationFrame(tick); };
+  requestAnimationFrame(tick);
+};
+
+const preview = (item) => {
+  const pv = document.createElement("div");
+  pv.className = "pv";
+  const p = item.preview;
+  if (p && p.hero && window.HeroMount) {
+    pv.classList.add("dark");
+    const svg = document.createElementNS(NS, "svg"); svg.setAttribute("viewBox", "0 0 600 600"); pv.appendChild(svg);
+    play(svg, window.HeroMount(svg, p.hero), 2.2, 2.5);
+  } else if (p && p.howto && window.HowtoScenes) {
+    const svg = document.createElementNS(NS, "svg"); svg.setAttribute("viewBox", "0 0 600 600"); pv.appendChild(svg);
+    play(svg, window.HowtoScenes.mount(svg, p.howto), 0, window.HowtoScenes.STILL[p.howto]);
+  } else if (p && p.frame) {
+    pv.classList.add("dark");
+    const f = document.createElement("iframe"); f.loading = "lazy"; f.src = p.frame + "?embed"; f.title = item.name; f.tabIndex = -1;
+    pv.appendChild(f);
+  } else {
+    pv.innerHTML = `<span class="none">${item.page ? "Open on its page" : "No preview"}</span>`;
+  }
+  return pv;
+};
+
+const lib = document.getElementById("lib"), nav = document.querySelector(".filters");
+const cards = [];
+GROUPS.forEach((g) => {
+  const items = CATALOG.filter((c) => c.group === g.id);
+  if (!items.length) return;
+  const sec = document.createElement("section");
+  sec.className = "group";
+  sec.innerHTML = `<h2>${esc(g.title)}</h2><p>${esc(g.text)}</p><div class="grid"></div>`;
+  const grid = sec.querySelector(".grid");
+  items.forEach((item) => {
+    const el = document.createElement("article");
+    el.className = "item"; el.dataset.status = item.status;
+    el.appendChild(preview(item));
+    const m = document.createElement("div");
+    m.className = "meta";
+    m.innerHTML = `
+      <div class="tags"><span class="badge ${item.status}">${LABEL[item.status] === "Explorations" ? "Exploration" : LABEL[item.status]}</span>${item.where ? `<span class="where">${esc(item.where)}</span>` : ""}</div>
+      <h3>${esc(item.name)}</h3>
+      ${item.note ? `<p>${esc(item.note)}</p>` : ""}
+      <dl><dt>Source</dt><dd><code>${esc(item.src)}</code></dd></dl>
+      ${item.page ? `<div class="links"><a href="${esc(item.page)}">Open →</a></div>` : ""}`;
+    el.appendChild(m);
+    grid.appendChild(el); cards.push(el);
+  });
+  lib.appendChild(sec);
+});
+
+// Filters, with a count for each status
+const setFilter = (k) => {
+  nav.querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", b.dataset.k === k));
+  cards.forEach((c) => { c.hidden = k !== "all" && c.dataset.status !== k; });
+  lib.querySelectorAll(".group").forEach((s) => { s.hidden = !s.querySelector(".item:not([hidden])"); });
+};
+Object.keys(LABEL).forEach((k) => {
+  const n = k === "all" ? CATALOG.length : CATALOG.filter((c) => c.status === k).length;
+  if (!n) return;
+  const b = document.createElement("button");
+  b.type = "button"; b.dataset.k = k;
+  b.innerHTML = `${LABEL[k]}<span class="n">${n}</span>`;
+  b.addEventListener("click", () => setFilter(k));
+  nav.appendChild(b);
+});
+setFilter("all");
+</script>
+</body>
+</html>

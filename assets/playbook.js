@@ -10,7 +10,8 @@
   const hasGsap = typeof window.gsap !== "undefined" && typeof window.ScrollTrigger !== "undefined";
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const barH = () => $(".bar").getBoundingClientRect().height;
-  // Where pinned sections stop: a breathing gap below the top bar (40–88px, 9% of the viewport), never flush against it
+  // Where pinned sections stop: a breathing gap below the top bar (40–88px, 9% of the viewport), never flush against it.
+  // Not used by How to apply it: its title sits inside a padded card, which already gives that gap.
   const pinTop = () => barH() + Math.round(Math.min(88, Math.max(40, window.innerHeight * 0.09)));
 
   /* A requestAnimationFrame clock that only runs while the element is on screen. */
@@ -266,7 +267,7 @@
       const travel = gsap.to(track, {
         x: () => -dist(), ease: "none",
         scrollTrigger: {
-          trigger: section, start: () => `top top+=${pinTop()}`, end: () => `+=${dist()}`,
+          trigger: section, start: () => `top top+=${barH()}`, end: () => `+=${dist()}`,
           pin: true, scrub: true, anticipatePin: 1, invalidateOnRefresh: true,
           onUpdate: (s) => {
             const x = s.progress * dist();
@@ -280,7 +281,7 @@
       const vp = () => viewport.getBoundingClientRect();
       timelines.forEach((tl, i) => {
         if (i === 0) {
-          ScrollTrigger.create({ trigger: section, start: "top 78%", end: () => `top top+=${pinTop() + 4}`, scrub: 0.6, animation: tl });
+          ScrollTrigger.create({ trigger: section, start: "top 78%", end: () => `top top+=${barH() + 4}`, scrub: 0.6, animation: tl });
         } else {
           ScrollTrigger.create({
             trigger: cards[i], containerAnimation: travel,
