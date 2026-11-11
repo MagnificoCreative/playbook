@@ -270,12 +270,10 @@ window.PlaybookChapter = (P) => {
     const o = { p: 0 };
     const mm = P.gsap.matchMedia();
     mm.add("(min-width: 1101px) and (min-height: 620px)", () => {
-      // A short hold covers Signal → Context; then the page scrolls on while Investigation and Action open,
-      // so How to apply it is already rising into view by the time Context is reached.
+      // Holds where it stops until all four steps have opened (Signal → Action), then the page scrolls on to How to apply it.
       // refreshPriority: lay this pin out before the how-to-apply pin further down, so that one starts after it
-      P.ScrollTrigger.create({ trigger: "#signal-to-action", start: () => `top top+=${P.pinTop()}`, end: "+=20%", pin: true, anticipatePin: 1, invalidateOnRefresh: true, refreshPriority: 1 });
       P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p),
-        scrollTrigger: { trigger: "#signal-to-action", start: () => `top top+=${P.pinTop()}`, end: "+=50%", scrub: 0.6, invalidateOnRefresh: true, refreshPriority: 1 } });
+        scrollTrigger: { trigger: "#signal-to-action", start: () => `top top+=${P.pinTop()}`, end: "+=90%", pin: true, scrub: 0.6, anticipatePin: 1, invalidateOnRefresh: true, refreshPriority: 1 } });
     });
     mm.add("(max-width: 1100px), (max-height: 619px)", () => {
       P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p),
