@@ -353,38 +353,10 @@ page(5, "Design Around Decisions",
   script_key: "path")
 
 # ───────────────────────── 06 · Test before you build ─────────────────────────
+# From prototype to platform: drawn by scripts.js (the lattice option)
 loop_svg = <<~SVG
-  <div class="stage viz" id="loop">
-    <svg viewBox="43 9 929 282" role="img" aria-label="A loop of prototype, test and refine, then a hand-off to a blueprint, a delivered platform and a predictive layer built on it.">
-      <circle class="gd" cx="210" cy="170" r="120" style="stroke-opacity:.3"/>
-      <path class="ln l-ring" d="M210 50A120 120 0 1 1 209.9 50" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="1" stroke-opacity=".55"/>
-      <g text-anchor="middle">
-        <circle class="node" cx="210" cy="50" r="8"/><text class="lbl" x="210" y="26">Prototype</text>
-        <circle class="node" cx="314" cy="230" r="8"/><text class="lbl" x="350" y="268">Test</text>
-        <circle class="node" cx="106" cy="230" r="8"/><text class="lbl" x="70" y="268">Refine</text>
-      </g>
-      <path class="ln l-out" d="M330 170H520" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="1" stroke-opacity=".55"/>
-      <text class="lbl-s l-hand" x="425" y="156" text-anchor="middle">Hand off</text>
-      <g class="l-blue">
-        <rect class="node" x="530" y="110" width="96" height="120" rx="6"/>
-        <path class="ln" d="M548 136h60M548 156h44M548 176h56M548 196h36" stroke-opacity=".35"/>
-        <text class="lbl" x="578" y="262" text-anchor="middle">Blueprint</text>
-      </g>
-      <path class="ln l-out2" d="M636 170H690" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="1" stroke-opacity=".55"/>
-      <g class="l-plat">
-        <rect class="node" x="700" y="150" width="270" height="80" rx="6"/>
-        <path class="ln" d="M718 172h70M718 192h120M718 212h90" stroke-opacity=".35"/>
-        <text class="lbl" x="835" y="262" text-anchor="middle">Delivered platform</text>
-      </g>
-      <g class="l-pred">
-        <rect class="node is-pink" x="700" y="70" width="270" height="64" rx="6"/>
-        <path class="ln" d="M716 112C760 112 770 86 800 92S860 80 900 96" stroke-opacity=".5"/>
-        <path class="ln" d="M900 96C920 104 936 90 954 84" stroke="#ff0074" stroke-dasharray="3 5"/>
-        <circle class="ball" cx="954" cy="84" r="6"/>
-        <text class="lbl" x="835" y="54" text-anchor="middle">Predictive layer</text>
-      </g>
-      <circle class="ball" id="loop-ball" cx="210" cy="50" r="11"/>
-    </svg>
+  <div class="stage viz proto-viz" id="loop">
+    <svg viewBox="20 74 931 243" role="img" aria-label="A loop of prototype, test and refine, run twice, then a hand-off to a blueprint, a delivered platform, and a predictive layer built on top of it."></svg>
   </div>
 SVG
 page(6, "Test Before You Build",
