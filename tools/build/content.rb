@@ -415,6 +415,5 @@ page(7, "Where to Start",
     ["Advanced capabilities come last, because they depend on everything before them."]) +
   block("start-this-month", "Start this month",
     ["You can start this month, without new technology:"], nil, start_body) +
-  cta +
-  next_band("Back to the beginning", "The Dashboard Isn’t the Problem", "../intro/"),
+  cta, # the page ends on the assessment
   script_key: "start")
