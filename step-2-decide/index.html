@@ -7,7 +7,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;500&family=Syne:wght@400;500;600&family=Inter:ital,wght@0,300;0,400;0,500;1,300&display=swap">
-<link rel="stylesheet" href="../assets/playbook.css?v=38965d17">
+<link rel="stylesheet" href="../assets/playbook.css?v=e81e2c0a">
+<script>try{if(matchMedia("(min-width: 1101px)").matches&&localStorage.getItem("playbook-rail")==="collapsed")document.documentElement.classList.add("rail-collapsed")}catch(e){}</script>
 
 <a class="skip" href="#main">Skip to content</a>
 
@@ -35,6 +36,9 @@
       </svg>
     </span>
   </a>
+  <button class="rail-toggle" id="rail-toggle" type="button" aria-controls="rail" aria-expanded="true" aria-label="Collapse contents">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 6.5 9 12l5.5 5.5"/></svg>
+  </button>
   <span class="bar-sep" aria-hidden="true"></span>
   <span class="bar-title">From Data Sprawl to a Single Source of Truth</span>
   <p class="bar-where"><span class="bw-num">02</span><span class="bw-ch">Know who decides what</span><span class="bw-sec" id="bar-section"></span></p>
@@ -45,10 +49,10 @@
 <aside class="rail" id="rail" aria-label="Playbook contents">
   <nav>
     <ol class="toc">
-        <li class="toc-item"><a class="toc-link toc-intro" href="../intro/"><span class="toc-kicker">Introduction</span><span>The Dashboard Isn’t the Problem</span></a></li>
-        <li class="toc-item"><a class="toc-link" href="../step-1-listen/"><span class="toc-num">01</span><span>Listen before you design</span></a></li>
+        <li class="toc-item"><a class="toc-link toc-intro" href="../intro/"><span class="toc-num">00</span><span class="toc-text"><span class="toc-kicker">Introduction</span><span>The Dashboard Isn’t the Problem</span></span></a></li>
+        <li class="toc-item"><a class="toc-link" href="../step-1-listen/"><span class="toc-num">01</span><span class="toc-text">Listen before you design</span></a></li>
         <li class="toc-item is-current">
-          <a class="toc-link" href="#top" aria-current="page"><span class="toc-num">02</span><span>Know who decides what</span></a>
+          <a class="toc-link" href="#top" aria-current="page"><span class="toc-num">02</span><span class="toc-text">Know who decides what</span></a>
           <ol class="subnav">
             <li><a href="#design-for-decisions" data-spy="design-for-decisions">Design for decisions</a></li>
             <li><a href="#how-to-apply" data-spy="how-to-apply">How to apply it</a></li>
@@ -56,18 +60,18 @@
             <li><a href="#five-roles" data-spy="five-roles">Five roles, one truth</a></li>
           </ol>
         </li>
-        <li class="toc-item"><a class="toc-link" href="../step-3-source/"><span class="toc-num">03</span><span>Follow the data to its source</span></a></li>
-        <li class="toc-item"><a class="toc-link" href="../step-4-align/"><span class="toc-num">04</span><span>Agree on what matters</span></a></li>
-        <li class="toc-item"><a class="toc-link" href="../step-5-decisions/"><span class="toc-num">05</span><span>Design around decisions</span></a></li>
-        <li class="toc-item"><a class="toc-link" href="../step-6-test/"><span class="toc-num">06</span><span>Test before you build</span></a></li>
-        <li class="toc-item"><a class="toc-link" href="../where-to-start/"><span class="toc-num">07</span><span>Where to start</span></a></li>
+        <li class="toc-item"><a class="toc-link" href="../step-3-source/"><span class="toc-num">03</span><span class="toc-text">Follow the data to its source</span></a></li>
+        <li class="toc-item"><a class="toc-link" href="../step-4-align/"><span class="toc-num">04</span><span class="toc-text">Agree on what matters</span></a></li>
+        <li class="toc-item"><a class="toc-link" href="../step-5-decisions/"><span class="toc-num">05</span><span class="toc-text">Design around decisions</span></a></li>
+        <li class="toc-item"><a class="toc-link" href="../step-6-test/"><span class="toc-num">06</span><span class="toc-text">Test before you build</span></a></li>
+        <li class="toc-item"><a class="toc-link" href="../where-to-start/"><span class="toc-num">07</span><span class="toc-text">Where to start</span></a></li>
     </ol>
   </nav>
   <div class="assess">
     <h2>How data-ready is your organization?</h2>
-    <button class="btn" type="button" data-soon="The assessment launches soon">Take the assessment
+    <a class="btn" href="https://magnifico-energy-operational-decision-readiness-assessment.scoreapp.com" target="_blank" rel="noopener">Take the assessment
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-    </button>
+    </a>
   </div>
 </aside>
 
@@ -202,6 +206,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
-<script src="../assets/motion/hero-scenes.js?v=38965d17"></script>
-<script src="../assets/playbook.js?v=38965d17"></script>
+<script src="../assets/motion/hero-scenes.js?v=e81e2c0a"></script>
+<script src="../assets/playbook.js?v=e81e2c0a"></script>
 </html>

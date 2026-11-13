@@ -40,6 +40,25 @@
     });
   }
 
+  /* ───── Start this month: square cards whose icons share one size, as large as the fullest card allows.
+     Measured against the width; if even the smallest icon can't fit, every card in the row grows by the same amount. ───── */
+  $$(".moves").forEach((row) => {
+    const cards = $$(".move", row).filter((c) => c.querySelector(".move-illo"));
+    if (!cards.length) return;
+    const MIN = 40, MAX = 120;
+    const fit = () => {
+      const fixed = cards.map((c) => {
+        const s = getComputedStyle(c), copy = c.querySelector(".move-copy") || c.querySelector("p");
+        return parseFloat(s.paddingTop) + parseFloat(s.paddingBottom) + parseFloat(s.rowGap) + copy.offsetHeight;
+      });
+      const side = cards[0].clientWidth, room = side - Math.max(...fixed);
+      row.style.setProperty("--move-illo", Math.round(Math.max(MIN, Math.min(MAX, room))) + "px");
+      row.style.setProperty("--move-min", room < MIN ? Math.ceil(side + MIN - room) + "px" : "0px");
+    };
+    new ResizeObserver(fit).observe(row);
+    fit();
+  });
+
   /* ───── Toast for links that aren't live yet ───── */
   const toast = $("#toast");
   let toastTimer;
@@ -56,17 +75,20 @@
 
   /* ───── Contents menu: collapsible rail on wide screens, a drawer below 1100px ───── */
   const menuBtn = $("#menu-btn");
+  const railBtn = $("#rail-toggle");
   const body = document.body;
   const wide = window.matchMedia("(min-width: 1101px)");
   let lenis = null;
   let collapsed = false;
   try { collapsed = localStorage.getItem("playbook-rail") === "collapsed"; } catch (e) { /* storage unavailable */ }
   const syncMenu = () => {
-    body.classList.toggle("rail-collapsed", wide.matches && collapsed);
+    document.documentElement.classList.toggle("rail-collapsed", wide.matches && collapsed); // set early by the inline script in <head>, so a new page never paints open first
     const open = wide.matches ? !collapsed : body.classList.contains("nav-open");
     body.classList.toggle("menu-is-open", open);
     menuBtn.setAttribute("aria-expanded", String(open));
     menuBtn.setAttribute("aria-label", open ? "Hide contents" : "Show contents");
+    $(".bar-brand")?.setAttribute("aria-label", !wide.matches ? "Magnifico, back to top" : collapsed ? "Show contents" : "Hide contents");
+    if (railBtn) { railBtn.setAttribute("aria-expanded", String(!collapsed)); railBtn.setAttribute("aria-label", collapsed ? "Expand contents" : "Collapse contents"); }
   };
   const setNav = (open) => {
     body.classList.toggle("nav-open", open);
@@ -88,6 +110,9 @@
     if (wide.matches) setCollapsed(!collapsed);
     else setNav(!body.classList.contains("nav-open"));
   });
+  railBtn?.addEventListener("click", () => setCollapsed(!collapsed));
+  // On wide screens the logo works like the caret: clicking it opens or closes the menu
+  $(".bar-brand")?.addEventListener("click", (e) => { if (wide.matches) { e.preventDefault(); e.stopImmediatePropagation(); setCollapsed(!collapsed); } }, true);
   $("#scrim").addEventListener("click", () => setNav(false));
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && document.body.classList.contains("nav-open")) { setNav(false); menuBtn.focus(); }

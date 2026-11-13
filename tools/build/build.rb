@@ -31,9 +31,9 @@ def rail(cur, subnav)
     href = current ? "#top" : "../#{p[:slug]}/"
     aria = current ? ' aria-current="page"' : ""
     inner = if p[:num].nil?
-      %(<a class="toc-link toc-intro" href="#{href}"#{aria}><span class="toc-kicker">Introduction</span><span>#{p[:toc]}</span></a>)
+      %(<a class="toc-link toc-intro" href="#{href}"#{aria}><span class="toc-num">00</span><span class="toc-text"><span class="toc-kicker">Introduction</span><span>#{p[:toc]}</span></span></a>)
     else
-      %(<a class="toc-link" href="#{href}"#{aria}><span class="toc-num">#{p[:num]}</span><span>#{p[:toc]}</span></a>)
+      %(<a class="toc-link" href="#{href}"#{aria}><span class="toc-num">#{p[:num]}</span><span class="toc-text">#{p[:toc]}</span></a>)
     end
     if current
       subs = subnav.map { |id, label| %(            <li><a href="##{id}" data-spy="#{id}">#{label}</a></li>) }.join("\n")
@@ -51,9 +51,9 @@ def rail(cur, subnav)
       </nav>
       <div class="assess">
         <h2>How data-ready is your organization?</h2>
-        <button class="btn" type="button" data-soon="The assessment launches soon">Take the assessment
+        <a class="btn" href="https://magnifico-energy-operational-decision-readiness-assessment.scoreapp.com" target="_blank" rel="noopener">Take the assessment
           #{ARROW}
-        </button>
+        </a>
       </div>
     </aside>
   HTML
@@ -205,7 +205,10 @@ end
 def page(i, title, subnav, body, script_key: nil)
   p = PAGES[i]
   chapter_js = script_key && SCRIPTS[script_key] ? "<script>\n#{SCRIPTS[script_key]}</script>\n" : ""
-  howto_js = "" # Step 1 card animations retired 2026-11-11; kept in assets/motion/howto-scenes.js, catalogued in animations/index.html
+  # Card scenes (assets/motion/howto-scenes.js) load only on pages that use one: today the Ask bubble on Where to start
+  howto_js = body.include?("data-scene=") ? %(<script src="../assets/motion/howto-scenes.js"></script>\n) : ""
+  # Context views (assets/motion/context-views.js) load only where the strip row is: today Step 5
+  cvs_js = body.include?("data-context-views=") ? %(<script src="../assets/motion/context-views.js"></script>\n) : ""
   html = <<~HTML
     <!doctype html>
     <html lang="en">
@@ -217,6 +220,7 @@ def page(i, title, subnav, body, script_key: nil)
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;500&family=Syne:wght@400;500;600&family=Inter:ital,wght@0,300;0,400;0,500;1,300&display=swap">
     <link rel="stylesheet" href="../assets/playbook.css">
+    <script>try{if(matchMedia("(min-width: 1101px)").matches&&localStorage.getItem("playbook-rail")==="collapsed")document.documentElement.classList.add("rail-collapsed")}catch(e){}</script>
 
     <a class="skip" href="#main">Skip to content</a>
 
@@ -236,7 +240,7 @@ def page(i, title, subnav, body, script_key: nil)
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
     <script src="../assets/motion/hero-scenes.js"></script>
-    #{howto_js}#{chapter_js}<script src="../assets/playbook.js"></script>
+    #{cvs_js}#{howto_js}#{chapter_js}<script src="../assets/playbook.js"></script>
     </html>
   HTML
   Dir.mkdir(File.join(ROOT, p[:slug])) unless Dir.exist?(File.join(ROOT, p[:slug]))

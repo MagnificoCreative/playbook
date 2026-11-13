@@ -7,7 +7,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;500&family=Syne:wght@400;500;600&family=Inter:ital,wght@0,300;0,400;0,500;1,300&display=swap">
-<link rel="stylesheet" href="../assets/playbook.css?v=38965d17">
+<link rel="stylesheet" href="../assets/playbook.css?v=e81e2c0a">
+<script>try{if(matchMedia("(min-width: 1101px)").matches&&localStorage.getItem("playbook-rail")==="collapsed")document.documentElement.classList.add("rail-collapsed")}catch(e){}</script>
 
 <a class="skip" href="#main">Skip to content</a>
 
@@ -35,6 +36,9 @@
       </svg>
     </span>
   </a>
+  <button class="rail-toggle" id="rail-toggle" type="button" aria-controls="rail" aria-expanded="true" aria-label="Collapse contents">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 6.5 9 12l5.5 5.5"/></svg>
+  </button>
   <span class="bar-sep" aria-hidden="true"></span>
   <span class="bar-title">From Data Sprawl to a Single Source of Truth</span>
   <p class="bar-where"><span class="bw-num">07</span><span class="bw-ch">Where to start</span><span class="bw-sec" id="bar-section"></span></p>
@@ -45,15 +49,15 @@
 <aside class="rail" id="rail" aria-label="Playbook contents">
   <nav>
     <ol class="toc">
-        <li class="toc-item"><a class="toc-link toc-intro" href="../intro/"><span class="toc-kicker">Introduction</span><span>The Dashboard Isn’t the Problem</span></a></li>
-        <li class="toc-item"><a class="toc-link" href="../step-1-listen/"><span class="toc-num">01</span><span>Listen before you design</span></a></li>
-        <li class="toc-item"><a class="toc-link" href="../step-2-decide/"><span class="toc-num">02</span><span>Know who decides what</span></a></li>
-        <li class="toc-item"><a class="toc-link" href="../step-3-source/"><span class="toc-num">03</span><span>Follow the data to its source</span></a></li>
-        <li class="toc-item"><a class="toc-link" href="../step-4-align/"><span class="toc-num">04</span><span>Agree on what matters</span></a></li>
-        <li class="toc-item"><a class="toc-link" href="../step-5-decisions/"><span class="toc-num">05</span><span>Design around decisions</span></a></li>
-        <li class="toc-item"><a class="toc-link" href="../step-6-test/"><span class="toc-num">06</span><span>Test before you build</span></a></li>
+        <li class="toc-item"><a class="toc-link toc-intro" href="../intro/"><span class="toc-num">00</span><span class="toc-text"><span class="toc-kicker">Introduction</span><span>The Dashboard Isn’t the Problem</span></span></a></li>
+        <li class="toc-item"><a class="toc-link" href="../step-1-listen/"><span class="toc-num">01</span><span class="toc-text">Listen before you design</span></a></li>
+        <li class="toc-item"><a class="toc-link" href="../step-2-decide/"><span class="toc-num">02</span><span class="toc-text">Know who decides what</span></a></li>
+        <li class="toc-item"><a class="toc-link" href="../step-3-source/"><span class="toc-num">03</span><span class="toc-text">Follow the data to its source</span></a></li>
+        <li class="toc-item"><a class="toc-link" href="../step-4-align/"><span class="toc-num">04</span><span class="toc-text">Agree on what matters</span></a></li>
+        <li class="toc-item"><a class="toc-link" href="../step-5-decisions/"><span class="toc-num">05</span><span class="toc-text">Design around decisions</span></a></li>
+        <li class="toc-item"><a class="toc-link" href="../step-6-test/"><span class="toc-num">06</span><span class="toc-text">Test before you build</span></a></li>
         <li class="toc-item is-current">
-          <a class="toc-link" href="#top" aria-current="page"><span class="toc-num">07</span><span>Where to start</span></a>
+          <a class="toc-link" href="#top" aria-current="page"><span class="toc-num">07</span><span class="toc-text">Where to start</span></a>
           <ol class="subnav">
             <li><a href="#the-short-version" data-spy="the-short-version">The short version</a></li>
             <li><a href="#start-this-month" data-spy="start-this-month">Start this month</a></li>
@@ -64,9 +68,9 @@
   </nav>
   <div class="assess">
     <h2>How data-ready is your organization?</h2>
-    <button class="btn" type="button" data-soon="The assessment launches soon">Take the assessment
+    <a class="btn" href="https://magnifico-energy-operational-decision-readiness-assessment.scoreapp.com" target="_blank" rel="noopener">Take the assessment
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-    </button>
+    </a>
   </div>
 </aside>
 
@@ -103,7 +107,7 @@
       </div>
       
     </div>
-<div class="moves" data-reveal="top 85%"><div class="move"><svg class="viz" viewBox="0 0 72 72" aria-hidden="true"><path class="ln" d="M8 18h38v24H24l-8 8v-8H8z" stroke-opacity=".7"/><path class="ln" d="M30 48v8h18l8 8v-8h8V32H52" stroke-opacity=".45"/><circle cx="56" cy="20" r="5" fill="#ff0074"/></svg><p>Have a handful of honest conversations across functions about how people really work with operational data.</p></div><div class="move"><svg class="viz" viewBox="0 0 72 72" aria-hidden="true"><path class="ln" d="M6 58C22 58 22 20 38 20S54 44 66 44" stroke-opacity=".55"/><circle cx="6" cy="58" r="5" fill="#ff0074"/><circle class="node" cx="66" cy="44" r="5"/></svg><p>Trace one metric your leadership relies on, from where it’s born to where it’s used.</p></div><div class="move"><svg class="viz" viewBox="0 0 72 72" aria-hidden="true"><path class="ln" d="M6 36h14M30 36h14M54 36h12" stroke-opacity=".55"/><circle cx="12" cy="36" r="5" fill="#ff0074"/><circle class="node" cx="36" cy="36" r="5"/><circle class="node" cx="60" cy="36" r="5"/><path class="ln" d="M56 22l6-6 6 6" stroke-opacity=".5"/></svg><p>Sketch one decision flow, from the first signal to the action that resolves it.</p></div></div>
+<div class="moves" data-reveal="top 85%"><div class="move"><svg class="illo move-illo" viewBox="278 138 260 260" data-scene="a1" aria-hidden="true"></svg><div class="move-copy"><h3>Talk across functions</h3><p>Have a handful of honest conversations about how people really work with operational data.</p></div></div><div class="move"><svg class="illo move-illo" viewBox="172 172 260 260" data-scene="l2" aria-hidden="true"></svg><div class="move-copy"><h3>Trace one metric</h3><p>Pick a number your leadership relies on and follow it from where it’s born to where it’s used.</p></div></div><div class="move"><svg class="illo move-illo" viewBox="260 187 260 260" data-scene="s4" aria-hidden="true"></svg><div class="move-copy"><h3>Sketch one decision</h3><p>Map how one call really gets made, from the first signal to the action that resolves it.</p></div></div></div>
 <p class="closing" data-reveal="top 90%"><span>Each of those will tell you more about your real problem <strong>than another dashboard would.</strong></span></p>
 
   </div>
@@ -113,18 +117,9 @@
     <div class="cta-art" aria-hidden="true"><svg viewBox="0 0 600 600" id="cta-art"></svg></div>
     <h2 class="h2" id="t-assessment">How ready is your organization to go from data to decisions?</h2>
     <p>The Data to Decision Assessment uses the same CLEAR steps to show you which practices you already have in place, where the gaps are, and what to tackle first.</p>
-    <button class="btn" type="button" data-soon="The assessment launches soon">Take the Data to Decision Assessment <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+    <a class="btn" href="https://magnifico-energy-operational-decision-readiness-assessment.scoreapp.com" target="_blank" rel="noopener">Take the Data to Decision Assessment <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
   </div>
 </section>
-<div class="next">
-  <a href="../intro/">
-    <div class="next-copy">
-      <p class="eyebrow">Back to the beginning</p>
-      <p class="next-title">The Dashboard Isn’t the Problem</p>
-    </div>
-    <span class="next-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
-  </a>
-</div>
 
   </main>
 </div>
@@ -134,7 +129,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
-<script src="../assets/motion/hero-scenes.js?v=38965d17"></script>
+<script src="../assets/motion/hero-scenes.js?v=e81e2c0a"></script>
+<script src="../assets/motion/howto-scenes.js?v=e81e2c0a"></script>
 <script>
 /* Where to start: rings breathe behind the assessment call to action. */
 window.PlaybookChapter = (P) => {
@@ -142,5 +138,5 @@ window.PlaybookChapter = (P) => {
   if (svg && window.HeroMount) P.loop(svg, window.HeroMount(svg, "00"), 1.5, 2.5);
 };
 </script>
-<script src="../assets/playbook.js?v=38965d17"></script>
+<script src="../assets/playbook.js?v=e81e2c0a"></script>
 </html>

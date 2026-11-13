@@ -304,14 +304,7 @@ path_viz = <<~HTML
     </ol>
   </div>
 HTML
-views = [
-  ["Hurricane map view for severe-weather planning", '<path class="ln" d="M10 70C30 62 40 74 60 66S88 70 96 60" stroke-opacity=".4"/><path class="ln" d="M62 34a10 10 0 1 1-9 13 15 15 0 1 0 22-17" stroke-opacity=".85"/><circle cx="62" cy="38" r="3.5" fill="#ff0074"/><path class="ln" d="M20 86l10-8 10 6 12-10" stroke-opacity=".3" stroke-dasharray="2 4"/>'],
-  ["Price per barrel for market context", '<path class="ln" d="M22 30h30v52H22zM22 44h30M22 68h30" stroke-opacity=".55"/><path class="ln" d="M60 74l10-12 9 6 15-24" stroke-opacity=".85"/><circle cx="94" cy="44" r="3.5" fill="#ff0074"/>'],
-  ["Flaring by platform, how much and for how long", '<path class="ln" d="M18 86h40M24 86V58h28v28M30 58V44h16v14M38 44V30" stroke-opacity=".55"/><path class="ln" d="M38 30c-6-6 0-12 0-18 4 6 8 10 2 18" stroke="#ff0074"/><path class="ln" d="M68 86V66M78 86V54M88 86V72" stroke-opacity=".7"/>'],
-  ["A 3D model of a booster gas compressor, with metrics on the equipment", '<path class="ln" d="M20 62l30-16 30 16-30 16zM20 62v16l30 16 30-16V62M50 78v16" stroke-opacity=".6"/><ellipse class="ln" cx="66" cy="44" rx="10" ry="5" stroke-opacity=".6"/><path class="ln" d="M56 44v14M76 44v14" stroke-opacity=".6"/><path class="ln" d="M66 30v-10h18" stroke-opacity=".5"/><circle cx="88" cy="20" r="3.5" fill="#ff0074"/>'],
-  ["Underwater views of pipelines and the wells they tap into", '<path class="ln" d="M8 30c12-6 18 6 30 0s18-6 30 0 18 6 30 0" stroke-opacity=".4"/><path class="ln" d="M30 30v34h40v22M70 64h20v22" stroke-opacity=".7"/><circle class="node" cx="70" cy="88" r="5"/><circle cx="90" cy="88" r="5" fill="#ff0074"/><path class="ln" d="M10 92h90" stroke-opacity=".3"/>'],
-]
-views_html = views.map { |cap, art| %(<li class="view"><svg class="viz" viewBox="0 0 110 110" aria-hidden="true">#{art}</svg><h3>#{cap}</h3></li>) }.join
+# Ends with the Context views strips (.cvs): built in the browser by assets/motion/context-views.js from the pages in assets/context-views/
 tiers = <<~HTML
   <div class="tiers" data-reveal="top 90%">
     <svg class="layers" id="layers" viewBox="0 0 320 300" role="img" aria-label="Three layers: a small pink one for what’s always visible, a wider teal one for what’s available on demand, and the widest, palest one for what’s revealed during investigation. Each fills in turn, then they draw together into one stack."></svg>
@@ -321,8 +314,11 @@ tiers = <<~HTML
       <li><svg class="t-key" viewBox="0 0 14 14" aria-hidden="true"><path d="M1 7 L7 4 L13 7 L7 10Z" stroke="#002a32" stroke-opacity=".28"/></svg><h3>Revealed during investigation</h3><p>Only matters once someone starts investigating.</p></li>
     </ol>
   </div>
-  <p class="block-sub" data-reveal="top 90%"><span>Context views at the oil and gas company, each added because it made a decision faster or clearer.</span></p>
-  <ul class="views" data-reveal="top 90%">#{views_html}</ul>
+  <div class="cvs" data-context-views="../assets/context-views/">
+    <div data-reveal="top 90%"><h3 class="cvs-title">Context views</h3></div>
+    <div class="cvs-row" role="group" aria-label="Context views at the oil and gas company"></div>
+    <div class="cvs-info" aria-live="polite"><div><div class="cvs-in"></div></div></div>
+  </div>
 HTML
 page(5, "Design Around Decisions",
   [["daily-friction", "Start with daily friction"], ["signal-to-action", "From signal to action"], ["how-to-apply", "How to apply it"], ["in-the-field", "In the field"], ["what-goes-where", "What goes where"]],
@@ -387,11 +383,17 @@ page(6, "Test Before You Build",
 
 # ───────────────────────── 07 · Where to start ─────────────────────────
 moves = [
-  ['<path class="ln" d="M8 18h38v24H24l-8 8v-8H8z" stroke-opacity=".7"/><path class="ln" d="M30 48v8h18l8 8v-8h8V32H52" stroke-opacity=".45"/><circle cx="56" cy="20" r="5" fill="#ff0074"/>', "Have a handful of honest conversations across functions about how people really work with operational data."],
-  ['<path class="ln" d="M6 58C22 58 22 20 38 20S54 44 66 44" stroke-opacity=".55"/><circle cx="6" cy="58" r="5" fill="#ff0074"/><circle class="node" cx="66" cy="44" r="5"/>', "Trace one metric your leadership relies on, from where it’s born to where it’s used."],
-  ['<path class="ln" d="M6 36h14M30 36h14M54 36h12" stroke-opacity=".55"/><circle cx="12" cy="36" r="5" fill="#ff0074"/><circle class="node" cx="36" cy="36" r="5"/><circle class="node" cx="60" cy="36" r="5"/><path class="ln" d="M56 22l6-6 6 6" stroke-opacity=".5"/>', "Sketch one decision flow, from the first signal to the action that resolves it."],
+  [:a1, "Talk across functions", "Have a handful of honest conversations about how people really work with operational data."],
+  [:l2, "Trace one metric", "Pick a number your leadership relies on and follow it from where it’s born to where it’s used."],
+  [:s4, "Sketch one decision", "Map how one call really gets made, from the first signal to the action that resolves it."],
 ]
-moves_html = %(<div class="moves" data-reveal="top 85%">) + moves.map { |art, t| %(<div class="move"><svg class="viz" viewBox="0 0 72 72" aria-hidden="true">#{art}</svg><p>#{t}</p></div>) }.join + "</div>"
+# Each card's looping scene (assets/motion/howto-scenes.js) is drawn in the 600 space and shown through a 260 crop,
+# placed so the drawing starts at the top-left of the crop and lines up with the card padding like the copy
+MOVE_CROP = { a1: "278 138 260 260", l2: "172 172 260 260", s4: "260 187 260 260" }
+moves_html = %(<div class="moves" data-reveal="top 85%">) + moves.map { |art, head, t|
+  svg = art.is_a?(Symbol) ? %(<svg class="illo move-illo" viewBox="#{MOVE_CROP.fetch(art)}" data-scene="#{art}" aria-hidden="true"></svg>) : %(<svg class="viz" viewBox="0 0 72 72" aria-hidden="true">#{art}</svg>)
+  %(<div class="move">#{svg}<div class="move-copy"><h3>#{head}</h3><p>#{t}</p></div></div>)
+}.join + "</div>"
 start_body = <<~HTML
   #{moves_html}
   <p class="closing" data-reveal="top 90%"><span>Each of those will tell you more about your real problem <strong>than another dashboard would.</strong></span></p>
@@ -402,7 +404,7 @@ cta = <<~HTML
       <div class="cta-art" aria-hidden="true"><svg viewBox="0 0 600 600" id="cta-art"></svg></div>
       <h2 class="h2" id="t-assessment">How ready is your organization to go from data to decisions?</h2>
       <p>The Data to Decision Assessment uses the same CLEAR steps to show you which practices you already have in place, where the gaps are, and what to tackle first.</p>
-      <button class="btn" type="button" data-soon="The assessment launches soon">Take the Data to Decision Assessment #{ARROW}</button>
+      <a class="btn" href="https://magnifico-energy-operational-decision-readiness-assessment.scoreapp.com" target="_blank" rel="noopener">Take the Data to Decision Assessment #{ARROW}</a>
     </div>
   </section>
 HTML
@@ -415,6 +417,5 @@ page(7, "Where to Start",
     ["Advanced capabilities come last, because they depend on everything before them."]) +
   block("start-this-month", "Start this month",
     ["You can start this month, without new technology:"], nil, start_body) +
-  cta +
-  next_band("Back to the beginning", "The Dashboard Isn’t the Problem", "../intro/"),
+  cta, # the page ends on the assessment
   script_key: "start")
