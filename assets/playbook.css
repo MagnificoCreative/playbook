@@ -604,7 +604,7 @@ main { min-width: 0; }
    Drawings that scale up set --u (viewBox units per screen pixel), so their type holds these sizes on screen. */
 .sieve-viz .axis { font-size: calc(12px * var(--u, 1)); }
 .sieve-viz .big { font: 300 calc(20px * var(--u, 1))/1.2 var(--f-display); letter-spacing: -0.01em; fill: var(--text-primary); }
-.sieve-viz .cat { font: 400 calc(16px * var(--u, 1))/1 var(--f-display); letter-spacing: -0.01em; fill: var(--text-primary); }
+.sieve-viz .cat { font: 400 calc(14px * var(--u, 1))/1 var(--f-display); letter-spacing: -0.01em; fill: var(--text-primary); }
 .sieve-viz svg { max-height: calc(100svh - var(--bar) - 2 * var(--pad) - 160px); margin: 0 auto; }
 
 /* From prototype to platform: two weights only. 1px for structure, 0.5px for every detail inside a shape */
