@@ -558,7 +558,7 @@ window.PlaybookChapter = (P) => {
       scrollTrigger: { trigger: "#prototype-to-platform", start: () => `top top+=${P.pinTop()}`, end: "+=160%", pin: true, scrub: 0.6, anticipatePin: 1, invalidateOnRefresh: true } });  // after how-to-apply on the page, so no refreshPriority: it is measured in page order
   });
   mm.add("(max-width: 1100px), (max-height: 619px)", () => {
-    P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p), scrollTrigger: { trigger: "#loop", start: "top 75%", end: "bottom 30%", scrub: 0.8 } });
+    P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p), scrollTrigger: { trigger: "#loop", start: "clamp(top 75%)", end: "clamp(bottom 30%)", scrub: 0.8 } });  // clamp: the page ends soon after, so the end must stay reachable or the journey stops halfway
   });
 };
 

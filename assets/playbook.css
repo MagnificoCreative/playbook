@@ -610,7 +610,7 @@ main { min-width: 0; }
 /* From prototype to platform: two weights only. 1px for structure, 0.5px for every detail inside a shape */
 .proto-viz .ln { stroke-width: 1; }
 .proto-viz .hair { fill: none; stroke: var(--teal-900); stroke-width: .5; }
-.proto-viz .lbl-s { font: 400 calc(16px * var(--u, 1))/1 var(--f-display); letter-spacing: -0.01em; transition: fill .3s var(--ease-out); }
+.proto-viz .lbl-s { font: 400 calc(14px * var(--u, 1))/1 var(--f-display); letter-spacing: -0.01em; transition: fill .3s var(--ease-out); }
 .proto-viz .lbl-b { font: 300 calc(14px * var(--u, 1))/1 var(--f-sans); letter-spacing: 0; }
 .proto-viz .lbl-s.on { fill: var(--text-primary); }
 
