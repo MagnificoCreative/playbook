@@ -96,12 +96,24 @@
     if (lenis) open ? lenis.stop() : lenis.start();
     if (open) $(".rail .toc-item.is-current .toc-link")?.focus({ preventScroll: true });
   };
+  /* Top bar: the centred title and the label on the right must not touch. When they would, drop the section name;
+     if they still would, drop the title. Re-checked on resize, when the section changes and after the menu moves. */
+  function fitBar() {
+    const bar = $(".bar"), title = $(".bar-title"), where = $(".bar-where");
+    if (!bar || !title || !where) return;
+    bar.classList.remove("bar-no-sec", "bar-no-title");
+    const clash = () => title.getBoundingClientRect().right + 24 > where.getBoundingClientRect().left;
+    if (getComputedStyle(title).display === "none" || !clash()) return;
+    bar.classList.add("bar-no-sec");
+    if (clash()) bar.classList.add("bar-no-title");
+  }
+  window.addEventListener("resize", fitBar);
   const setCollapsed = (v) => {
     collapsed = v;
     try { localStorage.setItem("playbook-rail", v ? "collapsed" : "open"); } catch (e) { /* storage unavailable */ }
     syncMenu();
     // The page reflows as the rail slides away; re-measure pinned sections once it settles.
-    setTimeout(() => window.ScrollTrigger && ScrollTrigger.refresh(), 600);
+    setTimeout(() => { fitBar(); window.ScrollTrigger && ScrollTrigger.refresh(); }, 600);
   };
   syncMenu();
   requestAnimationFrame(() => requestAnimationFrame(() => body.classList.add("rail-ready"))); // no slide on first paint
@@ -186,6 +198,7 @@
   const setActive = (id) => {
     spyLinks.forEach((l) => l.classList.toggle("is-active", l.dataset.spy === id));
     if (barSection) barSection.textContent = spyLinks.find((l) => l.dataset.spy === id)?.textContent || "";  // the hero shows the chapter alone
+    fitBar();
   };
   const createSpy = () => {
     const secs = $$("[data-section]");

@@ -955,3 +955,5 @@ h1, h2, h3, .h2, .display, .card-label, .card-title, .next-title, .stat-num,
 /* The logo opens and closes the menu on wide screens: its pink deepens on hover to show it's clickable */
 .logo-mark { transition: fill .25s var(--ease-out); }
 @media (min-width: 1101px) { .bar-brand:hover .logo-mark { fill: #d6005f; } }
+/* Crowded top bar (set by fitBar in playbook.js): the section name goes first, then the title */
+.bar-no-sec .bw-sec, .bar-no-title .bar-title { display: none; }
