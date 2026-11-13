@@ -603,7 +603,7 @@ main { min-width: 0; }
 /* Infographic type follows From signal to action: names in Syne 15, body in Inter 300 14, labels 11.
    Drawings that scale up set --u (viewBox units per screen pixel), so their type holds these sizes on screen. */
 .sieve-viz .axis { font-size: calc(12px * var(--u, 1)); }
-.sieve-viz .big { font: 300 calc(20px * var(--u, 1))/1.2 var(--f-display); letter-spacing: -0.01em; fill: var(--text-primary); }
+.sieve-viz .big { font: 300 calc(28px * var(--u, 1))/1.2 var(--f-display); letter-spacing: -0.01em; fill: var(--text-primary); }
 .sieve-viz .cat { font: 400 calc(14px * var(--u, 1))/1 var(--f-display); letter-spacing: -0.01em; fill: var(--text-primary); }
 .sieve-viz svg { max-height: calc(100svh - var(--bar) - 2 * var(--pad) - 160px); margin: 0 auto; }
 
@@ -967,3 +967,8 @@ h1, h2, h3, .h2, .display, .card-label, .card-title, .next-title, .stat-num,
 @media (min-width: 1101px) { .bar-brand:hover .logo-mark { fill: #d6005f; } }
 /* Crowded top bar (set by fitBar in playbook.js): the section name goes first, then the title */
 .bar-no-sec .bw-sec, .bar-no-title .bar-title { display: none; }
+/* Wide screens, menu open: the full logo stays, even past the hero (the fold to the M is for the collapsed menu and phones) */
+@media (min-width: 1101px) {
+  html:not(.rail-collapsed) .bar.is-compact .logo { width: calc(var(--logo-h) * 100 / 18.86); }
+  html:not(.rail-collapsed) .bar.is-compact .logo-word { opacity: 1; transform: none; }
+}
