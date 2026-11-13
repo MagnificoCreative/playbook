@@ -17,20 +17,26 @@ window.PlaybookChapter = (P) => {
     const f1 = (n) => n.toFixed(1);
 
     // Two layouts share one drawing. Spectrum runs from `a` (pane of glass) to `b` (source of truth).
-    const WIDE = { vb: "69 39 896 353", // cropped to the drawing
+    const WIDE = { vb: "69 39 896 186", base: 224.5, // the drawing alone, down to the bottom of the screen's stand; fit() places the line and labels below
       S: { x: 70, y: 40, w: 260, h: 170 }, ball: { x: 820, y: 125 },
-      a: { x: 200, y: 300 }, b: { x: 820, y: 300 },
-      pane: { x: 200, y: 344 }, truth: { x: 820, y: 344 } };
+      a: { x: 200, y: 266 }, b: { x: 820, y: 266 },
+      pane: { x: 200, y: 300 }, truth: { x: 820, y: 300 } };
     const STACKED = { vb: "14 23 330 564", S: { x: 70, y: 24, w: 260, h: 170 }, ball: { x: 200, y: 404 },
       a: { x: 22, y: 109 }, b: { x: 22, y: 404 },
       pane: { x: 200, y: 246 }, truth: { x: 200, y: 540 } };
 
+    let G0 = WIDE, SPEC = null, LABS = [];
     const build = (G) => {
+      G0 = G; LABS = [];
       while (svg.firstChild) svg.removeChild(svg.firstChild);
       svg.setAttribute("viewBox", G.vb);
       let seed = 7; // seeded, so the arcs and departure order are the same on every visit
       const R = () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
-      const text = (cls, x, y, s) => { const t = el("text", { class: cls, x, y, "text-anchor": "middle" }, svg); t.textContent = s; };
+      const label = (x, y, head, lines) => {
+        const t = el("text", { x, y, "text-anchor": "middle" }, svg); LABS.push(t);
+        el("tspan", { class: "lbl", x }, t).textContent = head;
+        lines.forEach((s, i) => { el("tspan", { class: "lbl-s", x, dy: i ? "1.45em" : "1.65em" }, t).textContent = s; });
+      };
       const N = 36, S = G.S, BALL = G.ball, RING = 82;
       el("rect", { class: "ln", x: S.x, y: S.y, width: S.w, height: S.h, rx: 8, "stroke-opacity": .45, style: THIN }, svg);
       el("line", { class: "ln", x1: S.x + S.w / 2 - 34, x2: S.x + S.w / 2 + 34, y1: S.y + S.h + 14, y2: S.y + S.h + 14, "stroke-opacity": .3, style: THIN }, svg);
@@ -50,20 +56,18 @@ window.PlaybookChapter = (P) => {
       const gr = el("linearGradient", { id: "truth-spectrum", gradientUnits: "userSpaceOnUse", x1: G.a.x, y1: G.a.y, x2: G.b.x, y2: G.b.y }, defs);
       el("stop", { offset: 0, "stop-color": TEAL, "stop-opacity": .2 }, gr);
       el("stop", { offset: 1, "stop-color": TEAL, "stop-opacity": .6 }, gr);
-      el("line", { x1: G.a.x, y1: G.a.y, x2: G.b.x, y2: G.b.y, stroke: "url(#truth-spectrum)", "stroke-width": 1 }, svg);
+      const spec = SPEC = el("g", {}, svg); // the line, its ticks, its ends and its marker move as one
+      el("line", { x1: G.a.x, y1: G.a.y, x2: G.b.x, y2: G.b.y, stroke: "url(#truth-spectrum)", "stroke-width": 1 }, spec);
       const len = Math.hypot(G.b.x - G.a.x, G.b.y - G.a.y), nx = -(G.b.y - G.a.y) / len, ny = (G.b.x - G.a.x) / len;
       for (let i = 0; i <= 10; i++) {
         const x = lerp(G.a.x, G.b.x, i / 10), y = lerp(G.a.y, G.b.y, i / 10);
-        el("line", { class: "hl", x1: f1(x - nx * 4), y1: f1(y - ny * 4), x2: f1(x + nx * 4), y2: f1(y + ny * 4), "stroke-opacity": .18 }, svg);
+        el("line", { class: "hl", x1: f1(x - nx * 4), y1: f1(y - ny * 4), x2: f1(x + nx * 4), y2: f1(y + ny * 4), "stroke-opacity": .18 }, spec);
       }
-      el("circle", { class: "node", cx: G.a.x, cy: G.a.y, r: 5, style: THIN }, svg);
-      el("circle", { class: "node", cx: G.b.x, cy: G.b.y, r: 5, style: THIN }, svg);
-      const marker = el("circle", { class: "ball", r: 7, cx: G.a.x, cy: G.a.y }, svg);
-      text("lbl", G.pane.x, G.pane.y, "A single pane of glass");
-      text("lbl-s", G.pane.x, G.pane.y + 25, "Puts all your data on one screen.");
-      text("lbl", G.truth.x, G.truth.y, "A single source of truth");
-      text("lbl-s", G.truth.x, G.truth.y + 25, "Everyone agrees what each number means,");
-      text("lbl-s", G.truth.x, G.truth.y + 43, "where it comes from and who owns it.");
+      el("circle", { class: "node", cx: G.a.x, cy: G.a.y, r: 5, style: THIN }, spec);
+      el("circle", { class: "node", cx: G.b.x, cy: G.b.y, r: 5, style: THIN }, spec);
+      const marker = el("circle", { class: "ball", r: 7, cx: G.a.x, cy: G.a.y }, spec);
+      label(G.pane.x, G.pane.y, "A single pane of glass", ["Puts all your data on one screen."]);
+      label(G.truth.x, G.truth.y, "A single source of truth", ["Everyone agrees what each number means,", "where it comes from and who owns it."]);
 
       const threads = el("g", {}, svg), dotsG = el("g", {}, svg);
       const order = Array.from({ length: N }, (_, i) => i).sort(() => R() - .5);
@@ -94,8 +98,35 @@ window.PlaybookChapter = (P) => {
     // Same breakpoint as the stylesheet's phone rules
     const phone = matchMedia("(max-width: 767px)");
     const o = { p: 0 };
-    let draw = build(phone.matches ? STACKED : WIDE);
-    phone.addEventListener("change", () => { draw = build(phone.matches ? STACKED : WIDE); draw(o.p); });
+    // Type keeps its on-screen size whatever the drawing's scale: --u is viewBox units per screen pixel
+    // (capped at 1.3, so narrow screens shrink it a little). Wide, the spacing below the drawing is set in screen
+    // pixels too: 24px from the screen's stand to the line, 24px from the line to the top of the headline's capitals.
+    // The crop is the drawing plus wherever the labels reach; a few passes settle scale, type size and crop together.
+    const GAP = 24;
+    let capEm = .7; // Syne's cap height as a share of the font size, measured once the font is in
+    const measureCap = () => { const c = document.createElement("canvas").getContext("2d"); c.font = "400 100px Syne"; const m = c.measureText("H"); if (m.actualBoundingBoxAscent) capEm = m.actualBoundingBoxAscent / 100; };
+    const fit = () => {
+      for (let k = 0; k < 4; k++) {
+        const w = svg.getBoundingClientRect().width;
+        if (!w) return;
+        const u = Math.min(1.3, svg.viewBox.baseVal.width / w);
+        svg.style.setProperty("--u", u.toFixed(4));
+        if (G0.base) {
+          const lineY = G0.base + GAP * u;
+          SPEC.setAttribute("transform", `translate(0 ${f1(lineY - G0.a.y)})`);
+          LABS.forEach((t) => t.setAttribute("y", f1(lineY + (GAP + 16 * capEm) * u)));
+        }
+        let [x0, y0, x1, y1] = G0.vb.split(" ").map(Number); x1 += x0; y1 += y0;
+        svg.querySelectorAll("text").forEach((t) => { const b = t.getBBox(); x0 = Math.min(x0, b.x); x1 = Math.max(x1, b.x + b.width); y1 = Math.max(y1, b.y + b.height); });
+        const vb = [x0, y0, x1 - x0, y1 - y0].map((n) => n.toFixed(1)).join(" ");
+        if (vb === svg.getAttribute("viewBox")) return;
+        svg.setAttribute("viewBox", vb);
+      }
+    };
+    if (window.ResizeObserver) new ResizeObserver(fit).observe(svg);
+    let draw = build(phone.matches ? STACKED : WIDE); measureCap(); fit();
+    if (document.fonts) document.fonts.ready.then(() => { measureCap(); fit(); });
+    phone.addEventListener("change", () => { draw = build(phone.matches ? STACKED : WIDE); fit(); draw(o.p); });
 
     if (!P.gsap || P.reduce) { o.p = 1; draw(1); return; }
     draw(0);
@@ -183,22 +214,117 @@ window.PlaybookChapter = (P) => {
 };
 
 // ==== trace ====
-/* Step 3: one metric splits into conflicting copies and only rejoins where a definition is agreed. */
+/* Step 3: one number, many copies. The number is a grid of twelve dots. It leaves the source whole, splits along three
+   dotted paths into copies that each lose a different few dots (some only half), and is whole again only where a
+   definition is agreed. Pinned on wide screens. */
 window.PlaybookChapter = (P) => {
   const svg = P.$("#trace svg");
   if (!svg) return;
-  const src = P.$(".t-src", svg), copies = P.$$(".t-copy", svg), out = P.$(".t-out", svg);
-  const vals = P.$$(".t-vals > g", svg), agree = P.$(".t-agree", svg);
-  if (!P.gsap || P.reduce) { [src, out, ...copies].forEach((p) => p.setAttribute("stroke-dashoffset", 0)); return; }
-  const g = P.gsap;
-  g.set(vals, { opacity: 0, y: 8 });
-  g.set(agree, { opacity: 0, scale: 0.6, svgOrigin: "830 165" });
-  g.timeline({ defaults: { ease: "none" }, scrollTrigger: { trigger: "#trace", start: "top 85%", end: "bottom 85%", scrub: 0.8 } })
-    .to(src, { attr: { "stroke-dashoffset": 0 }, duration: 0.15 })
-    .to(copies, { attr: { "stroke-dashoffset": 0 }, duration: 0.5, stagger: 0.06 }, 0.15)
-    .to(vals, { opacity: 1, y: 0, duration: 0.12, stagger: 0.05, ease: "power2.out" }, 0.25)
-    .to(agree, { opacity: 1, scale: 1, duration: 0.15, ease: "back.out(2)" }, 0.72)
-    .to(out, { attr: { "stroke-dashoffset": 0 }, duration: 0.12 }, 0.84);
+  const NS = "http://www.w3.org/2000/svg", PINK = "#ff0074", TEAL = "#002a32";
+  const el = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); parent.appendChild(e); return e; };
+  const set = (e, attrs) => { for (const k in attrs) e.setAttribute(k, attrs[k]); };
+  const cl = (x) => Math.min(1, Math.max(0, x));
+  const sm = (a, b, x) => { const t = cl((x - a) / (b - a)); return t * t * (3 - 2 * t); };
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const ease = (t) => (t < .5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
+  const f1 = (n) => n.toFixed(1), f3 = (n) => n.toFixed(3);
+  const fade = (e, o) => e.setAttribute("opacity", f3(o));
+  const text = (cls, x, y, s) => { const t = el("text", { class: cls, x, y, "text-anchor": "middle" }, svg); t.textContent = s; return t; };
+  // Type keeps its on-screen size as the drawing scales up: --u is viewBox units per screen pixel, capped at 1
+  const fit = () => { const w = svg.getBoundingClientRect().width; if (w) svg.style.setProperty("--u", Math.min(1, svg.viewBox.baseVal.width / w).toFixed(4)); };
+  fit(); if (window.ResizeObserver) new ResizeObserver(fit).observe(svg);
+
+  // A number: a 4 × 3 grid of dots. A slot is whole (1), half (.5) or missing (0); a missing one keeps a faint ring
+  const COLS = 4, ROWS = 3, GAP = 11, R = 2.9;
+  const cluster = (cx, cy) => {
+    const g = el("g", {}, svg), w = (COLS - 1) * GAP, h = (ROWS - 1) * GAP;
+    el("rect", { x: f1(cx - w / 2 - 9), y: f1(cy - h / 2 - 9), width: w + 18, height: h + 18, style: "fill: var(--bg-surface)" }, g); // lifts it off the path behind
+    const slots = [];
+    for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
+      const x = f1(cx - w / 2 + c * GAP), y = cy - h / 2 + r * GAP;
+      el("circle", { cx: x, cy: f1(y), r: R, fill: "none", stroke: TEAL, "stroke-width": .5, "stroke-opacity": .3 }, g);
+      slots.push({ half: el("path", { d: `M${x} ${f1(y - R)}A${R} ${R} 0 0 0 ${x} ${f1(y + R)}Z` }, g), full: el("circle", { cx: x, cy: f1(y), r: R }, g) });
+    }
+    return (v, o, col = TEAL) => {
+      fade(g, o * (col === TEAL ? .5 : 1)); // teal sets at 50% as a whole (half and whole dots overlap), so they stay quiet; the agreed pink set is full strength
+      slots.forEach((s, i) => { set(s.full, { fill: col, opacity: f3(cl((v[i] - .5) * 2)) }); set(s.half, { fill: col, opacity: f3(cl(v[i] * 2)) }); });
+    };
+  };
+  const FULL = Array(12).fill(1);
+  const copyOf = (lose) => { const v = FULL.slice(); lose.forEach(([i, x]) => (v[i] = x)); return v; };
+  const mix = (a, b, t) => a.map((x, i) => lerp(x, b[i], t));
+
+  // A dotted path that draws on as t runs 0→1: a solid mask reveals the dots
+  let uid = 0;
+  const dotted = (d, o) => {
+    const id = `trace-m${++uid}`, mask = el("mask", { id, maskUnits: "userSpaceOnUse" }, svg);
+    const mp = el("path", { d, fill: "none", stroke: "#fff", "stroke-width": 8, pathLength: 1, "stroke-dasharray": "1 1", "stroke-dashoffset": 1 }, mask);
+    const p = el("path", { class: "ln", d, "stroke-opacity": o, "stroke-dasharray": "1 4", mask: `url(#${id})` }, svg);
+    const len = p.getTotalLength();
+    return { at: (t) => { const q = p.getPointAtLength(cl(t) * len); return [q.x, q.y]; }, draw: (t) => mp.setAttribute("stroke-dashoffset", f3(1 - cl(t))) };
+  };
+  const ball = (r) => el("circle", { r, fill: PINK, opacity: 0 }, svg);
+  const put = (b, [x, y], o) => set(b, { cx: f1(x), cy: f1(y), opacity: f3(o) });
+
+  // Source, three lanes of copies, and the agreed definition, all on one centre line
+  const Y = 172, SPL = 210, JOIN = 800, UP = 88, DN = 256;
+  const src = cluster(110, Y);
+  text("name", 110, Y + 44, "Source");
+  const lead = dotted(`M140 ${Y}H${SPL}`, .6);
+  const lanes = [
+    { d: `M${SPL} ${Y}C280 ${Y} 290 ${UP} 360 ${UP}H640C710 ${UP} 730 ${Y} ${JOIN} ${Y}`, stops: [[420, UP, "Spreadsheet", -26, [[2, 0]]], [590, UP, null, -26, [[2, 0], [9, .5]]]] },
+    { d: `M${SPL} ${Y}H${JOIN}`, stops: [[505, Y, "Team dashboard", -26, [[5, .5], [11, 0]]]] },
+    { d: `M${SPL} ${Y}C280 ${Y} 290 ${DN} 360 ${DN}H640C710 ${DN} 730 ${Y} ${JOIN} ${Y}`, stops: [[420, DN, "Monthly report", 38, [[7, .5]]], [590, DN, null, 38, [[7, 0], [0, .5], [10, 0]]]] },
+  ].map((ln) => ({ ...ln, path: dotted(ln.d, .45) }));
+  const stops = [];
+  lanes.forEach((ln, li) => {
+    const xs = Array.from({ length: 101 }, (_, i) => ln.path.at(i / 100)[0]);
+    ln.stops.forEach(([x, y, name, dy, lose]) => {
+      const lab = name ? text("name", x, y + dy, name) : text("axis", x, y + dy, "A copy of it");
+      if (!name) lab.setAttribute("fill-opacity", .5);
+      stops.push({ draw: cluster(x, y), lab, v: copyOf(lose), share: xs.findIndex((v) => v >= x) / 100 });
+    });
+  });
+  const tail = dotted(`M${JOIN + 50} ${Y}H930`, .6);
+  const agreed = cluster(JOIN + 30, Y);
+  const aLab = text("name", JOIN + 30, Y + 44, "Agreed definition");
+  const aSub = text("body", JOIN + 30, Y + 64, "One owner");
+  const balls = lanes.map(() => ball(4.5)), lb = ball(5);
+
+  const draw = (p) => {
+    src(FULL, sm(0, .05, p));
+    const t0 = sm(.04, .14, p);
+    lead.draw(t0);
+    put(lb, [lerp(140, SPL, t0), Y], p > .04 && p < .15 ? 1 : 0);
+    const tl = ease(cl((p - .14) / .56));
+    lanes.forEach((ln, i) => { ln.path.draw(tl); put(balls[i], ln.path.at(tl), p > .14 && p < .72 ? 1 : 0); });
+    // a copy appears whole as its dot passes, then loses its few
+    stops.forEach((s) => {
+      const at = .14 + .56 * s.share;
+      const seen = sm(at - .02, at + .02, p);
+      s.draw(mix(FULL, s.v, sm(at + .03, at + .1, p)), seen);
+      fade(s.lab, seen);
+    });
+    const a = sm(.72, .82, p);
+    agreed(FULL, a, PINK);
+    fade(aLab, a); fade(aSub, sm(.8, .88, p));
+    tail.draw(sm(.84, .96, p));
+  };
+  // the dots travel by eased share, so a stop's moment is found from where the eased dot reaches it
+  stops.forEach((s) => { let k = 0; while (k < 1 && ease(k) < s.share) k += .005; s.share = k; });
+
+  if (!P.gsap || P.reduce) { draw(1); return; }
+  const o = { p: 0 };
+  draw(0);
+  const mm = P.gsap.matchMedia();
+  mm.add("(min-width: 1101px) and (min-height: 620px)", () => {
+    P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p),
+      // pinned below the bar; if the headline and quote make the section too tall, pinned by its bottom so the whole card shows
+      scrollTrigger: { trigger: "#one-number", start: () => { const sec = P.$("#one-number"), room = innerHeight - P.pinTop() - 24; return sec && sec.offsetHeight > room ? "bottom bottom-=24" : `top top+=${P.pinTop()}`; }, end: "+=140%", pin: true, scrub: 0.6, anticipatePin: 1, invalidateOnRefresh: true } });
+  });
+  mm.add("(max-width: 1100px), (max-height: 619px)", () => {
+    P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p), scrollTrigger: { trigger: "#trace", start: "top 75%", end: "bottom 35%", scrub: 0.8 } });
+  });
 };
 
 // ==== sieve ====
@@ -558,7 +684,7 @@ window.PlaybookChapter = (P) => {
       scrollTrigger: { trigger: "#prototype-to-platform", start: () => `top top+=${P.pinTop()}`, end: "+=160%", pin: true, scrub: 0.6, anticipatePin: 1, invalidateOnRefresh: true } });  // after how-to-apply on the page, so no refreshPriority: it is measured in page order
   });
   mm.add("(max-width: 1100px), (max-height: 619px)", () => {
-    P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p), scrollTrigger: { trigger: "#loop", start: "top 75%", end: "bottom 30%", scrub: 0.8 } });
+    P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p), scrollTrigger: { trigger: "#loop", start: "clamp(top 75%)", end: "clamp(bottom 30%)", scrub: 0.8 } });  // clamp: the page ends soon after, so the end must stay reachable or the journey stops halfway
   });
 };
 
