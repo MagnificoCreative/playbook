@@ -391,7 +391,7 @@ cta = <<~HTML
 HTML
 page(7, "Where to Start",
   [["the-short-version", "The short version"], ["start-this-month", "Start this month"], ["assessment", "The assessment"]],
-  hero("Where to start", "Where to Start",
+  hero("Next steps", "Where to Start",
        "You can start this month, without new technology.", "07") +
   people("the-short-version", "The short version",
     "You don’t fix operational data by buying a better dashboard. <strong>You fix it by listening to your people, following your data back to its source, agreeing on what matters, designing around real decisions, and testing before you build.</strong>",
