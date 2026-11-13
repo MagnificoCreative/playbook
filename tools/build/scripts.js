@@ -372,7 +372,7 @@ window.PlaybookChapter = (P) => {
   const mid = (BAR[0] + BAR[4]) / 2;
   const capT = text("big", 60, mid + 8, "", "start");
   const tsp = (attrs) => el("tspan", attrs, capT);
-  const cap = { k: text("axis", 60, mid - 16, "", "start", { "fill-opacity": .6 }), q1: tsp({ x: 60 }), q2: tsp({ x: 60, dy: "1.3em" }), cur: null };
+  const cap = { k: text("axis", 60, mid - 26, "", "start", { "fill-opacity": .6 }), q1: tsp({ x: 60 }), q2: tsp({ x: 60, dy: "1.3em" }), cur: null };
 
   // 60 measures: most fail the first test, fewer each test after, ten survive (two per category)
   const fails = [];
