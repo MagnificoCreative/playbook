@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;500&family=Syne:wght@400;500;600&family=Inter:ital,wght@0,300;0,400;0,500;1,300&display=swap">
-<link rel="stylesheet" href="../assets/playbook.css?v=b84d655b">
+<link rel="stylesheet" href="../assets/playbook.css?v=ebe6d40e">
 <script>try{if(matchMedia("(min-width: 1101px)").matches&&localStorage.getItem("playbook-rail")==="collapsed")document.documentElement.classList.add("rail-collapsed")}catch(e){}</script>
 
 <a class="skip" href="#main">Skip to content</a>
@@ -233,7 +233,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
-<script src="../assets/motion/hero-scenes.js?v=b84d655b"></script>
+<script src="../assets/motion/hero-scenes.js?v=ebe6d40e"></script>
 <script>
 /* Introduction: one piece of information travels Source → Act and loses trust at every stage. */
 window.PlaybookChapter = (P) => {
@@ -253,20 +253,26 @@ window.PlaybookChapter = (P) => {
     const f1 = (n) => n.toFixed(1);
 
     // Two layouts share one drawing. Spectrum runs from `a` (pane of glass) to `b` (source of truth).
-    const WIDE = { vb: "69 39 896 353", // cropped to the drawing
+    const WIDE = { vb: "69 39 896 186", base: 224.5, // the drawing alone, down to the bottom of the screen's stand; fit() places the line and labels below
       S: { x: 70, y: 40, w: 260, h: 170 }, ball: { x: 820, y: 125 },
-      a: { x: 200, y: 300 }, b: { x: 820, y: 300 },
-      pane: { x: 200, y: 344 }, truth: { x: 820, y: 344 } };
+      a: { x: 200, y: 266 }, b: { x: 820, y: 266 },
+      pane: { x: 200, y: 300 }, truth: { x: 820, y: 300 } };
     const STACKED = { vb: "14 23 330 564", S: { x: 70, y: 24, w: 260, h: 170 }, ball: { x: 200, y: 404 },
       a: { x: 22, y: 109 }, b: { x: 22, y: 404 },
       pane: { x: 200, y: 246 }, truth: { x: 200, y: 540 } };
 
+    let G0 = WIDE, SPEC = null, LABS = [];
     const build = (G) => {
+      G0 = G; LABS = [];
       while (svg.firstChild) svg.removeChild(svg.firstChild);
       svg.setAttribute("viewBox", G.vb);
       let seed = 7; // seeded, so the arcs and departure order are the same on every visit
       const R = () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
-      const text = (cls, x, y, s) => { const t = el("text", { class: cls, x, y, "text-anchor": "middle" }, svg); t.textContent = s; };
+      const label = (x, y, head, lines) => {
+        const t = el("text", { x, y, "text-anchor": "middle" }, svg); LABS.push(t);
+        el("tspan", { class: "lbl", x }, t).textContent = head;
+        lines.forEach((s, i) => { el("tspan", { class: "lbl-s", x, dy: i ? "1.45em" : "1.65em" }, t).textContent = s; });
+      };
       const N = 36, S = G.S, BALL = G.ball, RING = 82;
       el("rect", { class: "ln", x: S.x, y: S.y, width: S.w, height: S.h, rx: 8, "stroke-opacity": .45, style: THIN }, svg);
       el("line", { class: "ln", x1: S.x + S.w / 2 - 34, x2: S.x + S.w / 2 + 34, y1: S.y + S.h + 14, y2: S.y + S.h + 14, "stroke-opacity": .3, style: THIN }, svg);
@@ -286,20 +292,18 @@ window.PlaybookChapter = (P) => {
       const gr = el("linearGradient", { id: "truth-spectrum", gradientUnits: "userSpaceOnUse", x1: G.a.x, y1: G.a.y, x2: G.b.x, y2: G.b.y }, defs);
       el("stop", { offset: 0, "stop-color": TEAL, "stop-opacity": .2 }, gr);
       el("stop", { offset: 1, "stop-color": TEAL, "stop-opacity": .6 }, gr);
-      el("line", { x1: G.a.x, y1: G.a.y, x2: G.b.x, y2: G.b.y, stroke: "url(#truth-spectrum)", "stroke-width": 1 }, svg);
+      const spec = SPEC = el("g", {}, svg); // the line, its ticks, its ends and its marker move as one
+      el("line", { x1: G.a.x, y1: G.a.y, x2: G.b.x, y2: G.b.y, stroke: "url(#truth-spectrum)", "stroke-width": 1 }, spec);
       const len = Math.hypot(G.b.x - G.a.x, G.b.y - G.a.y), nx = -(G.b.y - G.a.y) / len, ny = (G.b.x - G.a.x) / len;
       for (let i = 0; i <= 10; i++) {
         const x = lerp(G.a.x, G.b.x, i / 10), y = lerp(G.a.y, G.b.y, i / 10);
-        el("line", { class: "hl", x1: f1(x - nx * 4), y1: f1(y - ny * 4), x2: f1(x + nx * 4), y2: f1(y + ny * 4), "stroke-opacity": .18 }, svg);
+        el("line", { class: "hl", x1: f1(x - nx * 4), y1: f1(y - ny * 4), x2: f1(x + nx * 4), y2: f1(y + ny * 4), "stroke-opacity": .18 }, spec);
       }
-      el("circle", { class: "node", cx: G.a.x, cy: G.a.y, r: 5, style: THIN }, svg);
-      el("circle", { class: "node", cx: G.b.x, cy: G.b.y, r: 5, style: THIN }, svg);
-      const marker = el("circle", { class: "ball", r: 7, cx: G.a.x, cy: G.a.y }, svg);
-      text("lbl", G.pane.x, G.pane.y, "A single pane of glass");
-      text("lbl-s", G.pane.x, G.pane.y + 25, "Puts all your data on one screen.");
-      text("lbl", G.truth.x, G.truth.y, "A single source of truth");
-      text("lbl-s", G.truth.x, G.truth.y + 25, "Everyone agrees what each number means,");
-      text("lbl-s", G.truth.x, G.truth.y + 43, "where it comes from and who owns it.");
+      el("circle", { class: "node", cx: G.a.x, cy: G.a.y, r: 5, style: THIN }, spec);
+      el("circle", { class: "node", cx: G.b.x, cy: G.b.y, r: 5, style: THIN }, spec);
+      const marker = el("circle", { class: "ball", r: 7, cx: G.a.x, cy: G.a.y }, spec);
+      label(G.pane.x, G.pane.y, "A single pane of glass", ["Puts all your data on one screen."]);
+      label(G.truth.x, G.truth.y, "A single source of truth", ["Everyone agrees what each number means,", "where it comes from and who owns it."]);
 
       const threads = el("g", {}, svg), dotsG = el("g", {}, svg);
       const order = Array.from({ length: N }, (_, i) => i).sort(() => R() - .5);
@@ -330,8 +334,35 @@ window.PlaybookChapter = (P) => {
     // Same breakpoint as the stylesheet's phone rules
     const phone = matchMedia("(max-width: 767px)");
     const o = { p: 0 };
-    let draw = build(phone.matches ? STACKED : WIDE);
-    phone.addEventListener("change", () => { draw = build(phone.matches ? STACKED : WIDE); draw(o.p); });
+    // Type keeps its on-screen size whatever the drawing's scale: --u is viewBox units per screen pixel
+    // (capped at 1.3, so narrow screens shrink it a little). Wide, the spacing below the drawing is set in screen
+    // pixels too: 24px from the screen's stand to the line, 24px from the line to the top of the headline's capitals.
+    // The crop is the drawing plus wherever the labels reach; a few passes settle scale, type size and crop together.
+    const GAP = 24;
+    let capEm = .7; // Syne's cap height as a share of the font size, measured once the font is in
+    const measureCap = () => { const c = document.createElement("canvas").getContext("2d"); c.font = "400 100px Syne"; const m = c.measureText("H"); if (m.actualBoundingBoxAscent) capEm = m.actualBoundingBoxAscent / 100; };
+    const fit = () => {
+      for (let k = 0; k < 4; k++) {
+        const w = svg.getBoundingClientRect().width;
+        if (!w) return;
+        const u = Math.min(1.3, svg.viewBox.baseVal.width / w);
+        svg.style.setProperty("--u", u.toFixed(4));
+        if (G0.base) {
+          const lineY = G0.base + GAP * u;
+          SPEC.setAttribute("transform", `translate(0 ${f1(lineY - G0.a.y)})`);
+          LABS.forEach((t) => t.setAttribute("y", f1(lineY + (GAP + 16 * capEm) * u)));
+        }
+        let [x0, y0, x1, y1] = G0.vb.split(" ").map(Number); x1 += x0; y1 += y0;
+        svg.querySelectorAll("text").forEach((t) => { const b = t.getBBox(); x0 = Math.min(x0, b.x); x1 = Math.max(x1, b.x + b.width); y1 = Math.max(y1, b.y + b.height); });
+        const vb = [x0, y0, x1 - x0, y1 - y0].map((n) => n.toFixed(1)).join(" ");
+        if (vb === svg.getAttribute("viewBox")) return;
+        svg.setAttribute("viewBox", vb);
+      }
+    };
+    if (window.ResizeObserver) new ResizeObserver(fit).observe(svg);
+    let draw = build(phone.matches ? STACKED : WIDE); measureCap(); fit();
+    if (document.fonts) document.fonts.ready.then(() => { measureCap(); fit(); });
+    phone.addEventListener("change", () => { draw = build(phone.matches ? STACKED : WIDE); fit(); draw(o.p); });
 
     if (!P.gsap || P.reduce) { o.p = 1; draw(1); return; }
     draw(0);
@@ -419,5 +450,5 @@ window.PlaybookChapter = (P) => {
 };
 
 </script>
-<script src="../assets/playbook.js?v=b84d655b"></script>
+<script src="../assets/playbook.js?v=ebe6d40e"></script>
 </html>

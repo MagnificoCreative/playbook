@@ -624,6 +624,9 @@ main { min-width: 0; }
 
 /* One screen isn't one truth: the spectrum sits full width under the intro copy */
 .truth-viz svg { max-height: calc(100svh - var(--bar) - 2 * var(--pad) - 160px); margin: 0 auto; }
+/* Its labels: a 16px headline over 14px notes, the same on every screen (--u holds the size as the drawing scales) */
+.truth-viz .lbl { font: 400 calc(16px * var(--u, 1))/1 var(--f-display); letter-spacing: -0.01em; }
+.truth-viz .lbl-s { font-size: calc(14px * var(--u, 1)); }
 
 /* Intro · single pane vs single source */
 .compare { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; }
