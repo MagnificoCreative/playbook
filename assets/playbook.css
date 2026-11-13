@@ -604,13 +604,13 @@ main { min-width: 0; }
    Drawings that scale up set --u (viewBox units per screen pixel), so their type holds these sizes on screen. */
 .sieve-viz .axis { font-size: calc(12px * var(--u, 1)); }
 .sieve-viz .big { font: 300 calc(20px * var(--u, 1))/1.2 var(--f-display); letter-spacing: -0.01em; fill: var(--text-primary); }
-.sieve-viz .cat { font: 400 calc(14px * var(--u, 1))/1 var(--f-display); letter-spacing: -0.01em; fill: var(--text-primary); }
+.sieve-viz .cat { font: 400 calc(16px * var(--u, 1))/1 var(--f-display); letter-spacing: -0.01em; fill: var(--text-primary); }
 .sieve-viz svg { max-height: calc(100svh - var(--bar) - 2 * var(--pad) - 160px); margin: 0 auto; }
 
 /* From prototype to platform: two weights only. 1px for structure, 0.5px for every detail inside a shape */
 .proto-viz .ln { stroke-width: 1; }
 .proto-viz .hair { fill: none; stroke: var(--teal-900); stroke-width: .5; }
-.proto-viz .lbl-s { font: 400 calc(14px * var(--u, 1))/1 var(--f-display); letter-spacing: -0.01em; transition: fill .3s var(--ease-out); }
+.proto-viz .lbl-s { font: 400 calc(16px * var(--u, 1))/1 var(--f-display); letter-spacing: -0.01em; transition: fill .3s var(--ease-out); }
 .proto-viz .lbl-b { font: 300 calc(14px * var(--u, 1))/1 var(--f-sans); letter-spacing: 0; }
 .proto-viz .lbl-s.on { fill: var(--text-primary); }
 
@@ -664,7 +664,7 @@ main { min-width: 0; }
 .role-table td { vertical-align: top; font-size: 14px; font-weight: 300; line-height: 1.5; color: var(--text-body); padding: 16px 24px 16px 0; border-bottom: 1px solid var(--hairline); }
 .role-table th:last-child, .role-table td:last-child { padding-right: 0; }
 .role-table .rt-role, .role-table .rt-lead { color: var(--text-primary); }
-.role-table .rt-role, .role-table .rt-lead { font: 400 14px/1.35 var(--f-display); letter-spacing: -0.01em; }
+.role-table .rt-role, .role-table .rt-lead { font: 400 16px/1.35 var(--f-display); letter-spacing: -0.01em; }
 .role-table .rt-lead { display: block; margin-bottom: 6px; }
 .role-table .rt-l { display: none; }
 @media (max-width: 767px) {
@@ -679,7 +679,7 @@ main { min-width: 0; }
 }
 
 /* Step 5 · the decision path: a delicate rail beside the intro; the current step opens in place.
-   Hierarchy: the step name (18px), then what it does (15px, headline face), then the example (14px body). */
+   Hierarchy: the step name (20px), then what it does (16px, headline face), then the example (14px body). */
 .pathway { --dot: 9px; --gap: 28px; }
 .block-top > .pathway { margin-top: calc(var(--t-h2) * 0.22 + 9px); }  /* level with the headline, like the pull quotes */
 .path-rail { position: relative; }
@@ -698,20 +698,20 @@ main { min-width: 0; }
 .p-more { grid-column: 2; display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows .6s var(--ease-out), opacity .4s var(--ease-out); }
 .p-more > div { overflow: hidden; display: flex; flex-direction: column; gap: 6px; }
 .path-step.is-current .p-more { grid-template-rows: 1fr; opacity: 1; }
-.p-more .pc-h { padding-top: 10px; font-size: 14px; line-height: 1.35; color: var(--text-primary); }
+.p-more .pc-h { padding-top: 10px; font-size: 16px; line-height: 1.35; color: var(--text-primary); }
 .p-more .pc-b { font-size: 14px; line-height: 1.5; font-weight: 300; color: var(--text-body); max-width: 48ch; }
 .pathway.is-scrubbed .p-head { pointer-events: none; cursor: default; }
 
 /* Step 5 · tiers + context views */
 .tiers { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 64px); align-items: center; }
-/* The key: small diamonds that fill with their layer, 15px tier names, 14px notes */
+/* The key: small diamonds that fill with their layer, 16px tier names, 14px notes */
 .layers { display: block; width: 100%; max-width: 380px; height: auto; justify-self: center; overflow: visible; }
 .tier-list { display: flex; flex-direction: column; }
 .tier-list li { display: grid; grid-template-columns: 14px minmax(0, 1fr); column-gap: 14px; padding: 16px 0; border-top: 1px solid var(--hairline); transition: opacity .5s var(--ease-out); }
 .tier-list li:last-child { border-bottom: 1px solid var(--hairline); }
 .tier-list li.is-dim { opacity: .3; }
 .tier-list .t-key { width: 14px; height: 14px; margin-top: 2px; }
-.tier-list h3 { font-size: 14px; font-weight: 400; line-height: 1.3; }
+.tier-list h3 { font-size: 16px; font-weight: 400; line-height: 1.3; }
 .tier-list p { grid-column: 2; font-size: 14px; font-weight: 300; color: var(--text-body); line-height: 1.45; margin-top: 4px; }
 
 /* Where to start · three moves + closing CTA */
