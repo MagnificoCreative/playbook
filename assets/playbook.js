@@ -87,6 +87,7 @@
     body.classList.toggle("menu-is-open", open);
     menuBtn.setAttribute("aria-expanded", String(open));
     menuBtn.setAttribute("aria-label", open ? "Hide contents" : "Show contents");
+    $(".bar-brand")?.setAttribute("aria-label", !wide.matches ? "Magnifico, back to top" : collapsed ? "Show contents" : "Hide contents");
     if (railBtn) { railBtn.setAttribute("aria-expanded", String(!collapsed)); railBtn.setAttribute("aria-label", collapsed ? "Expand contents" : "Collapse contents"); }
   };
   const setNav = (open) => {
@@ -110,6 +111,8 @@
     else setNav(!body.classList.contains("nav-open"));
   });
   railBtn?.addEventListener("click", () => setCollapsed(!collapsed));
+  // On wide screens the logo works like the caret: clicking it opens or closes the menu
+  $(".bar-brand")?.addEventListener("click", (e) => { if (wide.matches) { e.preventDefault(); e.stopImmediatePropagation(); setCollapsed(!collapsed); } }, true);
   $("#scrim").addEventListener("click", () => setNav(false));
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && document.body.classList.contains("nav-open")) { setNav(false); menuBtn.focus(); }

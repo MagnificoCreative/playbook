@@ -60,6 +60,7 @@ html.lenis, html.lenis body { height: auto; }
 
 *, *::before, *::after { box-sizing: border-box; }
 body {
+  margin: 0; /* no browser default 8px frame around the page */
   background: var(--bg-canvas);
   color: var(--text-primary);
   font-family: var(--f-sans);
@@ -95,7 +96,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .eyebrow {
   font-family: var(--f-sans);
   font-weight: 300;
-  font-size: 14px;
+  font-size: 12px; /* eyebrows and small numbers share one 12px size across the playbook */
   line-height: 1.4;
   color: var(--text-body);
 }
@@ -144,11 +145,11 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .menu-btn {
   flex: none; display: inline-grid; place-items: center;
   width: 40px; height: 40px; margin-right: 8px;
-  border-radius: 50%; border: 1px solid var(--n200);
+  border-radius: 4px; border: 0; /* no outline, like the caret */
   color: var(--text-emphasis);
-  transition: border-color .25s var(--ease-out), background-color .25s var(--ease-out);
+  transition: background-color .25s var(--ease-out);
 }
-.menu-btn:hover { border-color: var(--n300); background: rgba(7, 23, 27, 0.03); }
+.menu-btn:hover { background: rgba(7, 23, 27, 0.04); }
 .menu-btn i { position: relative; width: 16px; height: 8px; }
 .menu-btn i::before, .menu-btn i::after {
   content: ""; position: absolute; left: 0; right: 0; height: 1.5px; border-radius: 1px; background: currentColor;
@@ -187,7 +188,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   display: flex; align-items: baseline; gap: 10px;
   padding: 8px 12px;
   border-radius: 4px;
-  font-size: 14px; line-height: 20px; font-weight: 400; /* 8 + 20 + 8 = one 36px row, open or collapsed */
+  font-size: 13px; line-height: 20px; font-weight: 400; /* 8 + 20 + 8 = one 36px row, open or collapsed */
   color: var(--text-emphasis);
   transition: background-color .25s var(--ease-out);
 }
@@ -236,6 +237,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 }
 .assess h2 { font-size: 16px; line-height: 1.4; font-weight: 500; color: var(--text-primary); }
 .assess p { font-size: 14px; line-height: 1.5; color: var(--text-body); }
+.assess .btn { align-self: center; } /* buttons align left by default; here everything centres */
 .btn {
   display: inline-flex; align-items: center; gap: 10px;
   align-self: flex-start;
@@ -634,7 +636,7 @@ main { min-width: 0; }
   background: var(--bg-surface); border-radius: var(--radius) var(--radius) 0 0;
   padding: clamp(18px, 1.8vw, 28px) clamp(16px, 1.6vw, 24px) clamp(20px, 2vw, 28px);
 }
-.stair-num { font-family: var(--f-label); font-weight: 500; font-size: 13px; letter-spacing: .16em; color: var(--pink); font-variant-numeric: tabular-nums; }
+.stair-num { font-family: var(--f-label); font-weight: 500; font-size: 12px; letter-spacing: .16em; color: var(--pink); font-variant-numeric: tabular-nums; }
 .stair-name { font-size: clamp(22px, 1.9vw, 30px); line-height: 1.15; font-weight: 300; color: var(--text-primary); margin-top: -4px; }
 .stair-text { font-size: 14px; line-height: 1.5; color: var(--text-body); margin-top: 8px; }
 .stair-out { margin-top: auto; padding-top: 20px; display: flex; flex-direction: column; gap: 6px; }
@@ -774,9 +776,9 @@ main { min-width: 0; }
   .rail-ready .shell { transition: grid-template-columns .55s var(--ease-out); }
   .rail-ready .rail { transition: opacity .35s var(--ease-out), transform .55s var(--ease-out), visibility 0s; }
   /* Collapsed: a sliver that keeps the caret and the chapter numbers */
-  .rail-collapsed { --rail: 76px; } /* with the rail and page insets, 24px left of the numbers, 24px from them to the page, 24px right of the page: the same 24px left of the numbers, between them and the page, and right of the page */ /* the same gutter left of the numbers, between them and the page, and on the right */
+  .rail-collapsed { --rail: calc(36px + 2 * var(--gutter-r)); } /* with the rail and page insets, 24px left of the numbers, 24px from them to the page, 24px right of the page: the same 24px left of the numbers, between them and the page, and right of the page */ /* the same gutter left of the numbers, between them and the page, and on the right */
   .rail-collapsed .shell { grid-template-columns: var(--rail) minmax(0, 1fr); padding-left: 0; }
-  .rail-collapsed .rail { padding-left: 16px; padding-right: 16px; overflow-x: hidden; }
+  .rail-collapsed .rail { padding-left: var(--gutter-r); padding-right: var(--gutter-r); overflow-x: hidden; }
   .rail .toc-text, .rail .subnav, .rail .assess { transition: opacity .3s var(--ease-out); }
   .rail-collapsed .rail .toc-text, .rail-collapsed .rail .subnav, .rail-collapsed .rail .assess { opacity: 0; visibility: hidden; pointer-events: none; }
   .rail-collapsed .rail .subnav { display: none; }
@@ -785,26 +787,37 @@ main { min-width: 0; }
   .rail-collapsed .toc-text { position: absolute; }
   .menu-btn { display: none; } /* the caret in the rail takes over on wide screens */
 }
-/* Caret toggle above the contents: points left while open, right while collapsed */
+/* Caret toggle in the top bar, right of the logo.
+   Open: its right edge lines up with the open menu's content. Collapsed: the logo shrinks to the M and the caret
+   becomes a small tab, a lip that pokes out past the right edge of the numbered sliver. */
 .rail-toggle {
-  display: inline-grid; place-items: center; width: 36px; height: 36px; margin: 0;
-  position: absolute; top: 0; left: 0; z-index: 1;
+  position: absolute; top: 50%; left: calc(var(--rail) - var(--gutter-r) - 36px); z-index: 1;
+  display: grid; place-items: center; width: 36px; height: 36px; margin-top: -18px;
   border-radius: 4px; border: 0; color: var(--text-emphasis);
   transition: background-color .25s var(--ease-out);
 }
-/* The caret takes the introduction's number slot: it sits on the intro row, the intro title lines up with the other titles */
-.rail nav { position: relative; }
-.toc-intro { margin-left: 40px; padding-left: 6px; }
-@media (max-width: 1100px) { .toc-intro { margin-left: 0; padding-left: 12px; } }
-.rail-collapsed .toc-item:first-child { visibility: hidden; height: 36px; overflow: hidden; } /* collapsed, the caret stands in for the intro */
+.rail-ready .rail-toggle { transition: background-color .25s var(--ease-out), left .55s var(--ease-out); }
 .rail-toggle:hover { background: rgba(7, 23, 27, 0.04); } /* same hover as the chapter rows */
 .rail-toggle svg { width: 18px; height: 18px; }
 .rail-ready .rail-toggle svg { transition: transform .45s var(--ease-out); } /* only turns on a click, not when a new page loads already collapsed */
+/* Collapsed: the caret hides and the logo folds to the M, centred over the numbers; clicking the M opens the menu */
+.rail-collapsed .rail-toggle { opacity: 0; pointer-events: none; }
+.rail-collapsed .bar .logo { width: calc(var(--logo-h) * 21.63 / 18.86 + 1px); }
+.rail-collapsed .bar .logo-word { opacity: 0; transform: translateX(-8px); }
+.rail-collapsed .bar-brand { margin-left: 4px; } /* (36px column - 28px M) / 2 */
+.bar-brand { transition: margin-left .55s var(--ease-out); }
+@media (min-width: 1101px) { .logo { --logo-h: 24px; } } /* about 10% larger beside the menu */
 .rail-collapsed .rail-toggle svg { transform: rotate(180deg); }
+@media (min-width: 1101px) {
+  /* Centred over the page area, right of the menu; it slides with the menu as it opens and closes */
+  .bar-title { position: absolute; left: calc(var(--rail) + (100% - var(--rail)) / 2); transform: translateX(-50%); max-width: 40vw; }
+  .rail-ready .bar-title { transition: left .55s var(--ease-out); }
+  .bar-sep { display: none; }
+}
 @media (max-width: 1100px) { .rail-toggle { display: none; } }
 
 /* Top bar · where you are: chapter, then the section in view */
-.bar-where { margin-left: auto; display: flex; align-items: baseline; gap: 10px; min-width: 0; font-size: 14px; white-space: nowrap; }
+.bar-where { margin-left: auto; display: flex; align-items: baseline; gap: 10px; min-width: 0; font-size: 12px; white-space: nowrap; }
 .bw-num { font-family: var(--f-label); font-weight: 500; font-size: 12px; letter-spacing: .16em; color: var(--pink); }
 .bw-ch { color: var(--text-emphasis); font-weight: 400; overflow: hidden; text-overflow: ellipsis; }
 .bw-sec { color: var(--text-body); overflow: hidden; text-overflow: ellipsis; transition: opacity .3s var(--ease-out); }
@@ -817,7 +830,7 @@ main { min-width: 0; }
    Framed panels (hero, How to apply, In the field, the call to action) keep their full height;
    open text sections fit their content, so the space you see between sections is always the same. */
 :root { --section-gap: clamp(64px, 9vh, 104px); }
-main { display: flow-root; padding-block: 12px 24px; }
+main { display: flow-root; padding-block: 0 24px; } /* the hero meets the top bar with no gap */
 main > * + * { margin-top: var(--section-gap); }  /* margins, not flex gap: pinned sections need a block parent to keep their scroll space */
 main > .sec, main > .pin-spacer > .sec { padding-block: 0; }
 .sec:has(> .people), .sec:has(> .block), .sec:has(> .frag) { min-height: 0; }
@@ -909,3 +922,32 @@ h1, h2, h3, .h2, .display, .card-label, .card-title, .next-title, .stat-num,
    padding as the other card components (.stage), so the icon and the copy sit the same distance from every edge. */
 .move .move-illo { flex: none; width: var(--move-illo, 120px); height: var(--move-illo, 120px); min-height: 0; max-width: none; max-height: none; }
 .move .move-illo .ln { vector-effect: non-scaling-stroke; stroke-width: 1.25; }
+
+/* Logo and contents are one unit: the bar's bottom hairline starts at the menu's edge,
+   and a vertical hairline runs up that edge through the bar and down the menu */
+@media (min-width: 1101px) {
+  .bar { border-bottom-color: transparent; }
+  /* no horizontal hairline under the bar; the reading progress bar still runs along its bottom */
+  .bar::before { content: ""; position: absolute; left: calc(var(--rail) - 1px); /* same pixel column as the rail's edge line, so it runs unbroken */ top: 0; bottom: -1px; width: 1px; background: var(--hairline); }
+  .rail { box-shadow: inset -1px 0 0 var(--hairline); }
+  .bar { padding-left: var(--gutter-l); } /* logo starts on the menu items' left edge */
+  .bar-progress { left: var(--rail); } /* reading progress runs across the page, starting where the menu ends */
+  .rail-ready .bar::before, .rail-ready .bar-progress { transition: left .55s var(--ease-out); }
+}
+@media (min-width: 1101px) { main { padding-left: var(--gutter-r); } } /* the page sits off the menu hairline by the same gap it keeps on the right */
+/* Phones: only the chapter number on the right; the logo sits centred in the bar, the menu button stays on the left */
+@media (max-width: 767px) {
+  .bw-ch, .bw-sec { display: none; }
+  .bar-brand { position: absolute; left: 50%; transform: translateX(-50%); }
+}
+@media (min-width: 1101px) {
+  .rail { padding: 16px var(--gutter-r) 24px var(--gutter-l); } /* the playbook's own side margins; 16px under the logo's hairline */
+  /* Hairline under the logo and caret, inside the menu's margins. The logo sits 16px below the top of the bar,
+     and the line sits 16px below the logo, on the bar's bottom edge */
+  .bar::after { content: ""; position: absolute; bottom: 0; height: 1px; background: var(--hairline);
+    left: var(--gutter-l); width: calc(var(--rail) - 1px - var(--gutter-l) - var(--gutter-r)); } /* the vertical hairline takes the rail's last pixel */
+  .rail-ready .bar::after { transition: width .55s var(--ease-out); }
+} /* the playbook's own side margins */ /* menu items sit 20px closer to the logo */
+/* The logo opens and closes the menu on wide screens: its pink deepens on hover to show it's clickable */
+.logo-mark { transition: fill .25s var(--ease-out); }
+@media (min-width: 1101px) { .bar-brand:hover .logo-mark { fill: #d6005f; } }

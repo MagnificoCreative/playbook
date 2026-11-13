@@ -404,7 +404,7 @@ cta = <<~HTML
       <div class="cta-art" aria-hidden="true"><svg viewBox="0 0 600 600" id="cta-art"></svg></div>
       <h2 class="h2" id="t-assessment">How ready is your organization to go from data to decisions?</h2>
       <p>The Data to Decision Assessment uses the same CLEAR steps to show you which practices you already have in place, where the gaps are, and what to tackle first.</p>
-      <button class="btn" type="button" data-soon="The assessment launches soon">Take the Data to Decision Assessment #{ARROW}</button>
+      <a class="btn" href="https://magnifico-energy-operational-decision-readiness-assessment.scoreapp.com" target="_blank" rel="noopener">Take the Data to Decision Assessment #{ARROW}</a>
     </div>
   </section>
 HTML

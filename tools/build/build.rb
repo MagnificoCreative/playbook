@@ -31,7 +31,7 @@ def rail(cur, subnav)
     href = current ? "#top" : "../#{p[:slug]}/"
     aria = current ? ' aria-current="page"' : ""
     inner = if p[:num].nil?
-      %(<a class="toc-link toc-intro" href="#{href}"#{aria}><span class="toc-text"><span class="toc-kicker">Introduction</span><span>#{p[:toc]}</span></span></a>)
+      %(<a class="toc-link toc-intro" href="#{href}"#{aria}><span class="toc-num">00</span><span class="toc-text"><span class="toc-kicker">Introduction</span><span>#{p[:toc]}</span></span></a>)
     else
       %(<a class="toc-link" href="#{href}"#{aria}><span class="toc-num">#{p[:num]}</span><span class="toc-text">#{p[:toc]}</span></a>)
     end
@@ -45,18 +45,15 @@ def rail(cur, subnav)
   <<~HTML
     <aside class="rail" id="rail" aria-label="Playbook contents">
       <nav>
-        <button class="rail-toggle" id="rail-toggle" type="button" aria-controls="rail" aria-expanded="true" aria-label="Collapse contents">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 6.5 9 12l5.5 5.5"/></svg>
-        </button>
         <ol class="toc">
     #{items}
         </ol>
       </nav>
       <div class="assess">
         <h2>How data-ready is your organization?</h2>
-        <button class="btn" type="button" data-soon="The assessment launches soon">Take the assessment
+        <a class="btn" href="https://magnifico-energy-operational-decision-readiness-assessment.scoreapp.com" target="_blank" rel="noopener">Take the assessment
           #{ARROW}
-        </button>
+        </a>
       </div>
     </aside>
   HTML
