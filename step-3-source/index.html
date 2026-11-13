@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;500&family=Syne:wght@400;500;600&family=Inter:ital,wght@0,300;0,400;0,500;1,300&display=swap">
-<link rel="stylesheet" href="../assets/playbook.css?v=c5bdfb52">
+<link rel="stylesheet" href="../assets/playbook.css?v=b84d655b">
 <script>try{if(matchMedia("(min-width: 1101px)").matches&&localStorage.getItem("playbook-rail")==="collapsed")document.documentElement.classList.add("rail-collapsed")}catch(e){}</script>
 
 <a class="skip" href="#main">Skip to content</a>
@@ -180,28 +180,8 @@
           <figcaption>From the interviews</figcaption>
         </figure>
     </div>
-<div class="stage viz" id="trace">
-  <svg viewBox="60 21 882 262" role="img" aria-label="One metric leaves its source as a single line, splits into conflicting copies through spreadsheets and dashboards, and only rejoins where a definition is agreed.">
-    <path class="ln t-src" d="M90 165H250" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="1" stroke-opacity=".7"/>
-    <path class="ln t-copy" d="M250 165C320 165 330 70 420 70H640C730 70 760 165 830 165" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="1" stroke-opacity=".45"/>
-    <path class="ln t-copy" d="M250 165H830" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="1" stroke-opacity=".45"/>
-    <path class="ln t-copy" d="M250 165C320 165 330 260 420 260H640C730 260 760 165 830 165" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="1" stroke-opacity=".45"/>
-    <path class="ln t-out" d="M830 165H940" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="1" stroke-opacity=".7"/>
-    <circle class="ball" cx="90" cy="165" r="12"/>
-    <text class="lbl" x="90" y="210" text-anchor="middle">Source</text>
-    <g class="t-vals">
-      <g><rect class="node" x="380" y="48" width="104" height="44" rx="6"/><text class="lbl-num" x="432" y="75" text-anchor="middle">1,240</text><text class="lbl-s" x="432" y="36" text-anchor="middle">Spreadsheet</text></g>
-      <g><rect class="node" x="380" y="143" width="104" height="44" rx="6"/><text class="lbl-num" x="432" y="170" text-anchor="middle">1,198</text><text class="lbl-s" x="432" y="131" text-anchor="middle">Team dashboard</text></g>
-      <g><rect class="node" x="380" y="238" width="104" height="44" rx="6"/><text class="lbl-num" x="432" y="265" text-anchor="middle">1,305</text><text class="lbl-s" x="432" y="226" text-anchor="middle">Monthly report</text></g>
-      <g><rect class="node" x="560" y="48" width="96" height="44" rx="6"/><text class="lbl-num" x="608" y="75" text-anchor="middle">1,251</text></g>
-      <g><rect class="node" x="560" y="238" width="96" height="44" rx="6"/><text class="lbl-num" x="608" y="265" text-anchor="middle">1,187</text></g>
-    </g>
-    <g class="t-agree">
-      <circle class="ball" cx="830" cy="165" r="14"/>
-      <text class="lbl" x="830" y="214" text-anchor="middle">Agreed definition</text>
-      <text class="lbl-s" x="830" y="238" text-anchor="middle">One owner</text>
-    </g>
-  </svg>
+<div class="stage viz trace-viz" id="trace">
+  <svg viewBox="82 50 850 250" role="img" aria-label="A number, drawn as a grid of dots, leaves its source whole, splits into copies in a spreadsheet, a team dashboard and a monthly report that each lose a different few dots, and is only whole again at an agreed definition with one owner."></svg>
 </div>
 
   </div>
@@ -224,26 +204,121 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
-<script src="../assets/motion/hero-scenes.js?v=c5bdfb52"></script>
+<script src="../assets/motion/hero-scenes.js?v=b84d655b"></script>
 <script>
-/* Step 3: one metric splits into conflicting copies and only rejoins where a definition is agreed. */
+/* Step 3: one number, many copies. The number is a grid of twelve dots. It leaves the source whole, splits along three
+   dotted paths into copies that each lose a different few dots (some only half), and is whole again only where a
+   definition is agreed. Pinned on wide screens. */
 window.PlaybookChapter = (P) => {
   const svg = P.$("#trace svg");
   if (!svg) return;
-  const src = P.$(".t-src", svg), copies = P.$$(".t-copy", svg), out = P.$(".t-out", svg);
-  const vals = P.$$(".t-vals > g", svg), agree = P.$(".t-agree", svg);
-  if (!P.gsap || P.reduce) { [src, out, ...copies].forEach((p) => p.setAttribute("stroke-dashoffset", 0)); return; }
-  const g = P.gsap;
-  g.set(vals, { opacity: 0, y: 8 });
-  g.set(agree, { opacity: 0, scale: 0.6, svgOrigin: "830 165" });
-  g.timeline({ defaults: { ease: "none" }, scrollTrigger: { trigger: "#trace", start: "top 85%", end: "bottom 85%", scrub: 0.8 } })
-    .to(src, { attr: { "stroke-dashoffset": 0 }, duration: 0.15 })
-    .to(copies, { attr: { "stroke-dashoffset": 0 }, duration: 0.5, stagger: 0.06 }, 0.15)
-    .to(vals, { opacity: 1, y: 0, duration: 0.12, stagger: 0.05, ease: "power2.out" }, 0.25)
-    .to(agree, { opacity: 1, scale: 1, duration: 0.15, ease: "back.out(2)" }, 0.72)
-    .to(out, { attr: { "stroke-dashoffset": 0 }, duration: 0.12 }, 0.84);
+  const NS = "http://www.w3.org/2000/svg", PINK = "#ff0074", TEAL = "#002a32";
+  const el = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); parent.appendChild(e); return e; };
+  const set = (e, attrs) => { for (const k in attrs) e.setAttribute(k, attrs[k]); };
+  const cl = (x) => Math.min(1, Math.max(0, x));
+  const sm = (a, b, x) => { const t = cl((x - a) / (b - a)); return t * t * (3 - 2 * t); };
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const ease = (t) => (t < .5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
+  const f1 = (n) => n.toFixed(1), f3 = (n) => n.toFixed(3);
+  const fade = (e, o) => e.setAttribute("opacity", f3(o));
+  const text = (cls, x, y, s) => { const t = el("text", { class: cls, x, y, "text-anchor": "middle" }, svg); t.textContent = s; return t; };
+  // Type keeps its on-screen size as the drawing scales up: --u is viewBox units per screen pixel, capped at 1
+  const fit = () => { const w = svg.getBoundingClientRect().width; if (w) svg.style.setProperty("--u", Math.min(1, svg.viewBox.baseVal.width / w).toFixed(4)); };
+  fit(); if (window.ResizeObserver) new ResizeObserver(fit).observe(svg);
+
+  // A number: a 4 × 3 grid of dots. A slot is whole (1), half (.5) or missing (0); a missing one keeps a faint ring
+  const COLS = 4, ROWS = 3, GAP = 11, R = 2.9;
+  const cluster = (cx, cy) => {
+    const g = el("g", {}, svg), w = (COLS - 1) * GAP, h = (ROWS - 1) * GAP;
+    el("rect", { x: f1(cx - w / 2 - 9), y: f1(cy - h / 2 - 9), width: w + 18, height: h + 18, style: "fill: var(--bg-surface)" }, g); // lifts it off the path behind
+    const slots = [];
+    for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
+      const x = f1(cx - w / 2 + c * GAP), y = cy - h / 2 + r * GAP;
+      el("circle", { cx: x, cy: f1(y), r: R, fill: "none", stroke: TEAL, "stroke-width": .5, "stroke-opacity": .3 }, g);
+      slots.push({ half: el("path", { d: `M${x} ${f1(y - R)}A${R} ${R} 0 0 0 ${x} ${f1(y + R)}Z` }, g), full: el("circle", { cx: x, cy: f1(y), r: R }, g) });
+    }
+    return (v, o, col = TEAL) => {
+      fade(g, o * (col === TEAL ? .5 : 1)); // teal sets at 50% as a whole (half and whole dots overlap), so they stay quiet; the agreed pink set is full strength
+      slots.forEach((s, i) => { set(s.full, { fill: col, opacity: f3(cl((v[i] - .5) * 2)) }); set(s.half, { fill: col, opacity: f3(cl(v[i] * 2)) }); });
+    };
+  };
+  const FULL = Array(12).fill(1);
+  const copyOf = (lose) => { const v = FULL.slice(); lose.forEach(([i, x]) => (v[i] = x)); return v; };
+  const mix = (a, b, t) => a.map((x, i) => lerp(x, b[i], t));
+
+  // A dotted path that draws on as t runs 0→1: a solid mask reveals the dots
+  let uid = 0;
+  const dotted = (d, o) => {
+    const id = `trace-m${++uid}`, mask = el("mask", { id, maskUnits: "userSpaceOnUse" }, svg);
+    const mp = el("path", { d, fill: "none", stroke: "#fff", "stroke-width": 8, pathLength: 1, "stroke-dasharray": "1 1", "stroke-dashoffset": 1 }, mask);
+    const p = el("path", { class: "ln", d, "stroke-opacity": o, "stroke-dasharray": "1 4", mask: `url(#${id})` }, svg);
+    const len = p.getTotalLength();
+    return { at: (t) => { const q = p.getPointAtLength(cl(t) * len); return [q.x, q.y]; }, draw: (t) => mp.setAttribute("stroke-dashoffset", f3(1 - cl(t))) };
+  };
+  const ball = (r) => el("circle", { r, fill: PINK, opacity: 0 }, svg);
+  const put = (b, [x, y], o) => set(b, { cx: f1(x), cy: f1(y), opacity: f3(o) });
+
+  // Source, three lanes of copies, and the agreed definition, all on one centre line
+  const Y = 172, SPL = 210, JOIN = 800, UP = 88, DN = 256;
+  const src = cluster(110, Y);
+  text("name", 110, Y + 44, "Source");
+  const lead = dotted(`M140 ${Y}H${SPL}`, .6);
+  const lanes = [
+    { d: `M${SPL} ${Y}C280 ${Y} 290 ${UP} 360 ${UP}H640C710 ${UP} 730 ${Y} ${JOIN} ${Y}`, stops: [[420, UP, "Spreadsheet", -26, [[2, 0]]], [590, UP, null, -26, [[2, 0], [9, .5]]]] },
+    { d: `M${SPL} ${Y}H${JOIN}`, stops: [[505, Y, "Team dashboard", -26, [[5, .5], [11, 0]]]] },
+    { d: `M${SPL} ${Y}C280 ${Y} 290 ${DN} 360 ${DN}H640C710 ${DN} 730 ${Y} ${JOIN} ${Y}`, stops: [[420, DN, "Monthly report", 38, [[7, .5]]], [590, DN, null, 38, [[7, 0], [0, .5], [10, 0]]]] },
+  ].map((ln) => ({ ...ln, path: dotted(ln.d, .45) }));
+  const stops = [];
+  lanes.forEach((ln, li) => {
+    const xs = Array.from({ length: 101 }, (_, i) => ln.path.at(i / 100)[0]);
+    ln.stops.forEach(([x, y, name, dy, lose]) => {
+      const lab = name ? text("name", x, y + dy, name) : text("axis", x, y + dy, "A copy of it");
+      if (!name) lab.setAttribute("fill-opacity", .5);
+      stops.push({ draw: cluster(x, y), lab, v: copyOf(lose), share: xs.findIndex((v) => v >= x) / 100 });
+    });
+  });
+  const tail = dotted(`M${JOIN + 50} ${Y}H930`, .6);
+  const agreed = cluster(JOIN + 30, Y);
+  const aLab = text("name", JOIN + 30, Y + 44, "Agreed definition");
+  const aSub = text("body", JOIN + 30, Y + 64, "One owner");
+  const balls = lanes.map(() => ball(4.5)), lb = ball(5);
+
+  const draw = (p) => {
+    src(FULL, sm(0, .05, p));
+    const t0 = sm(.04, .14, p);
+    lead.draw(t0);
+    put(lb, [lerp(140, SPL, t0), Y], p > .04 && p < .15 ? 1 : 0);
+    const tl = ease(cl((p - .14) / .56));
+    lanes.forEach((ln, i) => { ln.path.draw(tl); put(balls[i], ln.path.at(tl), p > .14 && p < .72 ? 1 : 0); });
+    // a copy appears whole as its dot passes, then loses its few
+    stops.forEach((s) => {
+      const at = .14 + .56 * s.share;
+      const seen = sm(at - .02, at + .02, p);
+      s.draw(mix(FULL, s.v, sm(at + .03, at + .1, p)), seen);
+      fade(s.lab, seen);
+    });
+    const a = sm(.72, .82, p);
+    agreed(FULL, a, PINK);
+    fade(aLab, a); fade(aSub, sm(.8, .88, p));
+    tail.draw(sm(.84, .96, p));
+  };
+  // the dots travel by eased share, so a stop's moment is found from where the eased dot reaches it
+  stops.forEach((s) => { let k = 0; while (k < 1 && ease(k) < s.share) k += .005; s.share = k; });
+
+  if (!P.gsap || P.reduce) { draw(1); return; }
+  const o = { p: 0 };
+  draw(0);
+  const mm = P.gsap.matchMedia();
+  mm.add("(min-width: 1101px) and (min-height: 620px)", () => {
+    P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p),
+      // pinned below the bar; if the headline and quote make the section too tall, pinned by its bottom so the whole card shows
+      scrollTrigger: { trigger: "#one-number", start: () => { const sec = P.$("#one-number"), room = innerHeight - P.pinTop() - 24; return sec && sec.offsetHeight > room ? "bottom bottom-=24" : `top top+=${P.pinTop()}`; }, end: "+=140%", pin: true, scrub: 0.6, anticipatePin: 1, invalidateOnRefresh: true } });
+  });
+  mm.add("(max-width: 1100px), (max-height: 619px)", () => {
+    P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p), scrollTrigger: { trigger: "#trace", start: "top 75%", end: "bottom 35%", scrub: 0.8 } });
+  });
 };
 
 </script>
-<script src="../assets/playbook.js?v=c5bdfb52"></script>
+<script src="../assets/playbook.js?v=b84d655b"></script>
 </html>

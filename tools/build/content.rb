@@ -205,29 +205,10 @@ page(2, "Know Who Decides What",
   next_band("Next · <b>Step 3</b>", "Follow the data to its source", "../step-3-source/"))
 
 # ───────────────────────── 03 · Follow the data to its source ─────────────────────────
+# One number, many copies: drawn by scripts.js (a number as a grid of dots; each copy keeps a different set)
 trace_svg = <<~SVG
-  <div class="stage viz" id="trace">
-    <svg viewBox="60 21 882 262" role="img" aria-label="One metric leaves its source as a single line, splits into conflicting copies through spreadsheets and dashboards, and only rejoins where a definition is agreed.">
-      <path class="ln t-src" d="M90 165H250" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="1" stroke-opacity=".7"/>
-      <path class="ln t-copy" d="M250 165C320 165 330 70 420 70H640C730 70 760 165 830 165" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="1" stroke-opacity=".45"/>
-      <path class="ln t-copy" d="M250 165H830" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="1" stroke-opacity=".45"/>
-      <path class="ln t-copy" d="M250 165C320 165 330 260 420 260H640C730 260 760 165 830 165" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="1" stroke-opacity=".45"/>
-      <path class="ln t-out" d="M830 165H940" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="1" stroke-opacity=".7"/>
-      <circle class="ball" cx="90" cy="165" r="12"/>
-      <text class="lbl" x="90" y="210" text-anchor="middle">Source</text>
-      <g class="t-vals">
-        <g><rect class="node" x="380" y="48" width="104" height="44" rx="6"/><text class="lbl-num" x="432" y="75" text-anchor="middle">1,240</text><text class="lbl-s" x="432" y="36" text-anchor="middle">Spreadsheet</text></g>
-        <g><rect class="node" x="380" y="143" width="104" height="44" rx="6"/><text class="lbl-num" x="432" y="170" text-anchor="middle">1,198</text><text class="lbl-s" x="432" y="131" text-anchor="middle">Team dashboard</text></g>
-        <g><rect class="node" x="380" y="238" width="104" height="44" rx="6"/><text class="lbl-num" x="432" y="265" text-anchor="middle">1,305</text><text class="lbl-s" x="432" y="226" text-anchor="middle">Monthly report</text></g>
-        <g><rect class="node" x="560" y="48" width="96" height="44" rx="6"/><text class="lbl-num" x="608" y="75" text-anchor="middle">1,251</text></g>
-        <g><rect class="node" x="560" y="238" width="96" height="44" rx="6"/><text class="lbl-num" x="608" y="265" text-anchor="middle">1,187</text></g>
-      </g>
-      <g class="t-agree">
-        <circle class="ball" cx="830" cy="165" r="14"/>
-        <text class="lbl" x="830" y="214" text-anchor="middle">Agreed definition</text>
-        <text class="lbl-s" x="830" y="238" text-anchor="middle">One owner</text>
-      </g>
-    </svg>
+  <div class="stage viz trace-viz" id="trace">
+    <svg viewBox="82 50 850 250" role="img" aria-label="A number, drawn as a grid of dots, leaves its source whole, splits into copies in a spreadsheet, a team dashboard and a monthly report that each lose a different few dots, and is only whole again at an agreed definition with one owner."></svg>
   </div>
 SVG
 page(3, "Follow the Data to Its Source",

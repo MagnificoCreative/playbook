@@ -608,6 +608,13 @@ main { min-width: 0; }
 .sieve-viz .cat { font: 400 calc(14px * var(--u, 1))/1 var(--f-display); letter-spacing: -0.01em; fill: var(--text-primary); }
 .sieve-viz svg { max-height: calc(100svh - var(--bar) - 2 * var(--pad) - 160px); margin: 0 auto; }
 
+/* One number, many copies: names in Syne 14, the owner line in Inter 300 14, labels 12, held on screen by --u */
+.trace-viz .ln { stroke-width: 1; }
+.trace-viz .name { font: 400 calc(14px * var(--u, 1))/1 var(--f-display); letter-spacing: -0.01em; fill: var(--text-primary); }
+.trace-viz .body { font: 300 calc(14px * var(--u, 1))/1 var(--f-sans); fill: var(--text-body); }
+.trace-viz .axis { font-size: calc(12px * var(--u, 1)); }
+.trace-viz svg { max-height: calc(100svh - var(--bar) - 2 * var(--pad) - 160px); margin: 0 auto; }
+
 /* From prototype to platform: two weights only. 1px for structure, 0.5px for every detail inside a shape */
 .proto-viz .ln { stroke-width: 1; }
 .proto-viz .hair { fill: none; stroke: var(--teal-900); stroke-width: .5; }
