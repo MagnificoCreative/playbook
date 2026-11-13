@@ -207,7 +207,7 @@
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
 <script src="../assets/motion/hero-scenes.js?v=4967825e"></script>
 <script>
-/* Step 6: from prototype to platform. A pink dot laps prototype, test and refine twice (the dotted ring goes solid),
+/* Step 6: from prototype to platform. A pink dot laps prototype, test and refine once (a faint line follows it round the dotted ring),
    follows the dotted hand-off path into the blueprint and breaks into an ordered grid, travels on along the same
    centre line and fades where the platform begins; the platform draws in perspective, and the predictive layer
    rises above it as a lattice of linked diamonds, one over each tile. Pinned on wide screens.
@@ -238,11 +238,11 @@ window.PlaybookChapter = (P) => {
   const BP = { x: 430, y: 135, w: 150, h: 130 };
   const PL = { cx: 800, cy: LINE + 41, hw: 150, hh: 46, lift: 82 }; // the platform and its layer, as a pair, centred on the line
 
-  // ── The loop: dotted, then a faint first lap, then a solid second; each node lights as the dot passes
-  const NODES = [-90, 30, 150], TOTAL = 810;                     // two laps, then a quarter round to leave on the right
+  // ── The loop: dotted, with a faint solid line drawn behind the dot as it goes round once; each node lights as the dot passes
+  const NODES = [-90, 30, 150], TOTAL = 450;                     // one lap, then a quarter round to leave on the right
   const ring = (d) => { const a = (-90 + d) * D2R; return [LOOP.cx + Math.cos(a) * LOOP.R, LOOP.cy + Math.sin(a) * LOOP.R]; };
   el("circle", { class: "ln", cx: LOOP.cx, cy: LOOP.cy, r: LOOP.R, "stroke-opacity": .35, "stroke-dasharray": "1 5" }, svg);
-  const lap1 = el("path", { class: "ln", "stroke-opacity": .22 }, svg), lap2 = el("path", { class: "ln", "stroke-opacity": .6 }, svg);
+  const lap = el("path", { class: "ln", "stroke-opacity": .22 }, svg);
   const LBL = [[165, 88, "middle"], [268, 266, "start"], [62, 266, "end"]];
   const nodes = NODES.map((deg, i) => {
     const [x, y] = ring(deg + 90);
@@ -251,11 +251,9 @@ window.PlaybookChapter = (P) => {
   const arc = (d0, d1) => { const pts = []; for (let d = d0; d <= d1; d += 4) pts.push(ring(d)); pts.push(ring(d1)); return pts; };
   const loop = (t) => {
     const d = TOTAL * t;
-    set(lap1, { d: d > 0 ? poly(arc(0, Math.min(d, 360))) : "" });
-    set(lap2, { d: d > 360 ? poly(arc(360, Math.min(d, 720))) : "" });
+    set(lap, { d: d > 0 ? poly(arc(0, Math.min(d, 360))) : "" });
     nodes.forEach(({ deg, n, t: lab }) => {
-      let near = 0;
-      for (const k of [0, 1]) near = Math.max(near, 1 - cl(Math.abs(d - (deg + 90 + k * 360)) / 28));
+      const near = 1 - cl(Math.abs(d - (deg + 90)) / 28);
       set(n, { stroke: near > .05 ? PINK : TEAL, "stroke-opacity": f3(lerp(.55, 1, near)), r: f1(4 + near * 1.5) });
       lab.classList.toggle("on", near > .2);
     });
@@ -334,7 +332,7 @@ window.PlaybookChapter = (P) => {
   const hand = path(ring(TOTAL), [bEntry[0] - 8, LINE], "Hand off", [(ring(TOTAL)[0] + bEntry[0]) / 2, LINE - 14]);
   const onward = path(bExit, plEntry, null);
   const ball = el("circle", { r: 6.5, fill: PINK }, svg);
-  const T = { loop: [.03, .42], hand: [.42, .5], bp: [.5, .64], out: [.64, .7], plat: [.7, .84], pred: [.84, .97] };
+  const T = { loop: [.03, .38], hand: [.38, .46], bp: [.46, .6], out: [.6, .66], plat: [.66, .82], pred: [.82, .97] }; // one unhurried lap
   const draw = (p) => {
     const tt = (k) => cl((p - T[k][0]) / (T[k][1] - T[k][0]));
     let pos = loop(ease(tt("loop"))), show = 1;
