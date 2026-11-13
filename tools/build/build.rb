@@ -31,9 +31,9 @@ def rail(cur, subnav)
     href = current ? "#top" : "../#{p[:slug]}/"
     aria = current ? ' aria-current="page"' : ""
     inner = if p[:num].nil?
-      %(<a class="toc-link toc-intro" href="#{href}"#{aria}><span class="toc-kicker">Introduction</span><span>#{p[:toc]}</span></a>)
+      %(<a class="toc-link toc-intro" href="#{href}"#{aria}><span class="toc-text"><span class="toc-kicker">Introduction</span><span>#{p[:toc]}</span></span></a>)
     else
-      %(<a class="toc-link" href="#{href}"#{aria}><span class="toc-num">#{p[:num]}</span><span>#{p[:toc]}</span></a>)
+      %(<a class="toc-link" href="#{href}"#{aria}><span class="toc-num">#{p[:num]}</span><span class="toc-text">#{p[:toc]}</span></a>)
     end
     if current
       subs = subnav.map { |id, label| %(            <li><a href="##{id}" data-spy="#{id}">#{label}</a></li>) }.join("\n")
@@ -45,6 +45,9 @@ def rail(cur, subnav)
   <<~HTML
     <aside class="rail" id="rail" aria-label="Playbook contents">
       <nav>
+        <button class="rail-toggle" id="rail-toggle" type="button" aria-controls="rail" aria-expanded="true" aria-label="Collapse contents">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 6.5 9 12l5.5 5.5"/></svg>
+        </button>
         <ol class="toc">
     #{items}
         </ol>
@@ -220,6 +223,7 @@ def page(i, title, subnav, body, script_key: nil)
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;500&family=Syne:wght@400;500;600&family=Inter:ital,wght@0,300;0,400;0,500;1,300&display=swap">
     <link rel="stylesheet" href="../assets/playbook.css">
+    <script>try{if(matchMedia("(min-width: 1101px)").matches&&localStorage.getItem("playbook-rail")==="collapsed")document.documentElement.classList.add("rail-collapsed")}catch(e){}</script>
 
     <a class="skip" href="#main">Skip to content</a>
 

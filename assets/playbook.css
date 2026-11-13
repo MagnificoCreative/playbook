@@ -187,18 +187,22 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   display: flex; align-items: baseline; gap: 10px;
   padding: 8px 12px;
   border-radius: 4px;
-  font-size: 15px; line-height: 1.4; font-weight: 400;
+  font-size: 14px; line-height: 20px; font-weight: 400; /* 8 + 20 + 8 = one 36px row, open or collapsed */
   color: var(--text-emphasis);
   transition: background-color .25s var(--ease-out);
 }
 .toc-link:hover { background: rgba(7, 23, 27, 0.04); }
 .toc-num {
-  font-family: var(--f-label); font-weight: 300; font-size: 13px; letter-spacing: 0.16em;
+  font-family: var(--f-label); font-weight: 300; font-size: 12px; letter-spacing: 0.16em;
   flex: none; width: 24px;
 }
 .toc-item.is-current > .toc-link { background: var(--n200); font-weight: 500; }
-.toc-intro { flex-direction: column; align-items: flex-start; gap: 2px; }
-.toc-kicker { font-size: 14px; font-weight: 300; }
+.toc-text { min-width: 0; }
+.toc-link:not(.toc-intro) { align-items: center; } /* keeps every row exactly 36px; mixed 12/14px baselines added half a pixel */
+.toc-link:not(.toc-intro) .toc-num { line-height: 20px; }
+.toc-intro .toc-text { display: flex; flex-direction: column; gap: 2px; }
+.toc-intro .toc-num { line-height: 18px; } /* sits on the "Introduction" line */
+.toc-kicker { font-size: 12px; line-height: 18px; font-weight: 300; }
 .toc-item.is-current > .toc-link .toc-num { color: var(--pink); font-weight: 500; }
 .toc-item.is-soon > .toc-link { color: color-mix(in srgb, var(--text-emphasis) 72%, transparent); }
 
@@ -211,7 +215,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   position: relative;
   display: block;
   padding: 5px 0 5px 16px;
-  font-size: 14px;
+  font-size: 12px;
   color: var(--text-body);
   transition: color .25s var(--ease-out);
 }
@@ -230,7 +234,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   padding: 20px;
   display: flex; flex-direction: column; gap: 10px; align-items: center; text-align: center;
 }
-.assess h2 { font-size: 17px; line-height: 1.4; font-weight: 500; color: var(--text-primary); }
+.assess h2 { font-size: 16px; line-height: 1.4; font-weight: 500; color: var(--text-primary); }
 .assess p { font-size: 14px; line-height: 1.5; color: var(--text-body); }
 .btn {
   display: inline-flex; align-items: center; gap: 10px;
@@ -769,11 +773,35 @@ main { min-width: 0; }
 @media (min-width: 1101px) {
   .rail-ready .shell { transition: grid-template-columns .55s var(--ease-out); }
   .rail-ready .rail { transition: opacity .35s var(--ease-out), transform .55s var(--ease-out), visibility 0s; }
-  body.rail-collapsed { --rail: 0px; }
-  .rail-collapsed .shell { grid-template-columns: 0px minmax(0, 1fr); padding-left: var(--gutter-r); }
-  .rail-collapsed .rail { opacity: 0; transform: translateX(-32px); visibility: hidden; pointer-events: none; }
-  .rail-ready.rail-collapsed .rail { transition: opacity .25s var(--ease-out), transform .45s var(--ease-out), visibility 0s linear .45s; }
+  /* Collapsed: a sliver that keeps the caret and the chapter numbers */
+  .rail-collapsed { --rail: 76px; } /* with the rail and page insets, 24px left of the numbers, 24px from them to the page, 24px right of the page: the same 24px left of the numbers, between them and the page, and right of the page */ /* the same gutter left of the numbers, between them and the page, and on the right */
+  .rail-collapsed .shell { grid-template-columns: var(--rail) minmax(0, 1fr); padding-left: 0; }
+  .rail-collapsed .rail { padding-left: 16px; padding-right: 16px; overflow-x: hidden; }
+  .rail .toc-text, .rail .subnav, .rail .assess { transition: opacity .3s var(--ease-out); }
+  .rail-collapsed .rail .toc-text, .rail-collapsed .rail .subnav, .rail-collapsed .rail .assess { opacity: 0; visibility: hidden; pointer-events: none; }
+  .rail-collapsed .rail .subnav { display: none; }
+  .rail-collapsed .toc-link { width: 36px; height: 36px; padding: 0; align-items: center; justify-content: center; white-space: nowrap; overflow: hidden; }
+  .rail-collapsed .toc-num { width: auto; line-height: 1; margin-right: -0.16em; } /* trailing letter spacing would push it off centre */
+  .rail-collapsed .toc-text { position: absolute; }
+  .menu-btn { display: none; } /* the caret in the rail takes over on wide screens */
 }
+/* Caret toggle above the contents: points left while open, right while collapsed */
+.rail-toggle {
+  display: inline-grid; place-items: center; width: 36px; height: 36px; margin: 0;
+  position: absolute; top: 0; left: 0; z-index: 1;
+  border-radius: 4px; border: 0; color: var(--text-emphasis);
+  transition: background-color .25s var(--ease-out);
+}
+/* The caret takes the introduction's number slot: it sits on the intro row, the intro title lines up with the other titles */
+.rail nav { position: relative; }
+.toc-intro { margin-left: 40px; padding-left: 6px; }
+@media (max-width: 1100px) { .toc-intro { margin-left: 0; padding-left: 12px; } }
+.rail-collapsed .toc-item:first-child { visibility: hidden; height: 36px; overflow: hidden; } /* collapsed, the caret stands in for the intro */
+.rail-toggle:hover { background: rgba(7, 23, 27, 0.04); } /* same hover as the chapter rows */
+.rail-toggle svg { width: 18px; height: 18px; }
+.rail-ready .rail-toggle svg { transition: transform .45s var(--ease-out); } /* only turns on a click, not when a new page loads already collapsed */
+.rail-collapsed .rail-toggle svg { transform: rotate(180deg); }
+@media (max-width: 1100px) { .rail-toggle { display: none; } }
 
 /* Top bar · where you are: chapter, then the section in view */
 .bar-where { margin-left: auto; display: flex; align-items: baseline; gap: 10px; min-width: 0; font-size: 14px; white-space: nowrap; }

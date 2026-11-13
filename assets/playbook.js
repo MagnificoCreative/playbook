@@ -75,17 +75,19 @@
 
   /* ───── Contents menu: collapsible rail on wide screens, a drawer below 1100px ───── */
   const menuBtn = $("#menu-btn");
+  const railBtn = $("#rail-toggle");
   const body = document.body;
   const wide = window.matchMedia("(min-width: 1101px)");
   let lenis = null;
   let collapsed = false;
   try { collapsed = localStorage.getItem("playbook-rail") === "collapsed"; } catch (e) { /* storage unavailable */ }
   const syncMenu = () => {
-    body.classList.toggle("rail-collapsed", wide.matches && collapsed);
+    document.documentElement.classList.toggle("rail-collapsed", wide.matches && collapsed); // set early by the inline script in <head>, so a new page never paints open first
     const open = wide.matches ? !collapsed : body.classList.contains("nav-open");
     body.classList.toggle("menu-is-open", open);
     menuBtn.setAttribute("aria-expanded", String(open));
     menuBtn.setAttribute("aria-label", open ? "Hide contents" : "Show contents");
+    if (railBtn) { railBtn.setAttribute("aria-expanded", String(!collapsed)); railBtn.setAttribute("aria-label", collapsed ? "Expand contents" : "Collapse contents"); }
   };
   const setNav = (open) => {
     body.classList.toggle("nav-open", open);
@@ -107,6 +109,7 @@
     if (wide.matches) setCollapsed(!collapsed);
     else setNav(!body.classList.contains("nav-open"));
   });
+  railBtn?.addEventListener("click", () => setCollapsed(!collapsed));
   $("#scrim").addEventListener("click", () => setNav(false));
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && document.body.classList.contains("nav-open")) { setNav(false); menuBtn.focus(); }
