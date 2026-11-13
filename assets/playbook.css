@@ -706,9 +706,12 @@ main { min-width: 0; }
 
 /* Where to start · three moves + closing CTA */
 .moves { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
-.move { background: var(--bg-surface); border-radius: var(--radius); padding: clamp(24px, 3vw, 40px); display: flex; flex-direction: column; gap: 28px; min-height: 260px; }
+.move { background: var(--bg-surface); border-radius: var(--radius); padding: clamp(20px, 3vw, 48px); display: flex; flex-direction: column; gap: 20px; aspect-ratio: 1; min-height: var(--move-min, 0px); }
 .move svg { width: 72px; height: 72px; }
-.move p { font-size: var(--t-large); line-height: 1.45; color: var(--text-primary); margin-top: auto; }
+/* Headline and copy start right under the icon, so they line up across the cards whatever the copy length */
+.move-copy { display: flex; flex-direction: column; gap: 8px; max-width: 32ch; }
+.move h3 { font-size: var(--t-large); line-height: 1.3; font-weight: 400; color: var(--text-primary); }
+.move p { font-size: 14px; line-height: 1.5; color: var(--text-body); }
 .closing { font-size: var(--t-lead); line-height: 1.4; font-weight: 300; color: var(--text-primary); max-width: 34ch; }
 .closing strong { font-weight: 400; color: var(--pink); }
 .cta { background: var(--bg-brand); color: var(--slate-100); align-items: flex-start; gap: 28px; overflow: hidden; }
@@ -874,6 +877,7 @@ h1, h2, h3, .h2, .display, .card-label, .card-title, .next-title, .stat-num,
   .cvs *, .cvs-back, .cvs-fcap, .cvs-fx, .cvs-fnav, .cvs-live { transition-duration: .01s !important; transition-delay: 0s !important; }
 }
 
-/* Start this month: a card whose icon is a looping scene (the Ask bubble), cropped to the bubble and the ball */
-.move .move-illo { width: 120px; height: 120px; min-height: 0; max-width: none; max-height: none; margin: -12px 0 -12px -12px; }
-.move .move-illo .ln { vector-effect: non-scaling-stroke; }
+/* Start this month: each card's icon is a looping scene, cropped so it reads at 120px. Square cards with the same
+   padding as the other card components (.stage), so the icon and the copy sit the same distance from every edge. */
+.move .move-illo { flex: none; width: var(--move-illo, 120px); height: var(--move-illo, 120px); min-height: 0; max-width: none; max-height: none; }
+.move .move-illo .ln { vector-effect: non-scaling-stroke; stroke-width: 1.25; }

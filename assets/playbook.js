@@ -40,6 +40,25 @@
     });
   }
 
+  /* ───── Start this month: square cards whose icons share one size, as large as the fullest card allows.
+     Measured against the width; if even the smallest icon can't fit, every card in the row grows by the same amount. ───── */
+  $$(".moves").forEach((row) => {
+    const cards = $$(".move", row).filter((c) => c.querySelector(".move-illo"));
+    if (!cards.length) return;
+    const MIN = 40, MAX = 120;
+    const fit = () => {
+      const fixed = cards.map((c) => {
+        const s = getComputedStyle(c), copy = c.querySelector(".move-copy") || c.querySelector("p");
+        return parseFloat(s.paddingTop) + parseFloat(s.paddingBottom) + parseFloat(s.rowGap) + copy.offsetHeight;
+      });
+      const side = cards[0].clientWidth, room = side - Math.max(...fixed);
+      row.style.setProperty("--move-illo", Math.round(Math.max(MIN, Math.min(MAX, room))) + "px");
+      row.style.setProperty("--move-min", room < MIN ? Math.ceil(side + MIN - room) + "px" : "0px");
+    };
+    new ResizeObserver(fit).observe(row);
+    fit();
+  });
+
   /* ───── Toast for links that aren't live yet ───── */
   const toast = $("#toast");
   let toastTimer;

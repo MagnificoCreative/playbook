@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Start This Month in Situation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;500&family=Syne:wght@400;500;600&family=Inter:ital,wght@0,300;0,400;0,500;1,300&display=swap">
+<link rel="stylesheet" href="../assets/playbook.css">
+<style>
+/* The three card scenes, at the refined weight */
+.move .move-illo .ln { stroke-width: 1.25; }
+.move .move-illo .echo .ball, .move .move-illo .echo .glow { display: none; }
+/* Exploration controls, not part of the page */
+.pick { position: fixed; right: 16px; bottom: 16px; z-index: 50; display: flex; gap: 6px; flex-wrap: wrap; align-items: center; background: #fff; border: 1px solid rgba(7, 23, 27, .12); border-radius: 999px; padding: 6px 6px 6px 14px; box-shadow: 0 6px 24px rgba(7, 23, 27, .08); font: 500 11px/1 "IBM Plex Sans", sans-serif; letter-spacing: .14em; text-transform: uppercase; }
+.pick button { font: inherit; letter-spacing: inherit; border: 1px solid rgba(7, 23, 27, .12); background: #fff; color: #07171b; border-radius: 999px; padding: 8px 11px; cursor: pointer; }
+.pick button[aria-pressed="true"] { background: #002a32; color: #d5def0; border-color: #002a32; }
+</style>
+
+<div class="page">
+  <main id="main">
+<section class="sec" id="start-this-month" aria-labelledby="t-start-this-month">
+  <div class="panel block">
+    <div class="block-top is-solo">
+      <div class="block-intro">
+        <h2 class="h2" id="t-start-this-month">Start this month</h2>
+        <p>You can start this month, without new technology:</p>
+      </div>
+    </div>
+<div class="moves"><div class="move"><svg class="illo move-illo" viewBox="250 130 260 260" data-scene="a1" aria-hidden="true"></svg><p>Have a handful of honest conversations across functions about how people really work with operational data.</p></div><div class="move"><svg class="illo move-illo" id="card2" viewBox="170 170 260 260" data-scene="l2" aria-hidden="true"></svg><p>Trace one metric your leadership relies on, from where it’s born to where it’s used.</p></div><div class="move"><svg class="illo move-illo" viewBox="170 170 260 260" data-scene="s4" aria-hidden="true"></svg><p>Sketch one decision flow, from the first signal to the action that resolves it.</p></div></div>
+<p class="closing"><span>Each of those will tell you more about your real problem <strong>than another dashboard would.</strong></span></p>
+  </div>
+</section>
+  </main>
+</div>
+
+<div class="pick" role="group" aria-label="Card 2 option"><span>Card 2</span></div>
+
+<script src="chapters/scenes.js"></script>
+<script src="howto/scenes.js"></script>
+<script src="howto/start-month.js"></script>
+<script>
+(() => {
+  const OPTS = [["l0", "Original"], ["l1", "A"], ["l2", "B"], ["l3", "C"], ["l4", "D"]];
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let scenes = [], clock = 0, last = performance.now();
+  const mount = svg => scenes.push({ svg, draw: window.HeroMount(svg, svg.dataset.scene, { lag: .04 }) });
+  document.querySelectorAll("svg[data-scene]").forEach(mount);
+  scenes.forEach(s => s.draw(reduce ? 3 : 0));
+
+  const pick = document.querySelector(".pick");
+  OPTS.forEach(([key, label]) => {
+    const b = document.createElement("button");
+    b.type = "button"; b.textContent = label; b.setAttribute("aria-pressed", String(key === "l2"));
+    b.addEventListener("click", () => {
+      const old = document.getElementById("card2"), svg = old.cloneNode(false);
+      svg.dataset.scene = key; old.replaceWith(svg);
+      scenes = scenes.filter(s => s.svg !== old); mount(svg); scenes[scenes.length - 1].draw(clock);
+      pick.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+    });
+    pick.appendChild(b);
+  });
+
+  const tick = now => {
+    const dt = Math.min(.05, (now - last) / 1000); last = now;
+    if (!reduce) { clock += dt; scenes.forEach(s => s.draw(clock)); }
+    requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+})();
+</script>
+</html>

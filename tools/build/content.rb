@@ -387,14 +387,16 @@ page(6, "Test Before You Build",
 
 # ───────────────────────── 07 · Where to start ─────────────────────────
 moves = [
-  [:a1, "Have a handful of honest conversations across functions about how people really work with operational data."],
-  ['<path class="ln" d="M6 58C22 58 22 20 38 20S54 44 66 44" stroke-opacity=".55"/><circle cx="6" cy="58" r="5" fill="#ff0074"/><circle class="node" cx="66" cy="44" r="5"/>', "Trace one metric your leadership relies on, from where it’s born to where it’s used."],
-  ['<path class="ln" d="M6 36h14M30 36h14M54 36h12" stroke-opacity=".55"/><circle cx="12" cy="36" r="5" fill="#ff0074"/><circle class="node" cx="36" cy="36" r="5"/><circle class="node" cx="60" cy="36" r="5"/><path class="ln" d="M56 22l6-6 6 6" stroke-opacity=".5"/>', "Sketch one decision flow, from the first signal to the action that resolves it."],
+  [:a1, "Talk across functions", "Have a handful of honest conversations about how people really work with operational data."],
+  [:l2, "Trace one metric", "Pick a number your leadership relies on and follow it from where it’s born to where it’s used."],
+  [:s4, "Sketch one decision", "Map how one call really gets made, from the first signal to the action that resolves it."],
 ]
-moves_html = %(<div class="moves" data-reveal="top 85%">) + moves.map { |art, t|
-  # A Symbol is a looping scene from assets/motion/howto-scenes.js, cropped to the bubble and the ball
-  svg = art.is_a?(Symbol) ? %(<svg class="illo move-illo" viewBox="250 130 260 260" data-scene="#{art}" aria-hidden="true"></svg>) : %(<svg class="viz" viewBox="0 0 72 72" aria-hidden="true">#{art}</svg>)
-  %(<div class="move">#{svg}<p>#{t}</p></div>)
+# Each card's looping scene (assets/motion/howto-scenes.js) is drawn in the 600 space and shown through a 260 crop,
+# placed so the drawing starts at the top-left of the crop and lines up with the card padding like the copy
+MOVE_CROP = { a1: "278 138 260 260", l2: "172 172 260 260", s4: "260 187 260 260" }
+moves_html = %(<div class="moves" data-reveal="top 85%">) + moves.map { |art, head, t|
+  svg = art.is_a?(Symbol) ? %(<svg class="illo move-illo" viewBox="#{MOVE_CROP.fetch(art)}" data-scene="#{art}" aria-hidden="true"></svg>) : %(<svg class="viz" viewBox="0 0 72 72" aria-hidden="true">#{art}</svg>)
+  %(<div class="move">#{svg}<div class="move-copy"><h3>#{head}</h3><p>#{t}</p></div></div>)
 }.join + "</div>"
 start_body = <<~HTML
   #{moves_html}

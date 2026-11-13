@@ -143,8 +143,62 @@
     };
   };
 
+
+  /* ── Where to start · Start this month ── */
+  const frac = (t, P) => ((t / P) % 1 + 1) % 1;
+  const home = q => q * q * (1.6 - .6 * q);   // eases in and speeds up as it reaches the ball
+  const path = (svg, d, o) => el("path", { d, class: "ln", pathLength: 1, "stroke-opacity": o, visibility: "hidden" }, svg);
+  const ring = (svg, x, y, r, o) => el("circle", { cx: x, cy: y, r, class: "ln", pathLength: 1, "stroke-opacity": o, visibility: "hidden", transform: `rotate(-90 ${x} ${y})` }, svg);
+
+  S.l2 = svg => { // Card 2 · Every layer, lighter: m3 with 3 · 4 · 6 people, scaled to the 260 crop
+    const R = rng(9), P = 10, g = glow(svg), counts = [3, 4, 6], radii = [50, 86, 122];
+    const L = [[.1, .42, 4.4], [-.07, .3, 3.8], [.045, .2, 3.2]].map(([w, o, dr], k) => {
+      const r = radii[k], n = counts[k], ring = path(svg, circleD(r), .16), a0 = R() * TAU;
+      return { r, w, o, dr, ring, t0: .04 + k * .2,
+        people: Array.from({ length: n }, (_, i) => ({ a: a0 + i / n * TAU + (R() - .5) * .3, d: .012 * i + R() * .01, spoke: ln(svg, {}, 0), dot: el("circle", { r: 0, class: "dot" }, svg) })) };
+    });
+    const b = ball(svg);
+    return t => {
+      const p = frac(t, P), fade = 1 - sm(.85, .96, p); let pulse = 0;
+      L.forEach(l => {
+        dash(l.ring, 0, io(clamp((p - l.t0) / .14, 0, 1))); op(l.ring, .16 * fade);
+        l.people.forEach(o => {
+          const a = o.a + l.w * t, xy = polar(a, l.r), q = p - l.t0 - .1 - o.d, k = clamp((q - .03) / .1, 0, 1);
+          set(o.dot, { cx: f2(xy[0]), cy: f2(xy[1]), r: f2(Math.max(0, l.dr * backOut(clamp(q / .05, 0, 1)))), opacity: f2(.85 * fade) });
+          const tip = polar(a, B + 5), f = k * k;
+          seg2(o.spoke, xy, [lerp(xy[0], tip[0], f), lerp(xy[1], tip[1], f)], k > 0 ? l.o * fade : 0);
+          pulse = Math.max(pulse, land((q - .13) * P));
+        });
+      });
+      breathe(b, g, pulse);
+    };
+  };
+
+  S.s4 = svg => { // Card 3 · Flowchart: start ring, down into the decision diamond, a "no" rubbed out, "yes" out to the action
+    const P = 7, O = .42;
+    const g = glow(svg), start = ring(svg, 300, 200, 7, O), down = path(svg, "M300 207L300 266", O);
+    const dia = path(svg, "M300 266L334 300L300 334L266 300Z", O), no = path(svg, "M300 334L300 372", O);
+    const yes = path(svg, "M334 300L378 300", O), box = path(svg, "M378 290L398 290L398 310L378 310Z", O);
+    const fill = el("path", { d: "", class: "dot", opacity: .85 }, svg);
+    const d = el("circle", { cx: C, cy: C, r: 0, class: "dot", opacity: .85 }, svg), b = ball(svg);
+    return t => {
+      const p = frac(t, P), fade = 1 - sm(.82, .95, p);
+      dash(start, 0, io(clamp((p - .02) / .08, 0, 1))); op(start, O * fade);
+      const q = clamp((p - .1) / .14, 0, 1);
+      dash(down, 0, home(q)); op(down, O * fade);
+      set(d, { cy: f2(lerp(207, 266, home(q))), r: q > 0 && q < 1 ? 3.4 : 0 });
+      dash(dia, 0, io(clamp((p - .22) / .12, 0, 1))); op(dia, O * fade);
+      dash(no, 0, .7 * env(p, .36, .42, .46, .54)); op(no, O * .6);
+      dash(yes, 0, io(clamp((p - .5) / .1, 0, 1))); op(yes, O * fade);
+      dash(box, 0, io(clamp((p - .58) / .1, 0, 1))); op(box, O * fade);
+      const h = Math.max(0, 8 * backOut(clamp((p - .68) / .06, 0, 1))) / 2;
+      set(fill, { d: h > .05 ? poly([[388 - h, 300 - h], [388 + h, 300 - h], [388 + h, 300 + h], [388 - h, 300 + h]]) + "Z" : "", opacity: f2(.85 * fade) });
+      breathe(b, g, land((p - .3) * P));
+    };
+  };
+
   /* A frame that shows each piece whole, for prefers-reduced-motion */
-  const STILL = { m3: 8, a1: 3, e1: 5.4, p1: 5.4 };
+  const STILL = { m3: 8, a1: 3, e1: 5.4, p1: 5.4, l2: 8, s4: 5.4 };
 
   /* The trail: the scene drawn 10 more times underneath itself, each slightly in the past.
      Echo copies of anything that isn't moving are hidden, so still lines don't get brighter. */
