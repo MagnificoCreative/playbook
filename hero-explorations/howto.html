@@ -81,7 +81,7 @@ body { background: var(--white); color: var(--teal-950); font-family: var(--f-sa
 <body>
 <div class="wrap">
   <header class="top">
-    <p class="eyebrow">Chapter 01 · How to apply it · Spot motion</p>
+    <p class="eyebrow">How to apply it · Spot motion</p>
     <h1>Six options for each step</h1>
     <p>The four step illustrations redrawn in the hero language: the pink ball at the center, thin lines that carry the meaning, eased motion, seamless loops and the fading trail. The only change is the ground. On the light card the lines are dark teal at the same opacities.</p>
   </header>
@@ -92,6 +92,7 @@ body { background: var(--white); color: var(--teal-950); font-family: var(--f-sa
 
 <script src="chapters/scenes.js"></script>
 <script src="howto/scenes.js"></script>
+<script src="howto/conversations.js"></script>
 <script>
 (() => {
   const STEPS = [
@@ -127,14 +128,18 @@ body { background: var(--white); color: var(--teal-950); font-family: var(--f-sa
       ["p5", "The same loop again", "A single line draws a rosette, petal by petal, returning to the ball each time. The pattern is what repeats."],
       ["p6", "Field lines", "Scattered dashes point every which way, then turn together into rings around the ball, as if a field was switched on."],
     ] },
-  ];
+  { id: "conversations", n: "07", label: "Talk", eyebrow: "Where to start · Start this month · Card 1", title: "Have a handful of honest conversations across functions.", text: "The Ask bubble kept as it was, with a second voice mirrored to its left at the same spacing.", o: [
+    ["a1", "The bubble (original)", "Ask · The bubble, unchanged, for comparison."],
+    ["c1", "Two voices", "The original bubble on the right and its mirror on the left, at the same distance from the ball. The left one runs half a loop behind, so they come in and go out at different times."],
+  ] },
+];
   const LAG = { m2: .03, a2: .035, e4: .035, p3: .03, p6: .05 };
 
   const bar = document.getElementById("bar"), main = document.getElementById("steps");
   STEPS.forEach(s => {
     bar.insertAdjacentHTML("beforeend", `<a href="#${s.id}">${s.n} ${s.label}</a>`);
     main.insertAdjacentHTML("beforeend", `<section class="step" id="${s.id}">
-      <div class="st-head"><div><p class="eyebrow">Step ${s.n} · ${s.label}</p><h2>${s.title}</h2></div><p>${s.text}</p></div>
+      <div class="st-head"><div><p class="eyebrow">${s.eyebrow || `Step ${s.n} · ${s.label}`}</p><h2>${s.title}</h2></div><p>${s.text}</p></div>
       <div class="grid">${s.o.map(([key, name, text], i) => `<article>
         <div class="frame" data-scene="${key}"><span class="badge">${s.label} ${String.fromCharCode(65 + i)}</span><svg viewBox="0 0 600 600" aria-hidden="true"></svg></div>
         <div class="cap"><span class="l">${String.fromCharCode(65 + i)}</span><div><h3>${name}</h3><p>${text}</p></div></div>

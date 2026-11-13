@@ -205,7 +205,8 @@ end
 def page(i, title, subnav, body, script_key: nil)
   p = PAGES[i]
   chapter_js = script_key && SCRIPTS[script_key] ? "<script>\n#{SCRIPTS[script_key]}</script>\n" : ""
-  howto_js = "" # Step 1 card animations retired 2026-11-11; kept in assets/motion/howto-scenes.js, catalogued in animations/index.html
+  # Card scenes (assets/motion/howto-scenes.js) load only on pages that use one: today the Ask bubble on Where to start
+  howto_js = body.include?("data-scene=") ? %(<script src="../assets/motion/howto-scenes.js"></script>\n) : ""
   html = <<~HTML
     <!doctype html>
     <html lang="en">

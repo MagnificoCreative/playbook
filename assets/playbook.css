@@ -873,3 +873,7 @@ h1, h2, h3, .h2, .display, .card-label, .card-title, .next-title, .stat-num,
 @media (prefers-reduced-motion: reduce) {
   .cvs *, .cvs-back, .cvs-fcap, .cvs-fx, .cvs-fnav, .cvs-live { transition-duration: .01s !important; transition-delay: 0s !important; }
 }
+
+/* Start this month: a card whose icon is a looping scene (the Ask bubble), cropped to the bubble and the ball */
+.move .move-illo { width: 120px; height: 120px; min-height: 0; max-width: none; max-height: none; margin: -12px 0 -12px -12px; }
+.move .move-illo .ln { vector-effect: non-scaling-stroke; }

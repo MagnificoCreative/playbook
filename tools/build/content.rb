@@ -387,11 +387,15 @@ page(6, "Test Before You Build",
 
 # ───────────────────────── 07 · Where to start ─────────────────────────
 moves = [
-  ['<path class="ln" d="M8 18h38v24H24l-8 8v-8H8z" stroke-opacity=".7"/><path class="ln" d="M30 48v8h18l8 8v-8h8V32H52" stroke-opacity=".45"/><circle cx="56" cy="20" r="5" fill="#ff0074"/>', "Have a handful of honest conversations across functions about how people really work with operational data."],
+  [:a1, "Have a handful of honest conversations across functions about how people really work with operational data."],
   ['<path class="ln" d="M6 58C22 58 22 20 38 20S54 44 66 44" stroke-opacity=".55"/><circle cx="6" cy="58" r="5" fill="#ff0074"/><circle class="node" cx="66" cy="44" r="5"/>', "Trace one metric your leadership relies on, from where it’s born to where it’s used."],
   ['<path class="ln" d="M6 36h14M30 36h14M54 36h12" stroke-opacity=".55"/><circle cx="12" cy="36" r="5" fill="#ff0074"/><circle class="node" cx="36" cy="36" r="5"/><circle class="node" cx="60" cy="36" r="5"/><path class="ln" d="M56 22l6-6 6 6" stroke-opacity=".5"/>', "Sketch one decision flow, from the first signal to the action that resolves it."],
 ]
-moves_html = %(<div class="moves" data-reveal="top 85%">) + moves.map { |art, t| %(<div class="move"><svg class="viz" viewBox="0 0 72 72" aria-hidden="true">#{art}</svg><p>#{t}</p></div>) }.join + "</div>"
+moves_html = %(<div class="moves" data-reveal="top 85%">) + moves.map { |art, t|
+  # A Symbol is a looping scene from assets/motion/howto-scenes.js, cropped to the bubble and the ball
+  svg = art.is_a?(Symbol) ? %(<svg class="illo move-illo" viewBox="250 130 260 260" data-scene="#{art}" aria-hidden="true"></svg>) : %(<svg class="viz" viewBox="0 0 72 72" aria-hidden="true">#{art}</svg>)
+  %(<div class="move">#{svg}<p>#{t}</p></div>)
+}.join + "</div>"
 start_body = <<~HTML
   #{moves_html}
   <p class="closing" data-reveal="top 90%"><span>Each of those will tell you more about your real problem <strong>than another dashboard would.</strong></span></p>
