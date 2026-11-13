@@ -652,10 +652,10 @@ main { min-width: 0; }
   padding: clamp(18px, 1.8vw, 28px) clamp(16px, 1.6vw, 24px) clamp(20px, 2vw, 28px);
 }
 .stair-num { font-family: var(--f-label); font-weight: 500; font-size: 12px; letter-spacing: .16em; color: var(--pink); font-variant-numeric: tabular-nums; }
-.stair-name { font-size: clamp(22px, 1.95vw, 28px); line-height: 1.15; font-weight: 300; color: var(--text-primary); margin-top: -4px; }
-.stair-text { font-size: 14px; line-height: 1.5; color: var(--text-body); margin-top: 8px; }
+.stair-name { font-size: 20px; line-height: 1.15; font-weight: 300; color: var(--text-primary); margin-top: -4px; }
+.stair-text { font-size: 12px; line-height: 1.5; color: var(--text-body); margin-top: 8px; }
 .stair-out { margin-top: auto; padding-top: 20px; display: flex; flex-direction: column; gap: 6px; }
-.stair-link { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 400; color: var(--pink); }
+.stair-link { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 400; color: var(--pink); }
 .stair-link svg { width: 16px; height: 16px; transition: transform .35s var(--ease-out); }
 .stair-link:hover svg { transform: translateX(3px); }
 .stair-link.is-here { color: var(--text-body); font-weight: 300; }
