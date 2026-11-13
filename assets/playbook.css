@@ -968,3 +968,8 @@ h1, h2, h3, .h2, .display, .card-label, .card-title, .next-title, .stat-num,
 @media (min-width: 1101px) { .bar-brand:hover .logo-mark { fill: #d6005f; } }
 /* Crowded top bar (set by fitBar in playbook.js): the section name goes first, then the title */
 .bar-no-sec .bw-sec, .bar-no-title .bar-title { display: none; }
+/* Wide screens, menu open: the full logo stays, even past the hero (the fold to the M is for the collapsed menu and phones) */
+@media (min-width: 1101px) {
+  html:not(.rail-collapsed) .bar.is-compact .logo { width: calc(var(--logo-h) * 100 / 18.86); }
+  html:not(.rail-collapsed) .bar.is-compact .logo-word { opacity: 1; transform: none; }
+}
