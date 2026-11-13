@@ -207,6 +207,8 @@ def page(i, title, subnav, body, script_key: nil)
   chapter_js = script_key && SCRIPTS[script_key] ? "<script>\n#{SCRIPTS[script_key]}</script>\n" : ""
   # Card scenes (assets/motion/howto-scenes.js) load only on pages that use one: today the Ask bubble on Where to start
   howto_js = body.include?("data-scene=") ? %(<script src="../assets/motion/howto-scenes.js"></script>\n) : ""
+  # Context views (assets/motion/context-views.js) load only where the strip row is: today Step 5
+  cvs_js = body.include?("data-context-views=") ? %(<script src="../assets/motion/context-views.js"></script>\n) : ""
   html = <<~HTML
     <!doctype html>
     <html lang="en">
@@ -237,7 +239,7 @@ def page(i, title, subnav, body, script_key: nil)
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
     <script src="../assets/motion/hero-scenes.js"></script>
-    #{howto_js}#{chapter_js}<script src="../assets/playbook.js"></script>
+    #{cvs_js}#{howto_js}#{chapter_js}<script src="../assets/playbook.js"></script>
     </html>
   HTML
   Dir.mkdir(File.join(ROOT, p[:slug])) unless Dir.exist?(File.join(ROOT, p[:slug]))
