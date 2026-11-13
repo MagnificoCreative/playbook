@@ -215,6 +215,9 @@ window.PlaybookChapter = (P) => {
   const sm = (a, b, x) => { const t = cl((x - a) / (b - a)); return t * t * (3 - 2 * t); };
   const lerp = (a, b, t) => a + (b - a) * t;
   const f1 = (n) => n.toFixed(1), f3 = (n) => n.toFixed(3);
+  // Type keeps its on-screen size as the drawing scales up: --u is viewBox units per screen pixel, capped at 1
+  const fit = () => { const w = svg.getBoundingClientRect().width; if (w) svg.style.setProperty("--u", Math.min(1, svg.viewBox.baseVal.width / w).toFixed(4)); };
+  fit(); if (window.ResizeObserver) new ResizeObserver(fit).observe(svg);
   let seed = 7; // seeded, so the measures fall the same way on every visit
   const R = () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
 
@@ -241,7 +244,9 @@ window.PlaybookChapter = (P) => {
   CATS.forEach((c, i) => { el("line", { class: "ln", x1: binX(i), x2: binX(i), y1: HL + 4, y2: HL + 9, "stroke-opacity": .35 }, svg); text("cat", binX(i), HL + 30, c); });
   // The caption: only the test being applied
   const mid = (BAR[0] + BAR[4]) / 2;
-  const cap = { k: text("axis", 60, mid - 28, "", "start", { "fill-opacity": .6 }), q1: text("big", 60, mid + 6, "", "start"), q2: text("big", 60, mid + 38, "", "start"), cur: null };
+  const capT = text("big", 60, mid + 8, "", "start");
+  const tsp = (attrs) => el("tspan", attrs, capT);
+  const cap = { k: text("axis", 60, mid - 16, "", "start", { "fill-opacity": .6 }), q1: tsp({ x: 60 }), q2: tsp({ x: 60, dy: "1.3em" }), cur: null };
 
   // 60 measures: most fail the first test, fewer each test after, ten survive (two per category)
   const fails = [];
@@ -419,7 +424,10 @@ window.PlaybookChapter = (P) => {
   const ease = (t) => (t < .5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
   const f1 = (n) => n.toFixed(1), f3 = (n) => n.toFixed(3);
   const poly = (pts) => (pts.length ? "M" + pts.map((p) => f1(p[0]) + " " + f1(p[1])).join(" L") : "");
-  const text = (x, y, s, anchor = "middle") => { const t = el("text", { class: "lbl-s", x, y, "text-anchor": anchor }, svg); t.textContent = s; return t; };
+  const text = (x, y, s, anchor = "middle", cls = "lbl-s") => { const t = el("text", { class: cls, x, y, "text-anchor": anchor }, svg); t.textContent = s; return t; };
+  // Type keeps its on-screen size as the drawing scales up: --u is viewBox units per screen pixel, capped at 1
+  const fit = () => { const w = svg.getBoundingClientRect().width; if (w) svg.style.setProperty("--u", Math.min(1, svg.viewBox.baseVal.width / w).toFixed(4)); };
+  fit(); if (window.ResizeObserver) new ResizeObserver(fit).observe(svg);
   // A rhombus in perspective: map(u, v) runs u toward the top corner, v toward the bottom corner
   const rhombus = (cx, cy, hw, hh) => (u, v) => [cx - hw + u * hw + v * hw, cy - u * hh + v * hh];
   const quad = (m, u0, v0, u1, v1) => poly([m(u0, v0), m(u1, v0), m(u1, v1), m(u0, v1)]) + "Z";
@@ -457,7 +465,7 @@ window.PlaybookChapter = (P) => {
   // ── A dotted path the dot travels along
   const path = (a, b, label, lpos) => {
     const l = el("line", { class: "ln", x1: a[0], y1: a[1], x2: a[0], y2: a[1], "stroke-opacity": .55, "stroke-dasharray": "1 4" }, svg);
-    const lab = label ? text(lpos[0], lpos[1], label) : null;
+    const lab = label ? text(lpos[0], lpos[1], label, "middle", "lbl-s lbl-b") : null;
     return (t) => { const x = lerp(a[0], b[0], t), y = lerp(a[1], b[1], t); set(l, { x2: f1(x), y2: f1(y) }); if (lab) lab.setAttribute("opacity", f3(sm(.1, .5, t))); return [x, y]; };
   };
 

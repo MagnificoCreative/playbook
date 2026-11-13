@@ -594,14 +594,18 @@ main { min-width: 0; }
 
 /* From many measures to a few: 1px lines, a large caption for the test being applied */
 .sieve-viz .ln { stroke-width: 1; }
-.sieve-viz .big { font: 300 26px/1.2 var(--f-sans); fill: var(--text-primary); }
-.sieve-viz .cat { font: 400 15px/1 var(--f-sans); fill: var(--text-primary); }
+/* Infographic type follows From signal to action: names in Syne 15, body in Inter 300 14, labels 11.
+   Drawings that scale up set --u (viewBox units per screen pixel), so their type holds these sizes on screen. */
+.sieve-viz .axis { font-size: calc(11px * var(--u, 1)); }
+.sieve-viz .big { font: 300 calc(18px * var(--u, 1))/1.2 var(--f-display); letter-spacing: -0.01em; fill: var(--text-primary); }
+.sieve-viz .cat { font: 400 calc(15px * var(--u, 1))/1 var(--f-display); letter-spacing: -0.01em; fill: var(--text-primary); }
 .sieve-viz svg { max-height: calc(100svh - var(--bar) - 2 * var(--pad) - 160px); margin: 0 auto; }
 
 /* From prototype to platform: two weights only. 1px for structure, 0.5px for every detail inside a shape */
 .proto-viz .ln { stroke-width: 1; }
 .proto-viz .hair { fill: none; stroke: var(--teal-900); stroke-width: .5; }
-.proto-viz .lbl-s { transition: fill .3s var(--ease-out); }
+.proto-viz .lbl-s { font: 400 calc(15px * var(--u, 1))/1 var(--f-display); letter-spacing: -0.01em; transition: fill .3s var(--ease-out); }
+.proto-viz .lbl-b { font: 300 calc(14px * var(--u, 1))/1 var(--f-sans); letter-spacing: 0; }
 .proto-viz .lbl-s.on { fill: var(--text-primary); }
 
 /* One screen isn't one truth: the spectrum sits full width under the intro copy */
@@ -651,11 +655,11 @@ main { min-width: 0; }
 /* Step 2 · roles: one row per role, all copy at 12px */
 .role-table { width: 100%; border-collapse: collapse; }
 .role-table th { text-align: left; font: 500 11px/1.4 var(--f-label); letter-spacing: .16em; text-transform: uppercase; color: var(--text-primary); padding: 0 20px 12px 0; border-bottom: 1px solid var(--text-primary); }
-.role-table td { vertical-align: top; font-size: 12px; line-height: 1.5; color: var(--text-body); padding: 18px 20px 18px 0; border-bottom: 1px solid var(--hairline); }
+.role-table td { vertical-align: top; font-size: 14px; font-weight: 300; line-height: 1.5; color: var(--text-body); padding: 16px 24px 16px 0; border-bottom: 1px solid var(--hairline); }
 .role-table th:last-child, .role-table td:last-child { padding-right: 0; }
 .role-table .rt-role, .role-table .rt-lead { color: var(--text-primary); }
-.role-table .rt-role { font-weight: 400; }
-.role-table .rt-lead { display: block; margin-bottom: 4px; }
+.role-table .rt-role, .role-table .rt-lead { font: 400 15px/1.35 var(--f-display); letter-spacing: -0.01em; }
+.role-table .rt-lead { display: block; margin-bottom: 6px; }
 .role-table .rt-l { display: none; }
 @media (max-width: 767px) {
   /* Each role becomes a stacked block with small labels */
