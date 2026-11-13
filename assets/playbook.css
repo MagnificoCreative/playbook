@@ -439,11 +439,12 @@ main { min-width: 0; }
 .frag-sub { font-size: var(--t-large); color: var(--text-body); padding-top: 32px; border-top: 1px solid var(--hairline); }
 .groups { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px 24px; position: relative; }
 .group { display: flex; flex-direction: column; gap: 20px; }
-.group li { display: grid; grid-template-columns: 8px minmax(0, 1fr); column-gap: 12px; align-items: start; }
+.group li { display: grid; grid-template-columns: 6px minmax(0, 1fr); column-gap: 12px; align-items: start; }
 .dot { width: 8px; height: 8px; margin-top: calc((1.45em - 8px) / 2); border-radius: 50%; background: var(--pink); }
-.group h3 { font-size: 20px; line-height: 24px; font-weight: 500; color: var(--text-primary); }
+.group h3 { font-size: 16px; line-height: 20px; font-weight: 500; color: var(--text-primary); }
 .group ul { display: flex; flex-direction: column; gap: 12px; }
-.group li { font-size: 16px; line-height: 1.45; color: var(--text-primary); }
+.group .dot { width: 6px; height: 6px; margin-top: calc((1.45em - 6px) / 2); } /* Step 1 fragmentation lists: smaller dots for 14px text */
+.group li { font-size: 14px; line-height: 1.45; color: var(--text-primary); }
 
 /* Next chapter */
 .next { padding-block: 12px 24px; }

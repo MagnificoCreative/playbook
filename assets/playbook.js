@@ -375,7 +375,7 @@
       x: (i, el) => { const g = box.getBoundingClientRect(), d = el.getBoundingClientRect(); return g.left + g.width / 2 + Math.cos(scatter[i].a) * scatter[i].r * 2.2 - (d.left + d.width / 2); },
       y: (i, el) => { const g = box.getBoundingClientRect(), d = el.getBoundingClientRect(); return g.top - 70 + Math.sin(scatter[i].a) * scatter[i].r - (d.top + d.height / 2); },
       ease: "power2.inOut", stagger: 0.03,
-      scrollTrigger: { trigger: box, start: "top 92%", end: "top 45%", scrub: 0.8, invalidateOnRefresh: true },
+      scrollTrigger: { trigger: box, start: "clamp(top 92%)", end: "clamp(top 45%)", scrub: 0.8, invalidateOnRefresh: true },  // clamp: near the page end the dots must still land
     });
     gsap.from($$("h3, .li-text", box), {
       y: 16, opacity: 0, duration: 0.9, stagger: 0.04, ease: "expo.out",
