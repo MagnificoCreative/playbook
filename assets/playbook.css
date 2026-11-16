@@ -984,3 +984,8 @@ h1, h2, h3, .h2, .display, .card-label, .card-title, .next-title, .stat-num,
   html:not(.rail-collapsed) .bar.is-compact .logo { width: calc(var(--logo-h) * 100 / 18.86); }
   html:not(.rail-collapsed) .bar.is-compact .logo-word { opacity: 1; transform: none; }
 }
+/* Tablets and phones (menu in a drawer): the full logo always shows, never folding to the M */
+@media (max-width: 1100px) {
+  .bar.is-compact .logo { width: calc(var(--logo-h) * 100 / 18.86); }
+  .bar.is-compact .logo-word { opacity: 1; transform: none; }
+}
