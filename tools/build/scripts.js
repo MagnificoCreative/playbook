@@ -136,7 +136,7 @@ window.PlaybookChapter = (P) => {
         scrollTrigger: { trigger: "#one-truth", start: () => `top top+=${P.pinTop()}`, end: "+=120%", pin: true, scrub: 0.6, anticipatePin: 1, invalidateOnRefresh: true, refreshPriority: 1 } });
     });
     mm.add("(max-width: 1100px), (max-height: 619px)", () => {
-      P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p), scrollTrigger: { trigger: "#truth", start: "top 70%", end: "bottom 45%", scrub: 0.8 } });
+      P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p), scrollTrigger: { trigger: "#truth", start: "clamp(top 85%)", end: "clamp(center 50%)", scrub: 0.8 } });  // unpinned: starts as the drawing comes up, finishes while all of it is on screen (its centre at mid-screen); clamp keeps the end reachable near the page end
     });
   })();
   /* CLEAR staircase: the base draws, each step rises in turn, then its contents settle in */
@@ -209,7 +209,7 @@ window.PlaybookChapter = (P) => {
   });
   mm.add("(max-width: 1100px), (max-height: 619px)", () => {
     P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p),
-      scrollTrigger: { trigger: "#flow", start: "top 70%", end: "bottom 55%", scrub: 0.8 } });
+      scrollTrigger: { trigger: "#flow", start: "clamp(top 85%)", end: "clamp(center 50%)", scrub: 0.8 } });  // unpinned: starts as the drawing comes up, finishes while all of it is on screen (its centre at mid-screen); clamp keeps the end reachable near the page end
   });
 };
 
@@ -357,10 +357,10 @@ window.PlaybookChapter = (P) => {
   mm.add("(min-width: 1101px) and (min-height: 620px)", () => {
     P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p),
       // pinned below the bar; if the headline and quote make the section too tall, pinned by its bottom so the whole card shows
-      scrollTrigger: { trigger: "#one-number", start: () => { const sec = P.$("#one-number"), room = innerHeight - P.pinTop() - 24; return sec && sec.offsetHeight > room ? "bottom bottom-=24" : `top top+=${P.pinTop()}`; }, end: "+=140%", pin: true, scrub: 0.6, anticipatePin: 1, invalidateOnRefresh: true } });
+      scrollTrigger: { trigger: "#one-number", start: () => { const sec = P.$("#one-number"), room = innerHeight - P.pinTop() - 24; return sec && sec.offsetHeight > room ? "bottom bottom-=24" : `top top+=${P.pinTopFor(sec)}`; }, end: "+=140%", pin: true, scrub: 0.6, anticipatePin: 1, invalidateOnRefresh: true } });
   });
   mm.add("(max-width: 1100px), (max-height: 619px)", () => {
-    P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p), scrollTrigger: { trigger: "#trace", start: "clamp(top 75%)", end: "clamp(bottom 35%)", scrub: 0.8 } });  // clamp: near the page end, so the end must stay reachable
+    P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p), scrollTrigger: { trigger: "#trace", start: "clamp(top 85%)", end: "clamp(center 50%)", scrub: 0.8 } });  // unpinned: starts as the drawing comes up, finishes while all of it is on screen (its centre at mid-screen); clamp keeps the end reachable near the page end
   });
 };
 
@@ -487,10 +487,10 @@ window.PlaybookChapter = (P) => {
   const mm = P.gsap.matchMedia();
   mm.add("(min-width: 1101px) and (min-height: 620px)", () => {
     P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p),
-      scrollTrigger: { trigger: "#few-measures", start: () => `top top+=${P.pinTop()}`, end: "+=140%", pin: true, scrub: 0.6, anticipatePin: 1, invalidateOnRefresh: true } });
+      scrollTrigger: { trigger: "#few-measures", start: () => `top top+=${P.pinTopFor(P.$("#few-measures"))}`, end: "+=140%", pin: true, scrub: 0.6, anticipatePin: 1, invalidateOnRefresh: true } });
   });
   mm.add("(max-width: 1100px), (max-height: 619px)", () => {
-    P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p), scrollTrigger: { trigger: "#sieve", start: "clamp(top 75%)", end: "clamp(bottom 35%)", scrub: 0.8 } });  // clamp: near the page end, so the end must stay reachable
+    P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p), scrollTrigger: { trigger: "#sieve", start: "clamp(top 85%)", end: "clamp(center 50%)", scrub: 0.8 } });  // unpinned: starts as the drawing comes up, finishes while all of it is on screen (its centre at mid-screen); clamp keeps the end reachable near the page end
   });
 };
 
@@ -541,7 +541,7 @@ window.PlaybookChapter = (P) => {
     });
     mm.add("(max-width: 1100px), (max-height: 619px)", () => {
       P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p),
-        scrollTrigger: { trigger: ".pathway", start: "top 75%", end: "+=600", scrub: 0.6 } });
+        scrollTrigger: { trigger: ".pathway", start: "top 75%", end: () => `+=${Math.round(Math.min(600, innerHeight * .6))}`, scrub: 0.6, invalidateOnRefresh: true } });  // at most 60% of a screen, so a short screen still sees the rail finish
     });
   }
 
@@ -759,10 +759,11 @@ window.PlaybookChapter = (P) => {
   const mm = P.gsap.matchMedia();
   mm.add("(min-width: 1101px) and (min-height: 620px)", () => {
     P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p),
-      scrollTrigger: { trigger: "#prototype-to-platform", start: () => `top top+=${P.pinTop()}`, end: "+=160%", pin: true, scrub: 0.6, anticipatePin: 1, invalidateOnRefresh: true } });  // after how-to-apply on the page, so no refreshPriority: it is measured in page order
+      scrollTrigger: { trigger: "#prototype-to-platform", start: () => `top top+=${P.pinTopFor(P.$("#prototype-to-platform"))}`, end: "+=160%", pin: true, scrub: 0.6, anticipatePin: 1, invalidateOnRefresh: true } });  // after how-to-apply on the page, so no refreshPriority: it is measured in page order
+    // pinTopFor: little page follows this section, so on some screens (a large tablet on its side) it pins a little lower and still finishes before the page ends
   });
   mm.add("(max-width: 1100px), (max-height: 619px)", () => {
-    P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p), scrollTrigger: { trigger: "#loop", start: "clamp(top 75%)", end: "clamp(bottom 30%)", scrub: 0.8 } });  // clamp: the page ends soon after, so the end must stay reachable or the journey stops halfway
+    P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p), scrollTrigger: { trigger: "#loop", start: "clamp(top 85%)", end: "clamp(center 50%)", scrub: 0.8 } });  // unpinned: starts as the drawing comes up, finishes while all of it is on screen (its centre at mid-screen); clamp keeps the end reachable near the page end
   });
 };
 
