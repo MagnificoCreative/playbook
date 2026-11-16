@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Footer background options</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;500&family=Syne:wght@400;500;600&family=Inter:wght@300;400;500&display=swap">
+<link rel="stylesheet" href="../assets/playbook.css">
+<style>
+  /* Options page for the closing panel's background (Figma: Energy Operations Playbook › Footer BG).
+     Layers, bottom to top, as in Figma: brand teal, the pink M watermark, a dark gradient, and the striped
+     texture in saturation blend at 50% (it lends only its colour stripes). Every option adds a dark veil on the
+     left, where the words sit, so the copy reads at any moment of the loop. */
+  body { margin: 0; background: var(--bg-canvas); }
+  .page { max-width: 1240px; margin: 0 auto; padding: 48px 24px 96px; }
+  .page > header { margin-bottom: 40px; }
+  .page > header h1 { font-size: 32px; font-weight: 400; margin: 8px 0 12px; }
+  .page > header p { font-size: 16px; color: var(--text-body); max-width: 70ch; }
+  .opt { margin-top: 56px; }
+  .opt-head { display: flex; align-items: baseline; gap: 14px; margin-bottom: 14px; }
+  .opt-head b { font: 500 12px/1 var(--f-label); letter-spacing: .16em; color: var(--pink); }
+  .opt-head h2 { font-family: var(--f-display); font-size: 20px; font-weight: 400; margin: 0; }
+  .opt-head p { font-size: 14px; color: var(--text-body); margin: 0; }
+
+  /* The panel: a copy of the playbook's closing call to action */
+  .fpanel { position: relative; overflow: hidden; border-radius: var(--radius); background: #002a32; color: var(--slate-100);
+    min-height: 640px; padding: clamp(32px, 5vw, 68px); display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 28px; isolation: isolate; }
+  .fpanel .h2 { color: #fff; max-width: 18ch; margin: 0; }
+  .fpanel > p { font-size: var(--t-large); line-height: 1.5; color: var(--text-muted); max-width: 52ch; margin: 0; }
+  .fpanel .btn { margin-top: 12px; }
+  .fpanel > * { position: relative; z-index: 2; }
+  .sign { align-self: stretch; margin-top: 44px; padding-top: 28px; border-top: 1px solid rgba(213, 222, 240, .16); display: flex; flex-direction: column; gap: 24px; }
+  .sign .t { font-size: 16px; color: #fff; margin: 0 0 6px; }
+  .sign .s { font-size: 14px; line-height: 1.5; color: var(--text-muted); margin: 0; }
+
+  /* ── The art: a 1600 × 1200 stage (the Figma frame) that covers the panel */
+  .art { position: absolute; inset: 0; z-index: 0; container-type: size; pointer-events: none; }
+  .stage { position: absolute; left: 50%; top: 50%; width: max(100cqw, 133.334cqh); aspect-ratio: 4 / 3; transform: translate(-50%, -50%); isolation: isolate; background: #002a32; } /* the blend needs the teal underneath, as in Figma */
+  .wm { position: absolute; left: -33.25%; top: -4.58%; width: 124.75%; height: 109.08%; background: url(../assets/footer/watermark.svg) center / 100% 100% no-repeat; }
+  .grad { position: absolute; inset: 0; background: linear-gradient(270deg, rgba(0, 42, 50, .76) 0%, rgba(0, 42, 50, 0) 86%); }
+  .tex { position: absolute; left: -22.27%; top: 50%; width: 132.8%; aspect-ratio: 4 / 3; transform: translateY(-50%); mix-blend-mode: saturation; opacity: .5; overflow: hidden; }
+  /* The texture as an endless strip: original, mirrored, original, mirrored; it slides right by half its length */
+  .strip { position: absolute; inset: 0 auto 0 0; width: 400%; display: flex; transform: translateX(-50%); }
+  .strip i { flex: 1 0 25%; background: url(../assets/footer/texture.jpg) center / 100% 100%; }
+  .strip i:nth-child(even) { background-image: url(../assets/footer/texture-flip.jpg); }
+  @keyframes drift { from { transform: translateX(-50%); } to { transform: translateX(0); } }
+  /* Legibility veil, over the art and under the words: darkest behind the copy on the left */
+  .veil { position: absolute; inset: 0; z-index: 1; background: linear-gradient(90deg, rgba(0, 42, 50, .72) 0%, rgba(0, 42, 50, .45) 42%, rgba(0, 42, 50, 0) 70%); pointer-events: none; }
+
+  /* 01 · Drift: the texture glides left to right, everything else still */
+  .o1 .strip { animation: drift 90s linear infinite; }
+
+  /* 02 · Drift and tide: the same glide, while the dark gradient breathes in and out from the right */
+  .o2 .strip { animation: drift 90s linear infinite; }
+  .o2 .grad { animation: tide 14s ease-in-out infinite alternate; }
+  @keyframes tide { from { opacity: .55; transform: translateX(6%); } to { opacity: 1; transform: translateX(-4%); } }
+
+  /* 03 · Parallax: two texture layers at different speeds, the M easing slowly the same way */
+  .o3 .strip { animation: drift 120s linear infinite; }
+  .o3 .tex.front { opacity: .28; }
+  .o3 .tex.front .strip { animation-duration: 55s; }
+  .o3 .tex.front .strip i { background-size: 100% 140%; }
+  .o3 .wm { animation: sway 30s ease-in-out infinite alternate; }
+  @keyframes sway { from { transform: translateX(-1.5%); } to { transform: translateX(1.5%); } }
+
+  /* 04 · Sweep: a slow glide, and a band of brighter colour passing left to right every 12 seconds */
+  .o4 .strip { animation: drift 120s linear infinite; }
+  .o4 .tex.glow { opacity: .95; -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 50%, transparent 100%); mask-image: linear-gradient(90deg, transparent 0%, #000 50%, transparent 100%);
+    -webkit-mask-size: 45% 100%; mask-size: 45% 100%; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; animation: sweep 12s cubic-bezier(.45, 0, .55, 1) infinite; }
+  @keyframes sweep { from { -webkit-mask-position: -60% 0; mask-position: -60% 0; } to { -webkit-mask-position: 160% 0; mask-position: 160% 0; } }
+
+  @media (prefers-reduced-motion: reduce) { .art * { animation: none !important; } }
+  @media (max-width: 767px) { .fpanel { min-height: 0; } .veil { background: rgba(0, 42, 50, .55); } }
+</style>
+
+<div class="page">
+  <header>
+    <p class="eyebrow">Animation library · Footer background</p>
+    <h1>Four ways to move the Footer BG</h1>
+    <p>Built from the Figma Footer BG artboard: the brand teal, the pink M watermark, the dark gradient and the striped texture blended in saturation. Each option adds a dark veil on the left so the heading, the button and the sign-off stay readable while the art moves.</p>
+  </header>
+</div>
+
+<template id="panel">
+  <div class="art"><div class="stage"><div class="wm"></div><div class="grad"></div><div class="tex"><div class="strip"><i></i><i></i><i></i><i></i></div></div></div></div>
+  <div class="veil"></div>
+  <h2 class="h2">How ready is your organization to go from data to decisions?</h2>
+  <p>The Data to Decision Assessment uses the same CLEAR steps to show you which practices you already have in place, where the gaps are, and what to tackle first.</p>
+  <a class="btn" href="#">Take the Data to Decision Assessment <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+  <div class="sign"><svg viewBox="0 0 100 18.86" width="132" aria-hidden="true"></svg><div><p class="t">Want to know more about Magnifico?</p><p class="s">We help growing energy companies turn complex operational data into<br> clear, trusted digital experiences that help people make better decisions.</p></div></div>
+</template>
+
+<script>
+  const OPTS = [
+    ["01", "Drift", "The texture glides slowly left to right; the gradient and the M stay still."],
+    ["02", "Drift and tide", "The same glide, while the dark gradient breathes in and out from the right."],
+    ["03", "Parallax", "Two texture layers move at different speeds; the M eases gently with them."],
+    ["04", "Sweep", "A slow glide, and a band of brighter colour passes left to right every 12 seconds."],
+  ];
+  const page = document.querySelector(".page"), tpl = document.getElementById("panel");
+  OPTS.forEach(([n, name, note], i) => {
+    const s = document.createElement("section"); s.className = "opt";
+    s.innerHTML = `<div class="opt-head"><b>${n}</b><h2>${name}</h2><p>${note}</p></div>`;
+    const p = document.createElement("div"); p.className = `fpanel o${i + 1}`; p.appendChild(tpl.content.cloneNode(true));
+    const stage = p.querySelector(".stage");
+    if (i === 2) { const f = stage.querySelector(".tex").cloneNode(true); f.classList.add("front"); stage.appendChild(f); }
+    if (i === 3) { const g = stage.querySelector(".tex").cloneNode(true); g.classList.add("glow"); stage.appendChild(g); }
+    s.appendChild(p); page.appendChild(s);
+  });
+  // The logo in the sign-off: the same artwork as the playbook's top bar, wordmark in white
+  fetch("../where-to-start/").then(r => r.text()).then(h => {
+    const m = h.match(/<svg viewBox="0 0 100 18.86"[\s\S]*?<\/svg>/); if (!m) return;
+    document.querySelectorAll(".sign > svg").forEach(s => { s.outerHTML = m[0].replace('fill="#002A32"', 'fill="#fff"').replace("<svg ", '<svg width="132" '); });
+  });
+</script>
+</html>

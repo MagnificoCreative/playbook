@@ -768,8 +768,6 @@ window.PlaybookChapter = (P) => {
 };
 
 // ==== start ====
-/* Where to start: rings breathe behind the assessment call to action. */
-window.PlaybookChapter = (P) => {
-  const svg = P.$("#cta-art");
-  if (svg && window.HeroMount) P.loop(svg, window.HeroMount(svg, "00"), 1.5, 2.5);
-};
+/* Where to start: the closing panel's background (Footer BG · Parallax) moves in CSS, so nothing runs here.
+   The rings that used to breathe behind it are parked in the animation library. */
+window.PlaybookChapter = () => {};
