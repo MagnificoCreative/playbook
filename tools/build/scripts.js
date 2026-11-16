@@ -322,6 +322,8 @@ window.PlaybookChapter = (P) => {
     const agreed = cluster(...G.agreed);
     const aLab = text("name", G.aLab, "Agreed definition");
     const aSub = text("body", G.aSub, "One owner");
+    // labels sit above every dot cluster, so a cluster's backing never covers them
+    svg.querySelectorAll("text").forEach((t) => svg.appendChild(t));
     const balls = lanes.map(() => ball(4.5)), lb = ball(5);
     // the dots travel by eased share, so a stop's moment is found from where the eased dot reaches it
     stops.forEach((s) => { let k = 0; while (k < 1 && ease(k) < s.share) k += .005; s.share = k; });
