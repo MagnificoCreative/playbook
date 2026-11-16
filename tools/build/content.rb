@@ -379,6 +379,8 @@ start_body = <<~HTML
   #{moves_html}
   <p class="closing" data-reveal="top 90%"><span>Each of those will tell you more about your real problem <strong>than another dashboard would.</strong></span></p>
 HTML
+# The full Magnifico logo from the top bar, with the wordmark in light ink for the dark panel
+CTA_LOGO = BAR[%r{<svg viewBox="0 0 100 18.86".*?</svg>}m].sub('fill="#002A32"', 'fill="currentColor"')
 cta = <<~HTML
   <section class="sec" id="assessment" data-section="assessment" aria-labelledby="t-assessment">
     <div class="panel cta">
@@ -386,6 +388,14 @@ cta = <<~HTML
       <h2 class="h2" id="t-assessment">How ready is your organization to go from data to decisions?</h2>
       <p>The Data to Decision Assessment uses the same CLEAR steps to show you which practices you already have in place, where the gaps are, and what to tackle first.</p>
       <a class="btn" href="https://magnifico-energy-operational-decision-readiness-assessment.scoreapp.com" target="_blank" rel="noopener">Take the Data to Decision Assessment #{ARROW}</a>
+      <div class="cta-sign">
+        <a class="cta-logo" href="https://wearemagnifico.com" target="_blank" rel="noopener" aria-label="Magnifico">#{CTA_LOGO}</a>
+        <div class="cta-sign-copy">
+          <p class="cta-sign-title">Want to know more about Magnifico?</p>
+          <p class="cta-sign-text">We help growing energy companies turn complex operational data into<br> clear, trusted digital experiences that help people make better decisions.</p>
+          <a class="cta-sign-link" href="https://wearemagnifico.com" target="_blank" rel="noopener">Visit wearemagnifico.com #{ARROW}</a>
+        </div>
+      </div>
     </div>
   </section>
 HTML

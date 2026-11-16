@@ -746,6 +746,18 @@ main { min-width: 0; }
 .cta .h2 { color: var(--white); max-width: 18ch; position: relative; z-index: 1; }
 .cta p { font-size: var(--t-large); line-height: 1.5; color: var(--text-muted); max-width: 52ch; position: relative; z-index: 1; }
 .cta .btn { margin-top: 12px; position: relative; z-index: 1; }
+/* Sign-off under the assessment button: who we are, with the full logo and a link to our site */
+.cta-sign { position: relative; z-index: 1; margin-top: 44px; padding-top: 28px; border-top: 1px solid rgba(213, 222, 240, .16);
+  display: flex; flex-direction: column; align-items: flex-start; gap: 24px; align-self: stretch; } /* hairline full width; logo, then the words below it */
+.cta-logo { flex: none; display: block; width: 132px; color: var(--white); padding-top: 2px; }
+.cta-logo svg { display: block; width: 100%; height: auto; }
+.cta-sign-copy { display: flex; flex-direction: column; gap: 6px; }
+.cta .cta-sign-title { font-size: 16px; line-height: 1.4; color: var(--white); font-weight: 400; }
+.cta .cta-sign-text { font-size: 14px; line-height: 1.5; color: var(--text-muted); max-width: none; }
+.cta-sign-link { display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; font-size: 14px; color: var(--white); width: fit-content; }
+.cta-sign-link svg { width: 16px; height: 16px; color: var(--pink); transition: transform .3s var(--ease-out); }
+.cta-sign-link:hover svg { transform: translateX(3px); }
+@media (max-width: 767px) { .cta-sign { gap: 20px; } .cta-sign-text br { display: none; } } /* phones wrap naturally */
 .cta-art { position: absolute; right: -10%; top: 50%; width: min(56vw, 700px); aspect-ratio: 1; transform: translateY(-50%); pointer-events: none; opacity: .9; }
 .cta-art svg { width: 100%; height: 100%; overflow: visible; }
 .cta-art .ln { fill: none; stroke: var(--slate-100); stroke-width: 1.5; stroke-linecap: round; }
@@ -985,4 +997,9 @@ h1, h2, h3, .h2, .display, .card-label, .card-title, .next-title, .stat-num,
 @media (min-width: 1101px) {
   html:not(.rail-collapsed) .bar.is-compact .logo { width: calc(var(--logo-h) * 100 / 18.86); }
   html:not(.rail-collapsed) .bar.is-compact .logo-word { opacity: 1; transform: none; }
+}
+/* Tablets and phones (menu in a drawer): the full logo always shows, never folding to the M */
+@media (max-width: 1100px) {
+  .bar.is-compact .logo { width: calc(var(--logo-h) * 100 / 18.86); }
+  .bar.is-compact .logo-word { opacity: 1; transform: none; }
 }
