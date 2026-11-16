@@ -230,7 +230,12 @@ window.PlaybookChapter = (P) => {
   const lerp = (a, b, t) => a + (b - a) * t;
   const f1 = (n) => n.toFixed(1), f3 = (n) => n.toFixed(3);
   const fade = (e, o) => e.setAttribute("opacity", f3(o));
-  const text = (cls, [x, y, anchor = "middle"], s) => { const t = el("text", { class: cls, x, y, "text-anchor": anchor }, svg); t.textContent = s; return t; };
+  // A label is a group: a copy behind carries the background-coloured edge that hides the paths under it, the words sit on top
+  const text = (cls, [x, y, anchor = "middle"], s) => {
+    const g = el("g", { class: "lab" }, svg);
+    for (const k of ["halo", ""]) { const t = el("text", { class: `${cls} ${k}`.trim(), x, y, "text-anchor": anchor }, g); t.textContent = s; }
+    return g;
+  };
   const phone = matchMedia("(max-width: 767px)");                  // the stylesheet's phone breakpoint: a stacked layout below it
   // Type keeps its on-screen size as the drawing scales: --u is viewBox units per screen pixel, capped at 1 wide
   // (type never grows past its size) and at 1.3 on phones (where the drawing shrinks, type shrinks only a little)
@@ -323,7 +328,7 @@ window.PlaybookChapter = (P) => {
     const aLab = text("name", G.aLab, "Agreed definition");
     const aSub = text("body", G.aSub, "One owner");
     // labels sit above every dot cluster, so a cluster's backing never covers them
-    svg.querySelectorAll("text").forEach((t) => svg.appendChild(t));
+    svg.querySelectorAll(".lab").forEach((t) => svg.appendChild(t));
     const balls = lanes.map(() => ball(4.5)), lb = ball(5);
     // the dots travel by eased share, so a stop's moment is found from where the eased dot reaches it
     stops.forEach((s) => { let k = 0; while (k < 1 && ease(k) < s.share) k += .005; s.share = k; });

@@ -614,7 +614,7 @@ main { min-width: 0; }
 .trace-viz .axis { font-size: calc(12px * var(--u, 1)); }
 .trace-viz svg { max-height: calc(100svh - var(--bar) - 2 * var(--pad) - 160px); margin: 0 auto; }
 /* Stacked on phones, the lanes run behind the labels: a halo in the card colour keeps each label clear of the dots */
-.trace-viz text { paint-order: stroke; stroke: var(--bg-surface); stroke-width: calc(6px * var(--u, 1)); stroke-linejoin: round; }
+.trace-viz .halo { fill: none; stroke: var(--bg-surface); stroke-width: calc(6px * var(--u, 1)); stroke-linejoin: round; }  /* its own copy behind the words, so no browser can paint the edge over the letters */
 
 /* From prototype to platform: two weights only. 1px for structure, 0.5px for every detail inside a shape */
 .proto-viz .ln { stroke-width: 1; }
