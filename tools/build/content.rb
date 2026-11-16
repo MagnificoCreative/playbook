@@ -333,7 +333,7 @@ page(5, "Design Around Decisions",
 # From prototype to platform: drawn by scripts.js (the lattice option)
 loop_svg = <<~SVG
   <div class="stage viz proto-viz" id="loop">
-    <svg viewBox="20 74 931 243" role="img" aria-label="A loop of prototype, test and refine, run twice, then a hand-off to a blueprint, a delivered platform, and a predictive layer built on top of it."></svg>
+    <svg viewBox="20 74 931 243" role="img" aria-label="A loop of prototype, test and refine, run once, then a hand-off to a blueprint, a delivered platform, and a predictive layer built on top of it."></svg>
   </div>
 SVG
 page(6, "Test Before You Build",

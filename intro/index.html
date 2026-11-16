@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;500&family=Syne:wght@400;500;600&family=Inter:ital,wght@0,300;0,400;0,500;1,300&display=swap">
-<link rel="stylesheet" href="../assets/playbook.css?v=e474a4f4">
+<link rel="stylesheet" href="../assets/playbook.css?v=b541cd77">
 <script>try{if(matchMedia("(min-width: 1101px)").matches&&localStorage.getItem("playbook-rail")==="collapsed")document.documentElement.classList.add("rail-collapsed")}catch(e){}</script>
 
 <a class="skip" href="#main">Skip to content</a>
@@ -233,7 +233,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
-<script src="../assets/motion/hero-scenes.js?v=e474a4f4"></script>
+<script src="../assets/motion/hero-scenes.js?v=b541cd77"></script>
 <script>
 /* Introduction: one piece of information travels Source → Act and loses trust at every stage. */
 window.PlaybookChapter = (P) => {
@@ -372,7 +372,7 @@ window.PlaybookChapter = (P) => {
         scrollTrigger: { trigger: "#one-truth", start: () => `top top+=${P.pinTop()}`, end: "+=120%", pin: true, scrub: 0.6, anticipatePin: 1, invalidateOnRefresh: true, refreshPriority: 1 } });
     });
     mm.add("(max-width: 1100px), (max-height: 619px)", () => {
-      P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p), scrollTrigger: { trigger: "#truth", start: "top 70%", end: "bottom 45%", scrub: 0.8 } });
+      P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p), scrollTrigger: { trigger: "#truth", start: "clamp(top 85%)", end: "clamp(center 50%)", scrub: 0.8 } });  // unpinned: starts as the drawing comes up, finishes while all of it is on screen (its centre at mid-screen); clamp keeps the end reachable near the page end
     });
   })();
   /* CLEAR staircase: the base draws, each step rises in turn, then its contents settle in */
@@ -445,10 +445,10 @@ window.PlaybookChapter = (P) => {
   });
   mm.add("(max-width: 1100px), (max-height: 619px)", () => {
     P.gsap.to(o, { p: 1, ease: "none", onUpdate: () => draw(o.p),
-      scrollTrigger: { trigger: "#flow", start: "top 70%", end: "bottom 55%", scrub: 0.8 } });
+      scrollTrigger: { trigger: "#flow", start: "clamp(top 85%)", end: "clamp(center 50%)", scrub: 0.8 } });  // unpinned: starts as the drawing comes up, finishes while all of it is on screen (its centre at mid-screen); clamp keeps the end reachable near the page end
   });
 };
 
 </script>
-<script src="../assets/playbook.js?v=e474a4f4"></script>
+<script src="../assets/playbook.js?v=b541cd77"></script>
 </html>

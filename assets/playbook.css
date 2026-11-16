@@ -613,12 +613,13 @@ main { min-width: 0; }
 .trace-viz .body { font: 300 calc(14px * var(--u, 1))/1 var(--f-sans); fill: var(--text-body); }
 .trace-viz .axis { font-size: calc(12px * var(--u, 1)); }
 .trace-viz svg { max-height: calc(100svh - var(--bar) - 2 * var(--pad) - 160px); margin: 0 auto; }
+/* Stacked on phones, the lanes run behind the labels: a halo in the card colour keeps each label clear of the dots */
+.trace-viz text { paint-order: stroke; stroke: var(--bg-surface); stroke-width: calc(6px * var(--u, 1)); stroke-linejoin: round; }
 
 /* From prototype to platform: two weights only. 1px for structure, 0.5px for every detail inside a shape */
 .proto-viz .ln { stroke-width: 1; }
 .proto-viz .hair { fill: none; stroke: var(--teal-900); stroke-width: .5; }
 .proto-viz .lbl-s { font: 400 calc(14px * var(--u, 1))/1 var(--f-display); letter-spacing: -0.01em; transition: fill .3s var(--ease-out); }
-.proto-viz .lbl-b { font: 300 calc(14px * var(--u, 1))/1 var(--f-sans); letter-spacing: 0; }
 .proto-viz .lbl-s.on { fill: var(--text-primary); }
 
 /* One screen isn't one truth: the spectrum sits full width under the intro copy */
@@ -626,6 +627,13 @@ main { min-width: 0; }
 /* Its labels: a 16px headline over 14px notes, the same on every screen (--u holds the size as the drawing scales) */
 .truth-viz .lbl { font: 400 calc(16px * var(--u, 1))/1 var(--f-display); letter-spacing: -0.01em; }
 .truth-viz .lbl-s { font-size: calc(14px * var(--u, 1)); }
+
+/* Where a drawing isn't pinned (narrow or short screens, such as a phone on its side), the limits above give way:
+   each drawing may be as tall as the screen, so it never shrinks to a sliver. */
+@media (max-width: 1100px), (max-height: 619px) {
+  .trust-viz svg, .sieve-viz svg, .trace-viz svg, .truth-viz svg { max-height: calc(100svh - var(--bar) - 48px); }
+}
+
 
 /* Intro · single pane vs single source */
 .compare { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; }
@@ -781,7 +789,13 @@ main { min-width: 0; }
   .stage.trust-viz { overflow: visible; }
   .stage.trust-viz > svg { min-width: 0; min-height: 0; }
   .stage.truth-viz { overflow: visible; }
-  .stage.truth-viz > svg { min-width: 0; max-height: none; }
+  .stage.truth-viz > svg { min-width: 0; max-height: calc(100svh - var(--bar) - 48px); }
+  /* Steps 3, 4 and 6 draw a stacked layout on phones (scripts.js), so they fit without scrolling sideways */
+  .stage.trace-viz, .stage.sieve-viz, .stage.proto-viz { overflow: visible; }
+  .stage.trace-viz > svg, .stage.sieve-viz > svg, .stage.proto-viz > svg { min-width: 0; max-height: calc(100svh - var(--bar) - 48px); }  /* stacked drawings are tall: on a wider phone or small tablet they shrink to fit the screen rather than spill past it */
+  .sieve-viz .big { font-size: calc(20px * var(--u, 1)); }
+  .sieve-viz .cat { font-size: calc(12px * var(--u, 1)); }
+  .trace-viz .axis { letter-spacing: .1em; }
 }
 
 /* Introduction · roots divider between "You know this meeting" and "Where trust is lost" */
