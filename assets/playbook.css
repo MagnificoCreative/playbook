@@ -758,11 +758,27 @@ main { min-width: 0; }
 .cta-sign-link svg { width: 16px; height: 16px; color: var(--pink); transition: transform .3s var(--ease-out); }
 .cta-sign-link:hover svg { transform: translateX(3px); }
 @media (max-width: 767px) { .cta-sign { gap: 20px; } .cta-sign-text br { display: none; } } /* phones wrap naturally */
-.cta-art { position: absolute; right: -10%; top: 50%; width: min(56vw, 700px); aspect-ratio: 1; transform: translateY(-50%); pointer-events: none; opacity: .9; }
-.cta-art svg { width: 100%; height: 100%; overflow: visible; }
-.cta-art .ln { fill: none; stroke: var(--slate-100); stroke-width: 1.5; stroke-linecap: round; }
-.cta-art .ball { fill: var(--pink); }
-.cta-art .echo .ball { display: none; }
+/* Closing panel background, from Figma (Energy Operations Playbook › Footer BG), option 03 · Parallax.
+   A 1600 × 1200 stage covers the panel: the brand teal, the pink M watermark, a dark gradient from the right, and the
+   striped texture in saturation blend, twice: a slow layer behind and a faster, fainter one in front. Each texture
+   is an endless strip (the image, then its mirror) sliding left to right. A veil darkens the left for the copy. */
+.cta { isolation: isolate; }
+.cta-bg { position: absolute; inset: 0; z-index: 0; container-type: size; pointer-events: none; }
+.cta-stage { position: absolute; left: 50%; top: 50%; width: max(100cqw, 133.334cqh); aspect-ratio: 4 / 3; transform: translate(-50%, -50%); isolation: isolate; overflow: hidden; background: var(--bg-brand); } /* the texture is larger than the stage: clip it, or it shows raw where there is no teal under it */
+.cta-wm { position: absolute; left: -33.25%; top: -4.58%; width: 124.75%; height: 109.08%; background: url(footer/watermark.svg) center / 100% 100% no-repeat; animation: cta-sway 30s ease-in-out infinite alternate; }
+.cta-grad { position: absolute; inset: 0; background: linear-gradient(270deg, rgba(0, 42, 50, .76) 0%, rgba(0, 42, 50, 0) 86%); }
+.cta-tex { position: absolute; left: -22.27%; top: 50%; width: 132.8%; aspect-ratio: 4 / 3; transform: translateY(-50%); mix-blend-mode: saturation; opacity: .5; overflow: hidden; }
+.cta-tex.is-front { opacity: .28; }
+.cta-strip { position: absolute; inset: 0 auto 0 0; width: 400%; display: flex; transform: translateX(-50%); animation: cta-drift 120s linear infinite; will-change: transform; }
+.cta-tex.is-front .cta-strip { animation-duration: 55s; }
+.cta-strip i { flex: 1 0 25%; background: url(footer/texture.jpg) center / 100% 100%; }
+.cta-strip i:nth-child(even) { background-image: url(footer/texture-flip.jpg); }
+.cta-tex.is-front .cta-strip i { background-size: 100% 140%; }
+.cta-veil { position: absolute; inset: 0; z-index: 0; pointer-events: none; background: linear-gradient(90deg, rgba(0, 42, 50, .72) 0%, rgba(0, 42, 50, .45) 42%, rgba(0, 42, 50, 0) 70%); }
+@keyframes cta-drift { from { transform: translateX(-50%); } to { transform: translateX(0); } }
+@keyframes cta-sway { from { transform: translateX(-1.5%); } to { transform: translateX(1.5%); } }
+@media (prefers-reduced-motion: reduce) { .cta-wm, .cta-strip { animation: none; } }
+@media (max-width: 767px) { .cta-veil { background: rgba(0, 42, 50, .55); } }
 
 @media (max-width: 1100px) {
   .block-top, .trust-split { grid-template-columns: minmax(0, 1fr); }
@@ -780,7 +796,6 @@ main { min-width: 0; }
 }
 @media (max-width: 767px) {
   .card--text { width: 100%; }
-  .cta-art { right: -45%; width: 110vw; opacity: .45; }
 }
 @media (max-width: 767px) {
   /* Wide diagrams keep readable labels and pan inside their frame */

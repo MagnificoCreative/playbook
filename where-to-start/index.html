@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;500&family=Syne:wght@400;500;600&family=Inter:ital,wght@0,300;0,400;0,500;1,300&display=swap">
-<link rel="stylesheet" href="../assets/playbook.css?v=b541cd77">
+<link rel="stylesheet" href="../assets/playbook.css?v=28f4a53e">
 <script>try{if(matchMedia("(min-width: 1101px)").matches&&localStorage.getItem("playbook-rail")==="collapsed")document.documentElement.classList.add("rail-collapsed")}catch(e){}</script>
 
 <a class="skip" href="#main">Skip to content</a>
@@ -114,7 +114,15 @@
 </section>
 <section class="sec" id="assessment" data-section="assessment" aria-labelledby="t-assessment">
   <div class="panel cta">
-    <div class="cta-art" aria-hidden="true"><svg viewBox="0 0 600 600" id="cta-art"></svg></div>
+    <div class="cta-bg" aria-hidden="true">
+      <div class="cta-stage">
+        <div class="cta-wm"></div>
+        <div class="cta-grad"></div>
+        <div class="cta-tex"><div class="cta-strip"><i></i><i></i><i></i><i></i></div></div>
+        <div class="cta-tex is-front"><div class="cta-strip"><i></i><i></i><i></i><i></i></div></div>
+      </div>
+    </div>
+    <div class="cta-veil" aria-hidden="true"></div>
     <h2 class="h2" id="t-assessment">How ready is your organization to go from data to decisions?</h2>
     <p>The Data to Decision Assessment uses the same CLEAR steps to show you which practices you already have in place, where the gaps are, and what to tackle first.</p>
     <a class="btn" href="https://magnifico-energy-operational-decision-readiness-assessment.scoreapp.com" target="_blank" rel="noopener">Take the Data to Decision Assessment <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
@@ -154,14 +162,12 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
-<script src="../assets/motion/hero-scenes.js?v=b541cd77"></script>
-<script src="../assets/motion/howto-scenes.js?v=b541cd77"></script>
+<script src="../assets/motion/hero-scenes.js?v=28f4a53e"></script>
+<script src="../assets/motion/howto-scenes.js?v=28f4a53e"></script>
 <script>
-/* Where to start: rings breathe behind the assessment call to action. */
-window.PlaybookChapter = (P) => {
-  const svg = P.$("#cta-art");
-  if (svg && window.HeroMount) P.loop(svg, window.HeroMount(svg, "00"), 1.5, 2.5);
-};
+/* Where to start: the closing panel's background (Footer BG · Parallax) moves in CSS, so nothing runs here.
+   The rings that used to breathe behind it are parked in the animation library. */
+window.PlaybookChapter = () => {};
 </script>
-<script src="../assets/playbook.js?v=b541cd77"></script>
+<script src="../assets/playbook.js?v=28f4a53e"></script>
 </html>

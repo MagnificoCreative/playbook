@@ -384,7 +384,15 @@ CTA_LOGO = BAR[%r{<svg viewBox="0 0 100 18.86".*?</svg>}m].sub('fill="#002A32"',
 cta = <<~HTML
   <section class="sec" id="assessment" data-section="assessment" aria-labelledby="t-assessment">
     <div class="panel cta">
-      <div class="cta-art" aria-hidden="true"><svg viewBox="0 0 600 600" id="cta-art"></svg></div>
+      <div class="cta-bg" aria-hidden="true">
+        <div class="cta-stage">
+          <div class="cta-wm"></div>
+          <div class="cta-grad"></div>
+          <div class="cta-tex"><div class="cta-strip"><i></i><i></i><i></i><i></i></div></div>
+          <div class="cta-tex is-front"><div class="cta-strip"><i></i><i></i><i></i><i></i></div></div>
+        </div>
+      </div>
+      <div class="cta-veil" aria-hidden="true"></div>
       <h2 class="h2" id="t-assessment">How ready is your organization to go from data to decisions?</h2>
       <p>The Data to Decision Assessment uses the same CLEAR steps to show you which practices you already have in place, where the gaps are, and what to tackle first.</p>
       <a class="btn" href="https://magnifico-energy-operational-decision-readiness-assessment.scoreapp.com" target="_blank" rel="noopener">Take the Data to Decision Assessment #{ARROW}</a>
