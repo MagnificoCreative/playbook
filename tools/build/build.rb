@@ -250,3 +250,12 @@ def page(i, title, subnav, body, script_key: nil)
 end
 
 load File.join(DIR, "content.rb")
+
+# Hand-written pages that read the live stylesheet get the same stamp, so they never show a stale copy
+["design-system/index.html"].each do |rel|
+  f = File.join(ROOT, rel)
+  next unless File.exist?(f)
+  html = File.read(f).gsub(/((?:href|src)="\.\.\/assets\/[^"?]+\.(?:css|js))(?:\?v=[0-9a-f]+)?"/) { "#{$1}?v=#{ASSET_STAMP}\"" }
+  File.write(f, html)
+  puts "stamped #{rel}"
+end

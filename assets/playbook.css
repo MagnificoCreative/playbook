@@ -3,6 +3,7 @@
 :root {
   /* Primitives (Energy Operations Playbook design system) */
   --pink: #ff0074;
+  --pink-action: #e6006a; /* a touch deeper than brand pink so white text on it passes AA (4.59:1) */
   --pink-hover: #d1005f;
   --pink-press: #ab004e;
   --teal-950: #07171b;
@@ -88,7 +89,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 
 .skip {
   position: fixed; left: var(--gutter-l); top: 8px; z-index: 100;
-  background: var(--pink); color: var(--white); padding: 8px 16px; border-radius: 999px;
+  background: var(--pink-action); color: var(--white); padding: 8px 16px; border-radius: 999px;
   transform: translateY(-200%); transition: transform .2s var(--ease-out);
 }
 .skip:focus { transform: none; }
@@ -244,7 +245,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   margin-top: 8px;
   padding: 10px 20px;
   border-radius: 999px;
-  background: var(--pink);
+  background: var(--pink-action); /* white label passes AA; brand pink #ff0074 only reaches 3.82:1 */
   color: var(--white);
   font-size: 14px; font-weight: 500; line-height: 24px;
   transition: background-color .2s var(--ease-out);

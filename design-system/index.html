@@ -5,7 +5,7 @@
 <title>Playbook Design System</title>
 <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;500&family=Syne:wght@400;500;600&family=Inter:ital,wght@0,300;0,400;0,500;1,300&display=swap">
-<link rel="stylesheet" href="../assets/playbook.css">
+<link rel="stylesheet" href="../assets/playbook.css?v=74c9f4f2">
 <style>
   /* This page documents the playbook's design system. It loads the live stylesheet (assets/playbook.css),
      so swatches, type samples and components always show the values in production. Page chrome only below. */
@@ -182,8 +182,8 @@
       <table class="t" id="contrast"><thead><tr><th>Text on background</th><th>Where it's used</th><th>Ratio</th><th>Result</th></tr></thead><tbody></tbody></table>
       <h3>Colour rules</h3>
       <div class="dd">
-        <div class="do"><b>Do</b><ul><li>Use pink for the primary action, the current chapter number and the ball.</li><li>Set hierarchy in diagrams with opacity of one line colour, not new hues.</li><li>Use <code>--text-muted</code> for supporting copy on the dark teal.</li></ul></div>
-        <div class="dont"><b>Don't</b><ul><li>Introduce new colours for charts or states.</li><li>Put <code>--text-muted</code> grey on the light canvas; it fails contrast there.</li><li>Use pink for large areas or as a background behind text.</li></ul></div>
+        <div class="do"><b>Do</b><ul><li>Use pink for the current chapter number and the ball; fill buttons with <code>--pink-action</code>, which keeps white labels readable.</li><li>Set hierarchy in diagrams with opacity of one line colour, not new hues.</li><li>Use <code>--text-muted</code> for supporting copy on the dark teal.</li></ul></div>
+        <div class="dont"><b>Don't</b><ul><li>Introduce new colours for charts or states.</li><li>Put <code>--text-muted</code> grey on the light canvas, or white text on brand pink <code>#ff0074</code>; both fail contrast.</li><li>Use pink for large areas or as a background behind text.</li></ul></div>
       </div>
     </section>
 
@@ -240,7 +240,7 @@
       <div class="grid g2">
         <div class="demo"><span class="label">Primary button</span>
           <div class="row"><a class="btn" href="#components">Take the assessment <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a><span class="btn is-hover">Hover</span><span class="btn is-press">Pressed</span></div>
-          <p class="spec">Pill, pink, 14px Inter 500, 10 × 20 padding. The arrow nudges 3px right on hover. One per view; it's the only filled button.</p></div>
+          <p class="spec">Pill, <code>--pink-action</code> (#e6006a), 14px Inter 500, 10 × 20 padding. The arrow nudges 3px right on hover. One per view; it's the only filled button.</p></div>
         <div class="demo"><span class="label">Eyebrow</span>
           <p class="eyebrow">Roadmap <span style="opacity:.5;margin:0 .4em">|</span> Step 5</p>
           <p class="spec">12px Inter 300, sentence case, above hero titles and section openers. A thin bar separates kicker and step.</p></div>
@@ -313,7 +313,7 @@
     <section class="ds-sec" id="a11y" data-title="Accessibility">
       <header><span class="n">08</span><h2>Accessibility</h2><p>Built in, not added later. Check these before shipping a change.</p></header>
       <div class="grid g2">
-        <div class="pr"><b>Contrast</b><p>Body text meets AA on its background (see Colour). Muted grey is for the dark teal only. Pink text is for short labels and numbers, never paragraphs.</p></div>
+        <div class="pr"><b>Contrast</b><p>Body text and button labels meet AA on their backgrounds (see Colour). Muted grey is for the dark teal only. Pink text is for short labels and numbers, never paragraphs.</p></div>
         <div class="pr"><b>Reduced motion</b><p>Every animation respects <code>prefers-reduced-motion</code>: heroes and cards show a still frame, scrubbed diagrams show their end state, the footer stops drifting.</p></div>
         <div class="pr"><b>Decorative art</b><p>Hero, card and background art is <code>aria-hidden="true"</code>. Diagrams that carry meaning get <code>role="img"</code> and a full <code>aria-label</code>.</p></div>
         <div class="pr"><b>Keyboard and structure</b><p>A skip link to the content, one <code>h1</code> per page, buttons with labels that change with state ("Collapse contents" / "Expand contents"), Escape closes the drawer.</p></div>
@@ -351,7 +351,7 @@
   secs.forEach((s) => spy.observe(s));
 
   // Primitives
-  const PRIMS = [["--pink", "Magnifico pink", "Actions, current state, the ball"], ["--pink-hover", "Pink hover", "Button hover"], ["--pink-press", "Pink pressed", "Button pressed"],
+  const PRIMS = [["--pink", "Magnifico pink", "Current state, the ball, labels"], ["--pink-action", "Pink action", "Button fill (white text passes AA)"], ["--pink-hover", "Pink hover", "Button hover"], ["--pink-press", "Pink pressed", "Button pressed"],
     ["--teal-950", "Teal 950", "Primary text"], ["--teal-900", "Teal 900", "Brand surface, heroes"], ["--teal-800", "Teal 800", "Lines on light diagrams"],
     ["--slate-100", "Slate 100", "Text and lines on teal"], ["--white", "White", "Cards, surfaces"], ["--canvas", "Canvas", "Page background"],
     ["--n200", "Neutral 200", "Current menu row"], ["--n300", "Neutral 300", "Muted text on teal"], ["--n700", "Neutral 700", "Body text"],
@@ -370,7 +370,7 @@
   const lum = ([r, g, b]) => [r, g, b].map((x) => { x /= 255; return x <= .03928 ? x / 12.92 : ((x + .055) / 1.055) ** 2.4; }).reduce((s, x, i) => s + x * [.2126, .7152, .0722][i], 0);
   const ratio = (a, b) => { const [l1, l2] = [lum(rgb(a)), lum(rgb(b))].sort((x, y) => y - x); return (l1 + .05) / (l2 + .05); };
   const PAIRS = [["var(--text-primary)", "var(--bg-canvas)", "Headings on the page"], ["var(--text-body)", "var(--bg-canvas)", "Body copy on the page"], ["var(--text-body)", "var(--bg-surface)", "Body copy on cards"],
-    ["var(--text-on-brand)", "var(--bg-brand)", "Text on teal"], ["var(--text-muted)", "var(--bg-brand)", "Supporting copy on teal"], ["var(--white)", "var(--pink)", "Button label"],
+    ["var(--text-on-brand)", "var(--bg-brand)", "Text on teal"], ["var(--text-muted)", "var(--bg-brand)", "Supporting copy on teal"], ["var(--white)", "var(--pink-action)", "Button label"], ["var(--white)", "var(--pink)", "White text on brand pink (avoid)"],
     ["var(--pink)", "var(--bg-canvas)", "Pink numbers and labels on the page"], ["var(--text-muted)", "var(--bg-canvas)", "Muted grey on the page (avoid)"]];
   document.querySelector("#contrast tbody").innerHTML = PAIRS.map(([f, b, u]) => {
     const r = ratio(f, b), res = r >= 4.5 ? '<span class="pass">AA</span>' : r >= 3 ? '<span class="large">AA large only</span>' : '<span class="fail">Fails</span>';
