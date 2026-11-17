@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What Goes Where Options</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;500&family=Syne:wght@400;500;600&family=Inter:ital,wght@0,300;0,400;0,500;1,300&display=swap">
+<!-- The playbook's own tokens and type, so these read as they would on the page -->
+<link rel="stylesheet" href="../assets/playbook.css">
+<style>
+body { background: var(--bg-canvas); }
+.wrap { max-width: 1040px; margin: 0 auto; padding: 56px max(16px, 3vw) 30vh; }
+.eyebrow-x { font: 500 12px/1 var(--f-label); letter-spacing: .16em; text-transform: uppercase; color: var(--pink); }
+.top h1 { margin-top: 20px; font-family: var(--f-display); font-size: clamp(34px, 4.4vw, 56px); font-weight: 400; line-height: 1.08; }
+.top p { margin-top: 18px; color: var(--text-body); font-size: 18px; line-height: 1.5; max-width: 66ch; }
+.optnav { position: sticky; top: 0; z-index: 5; margin: 32px calc(-1 * max(16px, 3vw)) 0; padding: 12px max(16px, 3vw); background: rgba(246,246,246,.92); backdrop-filter: blur(10px); border-bottom: 1px solid var(--hairline); display: flex; gap: 8px; overflow-x: auto; }
+.optnav a { flex: none; font: 500 12px/1 var(--f-label); letter-spacing: .16em; text-transform: uppercase; text-decoration: none; color: var(--text-primary); border: 1px solid var(--hairline); background: #fff; padding: 11px 14px; border-radius: 999px; }
+.opt { padding-top: 88px; }
+.opt-head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px 48px; align-items: end; margin-bottom: 8px; }
+.opt-head h2 { margin-top: 14px; font-family: var(--f-display); font-size: clamp(26px, 3vw, 40px); font-weight: 400; line-height: 1.15; }
+.opt-head p { color: var(--text-body); font-size: 17px; line-height: 1.5; }
+.track { position: relative; height: 220vh; }
+.pin { position: sticky; top: 0; height: 100vh; display: flex; align-items: center; }
+/* The section sits on a white panel on the page, so these do too */
+.sheet { width: 100%; background: var(--bg-surface); border-radius: var(--radius); padding: clamp(20px, 3vw, 48px); }
+
+/* Illustration on the left, a small key on the right */
+.ww { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(24px, 5vw, 72px); align-items: center; }
+.ww svg { display: block; width: 100%; max-width: 380px; height: auto; justify-self: center; overflow: visible; }
+.ln { fill: none; stroke: var(--teal-900); stroke-width: 1; stroke-linecap: round; }
+.key { display: flex; flex-direction: column; }
+.key li { display: grid; grid-template-columns: 14px minmax(0, 1fr); column-gap: 14px; padding: 16px 0; border-top: 1px solid var(--hairline); transition: opacity .5s var(--ease-out); }
+.key li:last-child { border-bottom: 1px solid var(--hairline); }
+.key svg { width: 14px; height: 14px; margin-top: 2px; }
+.key h3 { font-family: var(--f-display); font-size: 15px; font-weight: 400; line-height: 1.3; color: var(--text-primary); }
+.key p { grid-column: 2; margin-top: 4px; font-size: 14px; line-height: 1.45; font-weight: 300; color: var(--text-body); }
+.key li.dim { opacity: .3; }
+
+/* E: type only */
+.typo { display: flex; flex-direction: column; max-width: 560px; }
+.typo li { display: grid; grid-template-columns: 14px minmax(0, 1fr); column-gap: 16px; align-items: baseline; padding: 22px 0; border-top: 1px solid var(--hairline); transition: opacity .6s var(--ease-out), transform .6s var(--ease-out); }
+.typo li:last-child { border-bottom: 1px solid var(--hairline); }
+.typo h3 { font-family: var(--f-display); font-weight: 400; color: var(--text-primary); line-height: 1.2; }
+.typo p { grid-column: 2; margin-top: 6px; font-size: 12px; line-height: 1.45; color: var(--text-body); font-weight: 300; }
+.typo .t1 h3 { font-size: 28px; } .typo .t2 h3 { font-size: 19px; opacity: .7; } .typo .t3 h3 { font-size: 15px; opacity: .45; }
+.typo i { width: 7px; height: 7px; border-radius: 50%; align-self: center; }
+.typo li.off { opacity: 0; transform: translateY(10px); }
+
+@media (max-width: 760px) { .opt-head, .ww { grid-template-columns: minmax(0, 1fr); } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <p class="eyebrow-x">Step 5 · What goes where</p>
+    <h1>Lighter than a pyramid</h1>
+    <p>Five quieter ways to show the three tiers: always visible, available on demand, and revealed during investigation. The point is that the most important tier is the smallest one. Everything uses 1px lines, small dots, and the small type from the other charts: 15px for tier names and 14px or 12px for the notes. Each one builds as you scroll.</p>
+  </header>
+  <nav class="optnav">
+    <a href="#a">A · Rings</a>
+    <a href="#b">B · Layers</a>
+    <a href="#c">C · Density</a>
+    <a href="#d">D · Depth</a>
+    <a href="#e">E · Type only</a>
+  </nav>
+
+  <section class="opt" id="a">
+    <div class="opt-head"><div><p class="eyebrow-x">Option A</p><h2>Rings</h2></div><div><p>The first tier is the pink dot at the center: small and always in view. On demand is the ring around it. Investigation is the faint dashed ring at the edge, the largest and furthest away. The most important tier takes up the least room.</p></div></div>
+    <div class="track"><div class="pin"><div class="sheet"><div class="ww" data-v="a"></div></div></div></div>
+  </section>
+
+  <section class="opt" id="b">
+    <div class="opt-head"><div><p class="eyebrow-x">Option B</p><h2>Layers</h2></div><div><p>Three hairline planes stacked like screens, starting as one. As you scroll they separate. The top layer is small and outlined in pink, and each layer underneath is wider and fainter. Depth stands in for “how far you have to go to see it”.</p></div></div>
+    <div class="track"><div class="pin"><div class="sheet"><div class="ww" data-v="b"></div></div></div></div>
+  </section>
+
+  <section class="opt" id="c">
+    <div class="opt-head"><div><p class="eyebrow-x">Option C</p><h2>Density</h2></div><div><p>The information itself, as dots. At first only a handful of pink ones show: the first tier. Scroll and the on-demand dots fill in around them, then the rest of the field appears faintly for investigation. The key below lights up each tier as it arrives.</p></div></div>
+    <div class="track"><div class="pin"><div class="sheet"><div class="ww" data-v="c"></div></div></div></div>
+  </section>
+
+  <section class="opt" id="d">
+    <div class="opt-head"><div><p class="eyebrow-x">Option D</p><h2>Depth</h2></div><div><p>A single line going down, in the same language as the signal-to-action rail just above it on the page. Each tier sits at its own depth, with a row of short ticks for how much information lives there: a few at the surface, more below, and many at the bottom.</p></div></div>
+    <div class="track"><div class="pin"><div class="sheet"><div class="ww" data-v="d"></div></div></div></div>
+  </section>
+
+  <section class="opt" id="e">
+    <div class="opt-head"><div><p class="eyebrow-x">Option E</p><h2>Type only</h2></div><div><p>No illustration at all. The tiers are the type: the first is large and dark with a pink dot, the next is smaller and lighter, and the last is smallest and faintest. The notes are 12px. It's the quietest option, and it makes the point that important doesn't mean equal space on its own.</p></div></div>
+    <div class="track"><div class="pin"><div class="sheet"><ol class="typo" data-v="e"></ol></div></div></div>
+  </section>
+</div>
+
+<script>
+(() => {
+const NS = "http://www.w3.org/2000/svg", PINK = "#ff0074", TEAL = "#002a32";
+const el = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; };
+const set = (e, attrs) => { for (const k in attrs) e.setAttribute(k, attrs[k]); };
+const cl = (x) => Math.min(1, Math.max(0, x));
+const sm = (a, b, x) => { const t = cl((x - a) / (b - a)); return t * t * (3 - 2 * t); };
+const lerp = (a, b, t) => a + (b - a) * t;
+const f1 = (n) => n.toFixed(1), f3 = (n) => n.toFixed(3);
+const rng = (seed) => () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+const REDUCE = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const FORCE = new URLSearchParams(location.search).get("p");
+
+const TIERS = [["Always visible", "Keep the first tier small."], ["Available on demand", "Useful only on request."], ["Revealed during investigation", "Only matters once someone starts investigating."]];
+const T = (i) => [.1, .4, .7][i]; // when each tier arrives
+
+// The key: a tiny marker that matches the drawing, the tier name, the note
+function key(box, markers) {
+  const ol = document.createElement("ol"); ol.className = "key";
+  ol.innerHTML = TIERS.map(([h, p], i) => `<li><svg viewBox="0 0 14 14" aria-hidden="true">${markers[i]}</svg><h3>${h}</h3><p>${p}</p></li>`).join("");
+  box.appendChild(ol);
+  const rows = [...ol.children];
+  return (p) => rows.forEach((li, i) => li.classList.toggle("dim", p < T(i) - .02));
+}
+const svgIn = (box, vb, label) => { const s = el("svg", { viewBox: vb, role: "img", "aria-label": label }, box); return s; };
+const M = {
+  dot: `<circle cx="7" cy="7" r="3.5" fill="${PINK}"/>`,
+  ring: `<circle cx="7" cy="7" r="5" fill="none" stroke="${TEAL}" stroke-opacity=".55"/>`,
+  dash: `<circle cx="7" cy="7" r="5" fill="none" stroke="${TEAL}" stroke-opacity=".35" stroke-dasharray="1.5 2"/>`,
+};
+
+/* A · Rings */
+function rings(box) {
+  const svg = svgIn(box, "0 0 300 300", "A small pink dot for what's always visible, a ring around it for what's on demand, and a wide faint ring for what's revealed during investigation.");
+  const ball = el("circle", { cx: 150, cy: 150, r: 0, fill: PINK }, svg);
+  const r1 = el("circle", { class: "ln", cx: 150, cy: 150, r: 62, "stroke-opacity": .55, pathLength: 1, "stroke-dasharray": 1, "stroke-dashoffset": 1, transform: "rotate(-90 150 150)" }, svg);
+  const r2 = el("circle", { class: "ln", cx: 150, cy: 150, r: 138, "stroke-opacity": .3, "stroke-dasharray": "2 5", opacity: 0 }, svg);
+  const k = key(box, [M.dot, M.ring, M.dash]);
+  return (p) => {
+    set(ball, { r: f1(9 * sm(T(0), T(0) + .12, p)) });
+    set(r1, { "stroke-dashoffset": f3(1 - sm(T(1), T(1) + .2, p)) });
+    const v = sm(T(2), T(2) + .2, p);
+    set(r2, { opacity: f3(v), r: f1(lerp(100, 138, v)) });
+    k(p);
+  };
+}
+
+/* B · Layers */
+function layers(box) {
+  const svg = svgIn(box, "0 0 320 300", "Three stacked planes that separate: a small pink-outlined one on top, wider and fainter ones beneath.");
+  const plane = (w) => `M${-w / 2} 0 L0 ${-w / 4} L${w / 2} 0 L0 ${w / 4}Z`;
+  const P = [
+    el("path", { d: plane(300), fill: "none", stroke: TEAL, "stroke-opacity": .22, "stroke-dasharray": "2 4" }, svg),
+    el("path", { d: plane(200), fill: "#fff", stroke: TEAL, "stroke-opacity": .5 }, svg),
+    el("path", { d: plane(96), fill: "#fff", stroke: PINK, "stroke-opacity": .9 }, svg),
+  ];
+  const dot = el("circle", { r: 4, fill: PINK }, svg);
+  const k = key(box, [`<path d="M2 7 L7 4.5 L12 7 L7 9.5Z" fill="none" stroke="${PINK}"/>`, `<path d="M1 7 L7 4 L13 7 L7 10Z" fill="none" stroke="${TEAL}" stroke-opacity=".55"/>`, `<path d="M1 7 L7 4 L13 7 L7 10Z" fill="none" stroke="${TEAL}" stroke-opacity=".35" stroke-dasharray="1.5 2"/>`]);
+  return (p) => {
+    const ys = [lerp(150, 236, sm(T(2), T(2) + .2, p)), lerp(150, 158, sm(T(1), T(1) + .2, p)), lerp(150, 70, sm(T(0), T(0) + .25, p))];
+    P.forEach((e, i) => set(e, { transform: `translate(160 ${f1(ys[i])})`, opacity: f3(i === 2 ? 1 : sm(T(2 - i) - .05, T(2 - i) + .1, p)) }));
+    set(dot, { cx: 160, cy: f1(ys[2]), opacity: f3(sm(T(0) + .1, T(0) + .2, p)) });
+    k(p);
+  };
+}
+
+/* C · Density */
+function density(box) {
+  const svg = svgIn(box, "0 0 320 220", "A few pink dots are always visible; more dots fill in on demand; the whole field appears faintly during investigation.");
+  const R = rng(9), COLS = 18, ROWS = 11, FX = 40, FY = 46;
+  const dots = [];
+  for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
+    const x = 18 + c * 16.7, y = 14 + r * 19, d = Math.hypot((x - FX) / 1.3, y - FY) + R() * 40;
+    dots.push({ x, y, d });
+  }
+  dots.sort((a, b) => a.d - b.d);
+  dots.forEach((o, i) => { o.tier = i < 4 ? 0 : i < 34 ? 1 : 2; o.c = el("circle", { cx: f1(o.x), cy: f1(o.y), r: o.tier ? 2 : 3.5, fill: o.tier ? TEAL : PINK, opacity: 0 }, svg); o.j = R() * .12; });
+  const k = key(box, [M.dot, `<circle cx="7" cy="7" r="2.5" fill="${TEAL}" fill-opacity=".55"/>`, `<circle cx="7" cy="7" r="2" fill="${TEAL}" fill-opacity=".2"/>`]);
+  const OP = [1, .55, .16];
+  return (p) => { dots.forEach((o) => set(o.c, { opacity: f3(OP[o.tier] * sm(T(o.tier) + o.j, T(o.tier) + o.j + .08, p)) })); k(p); };
+}
+
+/* D · Depth */
+function depth(box) {
+  const svg = svgIn(box, "0 0 320 260", "A line going down: a pink dot and a few ticks at the surface, a ring and more ticks below, a faint ring and many ticks at the bottom.");
+  const X = 24, Y = [30, 120, 210], N = [3, 9, 24];
+  const line = el("line", { class: "ln", x1: X, x2: X, y1: Y[0], y2: Y[0], "stroke-opacity": .25 }, svg);
+  const marks = [el("circle", { cx: X, cy: Y[0], r: 4.5, fill: PINK, opacity: 0 }, svg), el("circle", { class: "ln", cx: X, cy: Y[1], r: 4.5, "stroke-opacity": .55, fill: "#fff", opacity: 0 }, svg), el("circle", { class: "ln", cx: X, cy: Y[2], r: 4.5, "stroke-opacity": .35, "stroke-dasharray": "1.5 2", fill: "#fff", opacity: 0 }, svg)];
+  const ticks = N.map((n, t) => Array.from({ length: n }, (_, i) => {
+    const per = 12, row = Math.floor(i / per), x = 52 + (i % per) * 21, y = Y[t] + row * 14 - (n > per ? 7 : 0);
+    return el("line", { class: "ln", x1: x, x2: x + 13, y1: y, y2: y, "stroke-opacity": [.7, .45, .22][t], style: t === 0 ? `stroke:${PINK}` : "", opacity: 0 }, svg);
+  }));
+  const k = key(box, [M.dot, M.ring, M.dash]);
+  return (p) => {
+    set(line, { y2: f1(lerp(Y[0], Y[2], sm(T(0), T(2) + .1, p))) });
+    marks.forEach((m, t) => set(m, { opacity: f3(sm(T(t), T(t) + .06, p)) }));
+    ticks.forEach((row, t) => row.forEach((l, i) => set(l, { opacity: f3(sm(T(t) + .03 + i * .006, T(t) + .1 + i * .006, p)) })));
+    k(p);
+  };
+}
+
+/* E · Type only */
+function typo(ol) {
+  const COL = [PINK, TEAL, TEAL], OP = [1, .55, .3];
+  ol.innerHTML = TIERS.map(([h, p], i) => `<li class="t${i + 1}"><i style="background:${COL[i]};opacity:${OP[i]}"></i><h3>${h}</h3><p>${p}</p></li>`).join("");
+  const rows = [...ol.children];
+  return (p) => rows.forEach((li, i) => li.classList.toggle("off", p < T(i)));
+}
+
+const B = { a: rings, b: layers, c: density, d: depth, e: typo };
+const runs = [...document.querySelectorAll(".opt")].map((sec) => { const box = sec.querySelector("[data-v]"); return { track: sec.querySelector(".track"), draw: B[box.dataset.v](box), p: REDUCE ? 1 : 0 }; });
+if (FORCE !== null) { runs.forEach((r) => r.draw(+FORCE)); return; }
+const target = (r) => { const b = r.track.getBoundingClientRect(); return cl(-b.top / (b.height - innerHeight)); };
+const frame = () => {
+  runs.forEach((r) => {
+    const b = r.track.getBoundingClientRect();
+    if (b.bottom < -50 || b.top > innerHeight + 50) return;
+    if (!REDUCE) r.p += (target(r) - r.p) * .14;
+    r.draw(r.p);
+  });
+  requestAnimationFrame(frame);
+};
+runs.forEach((r) => r.draw(r.p));
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

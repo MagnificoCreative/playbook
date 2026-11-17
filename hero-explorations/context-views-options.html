@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Context views: display options</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;500&family=Syne:wght@400;500;600&family=Inter:wght@300;400;500&display=swap">
+<link rel="stylesheet" href="../assets/playbook.css">
+<style>
+/* Options page only: everything here is prefixed cv- so it sits beside playbook.css without touching it */
+body { background: var(--bg-canvas); }
+.cv-wrap { max-width: 1320px; margin: 0 auto; padding: 56px max(16px, 3vw) 120px; }
+.cv-eyebrow { font: 500 12px/1 var(--f-label); letter-spacing: .16em; text-transform: uppercase; color: var(--pink); }
+.cv-h1 { margin: 20px 0 0; font-family: var(--f-display); font-size: clamp(34px, 4.4vw, 56px); font-weight: 400; line-height: 1.08; color: var(--text-primary); }
+.cv-lead { margin: 18px 0 0; color: var(--text-body); font-size: 18px; line-height: 1.5; max-width: 68ch; }
+.cv-switch { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 36px; position: sticky; top: 0; z-index: 5; padding: 12px 0; background: var(--bg-canvas); }
+.cv-switch button, .cv-mini button { font: 500 12px/1 var(--f-label); letter-spacing: .12em; text-transform: uppercase; color: var(--text-primary); border: 1px solid var(--hairline); background: #fff; padding: 12px 16px; border-radius: 999px; cursor: pointer; }
+.cv-switch button[aria-pressed="true"], .cv-mini button[aria-pressed="true"] { background: var(--teal-900); color: #fff; border-color: var(--teal-900); }
+.cv-note { margin: 14px 0 0; color: var(--text-body); font-size: 15px; line-height: 1.5; max-width: 80ch; min-height: 3em; }
+.cv-stage { margin-top: 28px; background: var(--bg-surface); border-radius: 16px; padding: clamp(24px, 3.4vw, 56px); overflow: hidden; }
+.cv-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap; margin-bottom: clamp(20px, 3vw, 40px); }
+.cv-h2 { margin: 0; font-size: clamp(28px, 3vw, 44px); font-weight: 300; line-height: 1.15; color: var(--text-primary); }
+.cv-sub { margin: 10px 0 0; color: var(--text-body); font-size: 16px; line-height: 1.45; max-width: 60ch; }
+
+/* The animation frame: one iframe per view, still until told to play */
+.cv-frame { position: relative; width: 100%; aspect-ratio: 1728 / 1117; border-radius: 10px; overflow: hidden; background: #111519; }
+.cv-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; pointer-events: none; }
+.cv-num { font: 500 12px/1 var(--f-label); letter-spacing: .16em; color: var(--pink); font-variant-numeric: tabular-nums; }
+.cv-label { margin: 0; font-size: clamp(17px, 1.5vw, 22px); font-weight: 400; line-height: 1.3; color: var(--text-primary); }
+.cv-cap { display: flex; align-items: baseline; gap: 16px; margin-top: 18px; }
+
+/* A · Carousel */
+.cvA-view { display: flex; gap: 24px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; margin-inline: calc(clamp(24px, 3.4vw, 56px) * -1); padding-inline: clamp(24px, 3.4vw, 56px); scroll-padding-inline: clamp(24px, 3.4vw, 56px); }
+.cvA-view::-webkit-scrollbar { display: none; }
+.cvA-card { flex: 0 0 min(78%, 980px); scroll-snap-align: start; background: var(--bg-canvas); border-radius: 12px; padding: clamp(16px, 2vw, 28px); transition: opacity .4s; opacity: .5; cursor: pointer; }
+.cvA-card.is-on { opacity: 1; cursor: default; }
+.cvA-nav { display: flex; gap: 8px; }
+.cvA-nav button { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--hairline); background: #fff; font-size: 18px; color: var(--text-primary); cursor: pointer; }
+.cvA-nav button:disabled { opacity: .35; cursor: default; }
+.cvA-meter { display: flex; align-items: center; gap: 20px; }
+
+/* B · Player with thumbnails */
+.cvB-thumbs { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; margin-top: 28px; }
+.cvB-thumb { all: unset; cursor: pointer; display: flex; flex-direction: column; gap: 12px; padding-top: 12px; border-top: 2px solid var(--n200); transition: border-color .3s; }
+.cvB-thumb.is-on { border-top-color: var(--pink); }
+.cvB-thumb .cv-frame { border-radius: 6px; opacity: .7; transition: opacity .3s; }
+.cvB-thumb.is-on .cv-frame, .cvB-thumb:hover .cv-frame { opacity: 1; }
+.cvB-thumb span { font-size: 14px; line-height: 1.35; color: var(--text-body); }
+.cvB-thumb.is-on span { color: var(--text-primary); }
+.cvB-thumb:focus-visible, .cvC-tile:focus-visible { outline: 2px solid var(--pink); outline-offset: 4px; }
+
+/* C · Grid that opens larger */
+.cv-mini { display: flex; gap: 8px; align-items: center; }
+.cv-mini span { font: 500 12px/1 var(--f-label); letter-spacing: .12em; text-transform: uppercase; color: var(--text-body); margin-right: 4px; }
+.cv-mini button { padding: 9px 12px; }
+.cvC-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+.cvC-tile { all: unset; cursor: zoom-in; display: flex; flex-direction: column; gap: 12px; background: var(--bg-canvas); border-radius: 12px; padding: 12px 12px 16px; position: relative; }
+.cvC-tile .cv-frame { border-radius: 6px; }
+.cvC-tile p { margin: 0 4px; font-size: 15px; line-height: 1.35; color: var(--text-primary); }
+.cvC-tile i { position: absolute; right: 22px; top: 22px; width: 34px; height: 34px; border-radius: 50%; background: rgba(0, 42, 50, .85); color: #fff; font: 400 16px/34px var(--f-sans); text-align: center; font-style: normal; opacity: 0; transition: opacity .25s; }
+.cvC-tile:hover i { opacity: 1; }
+.cvC-grid.hover-labels .cvC-tile { padding: 12px; }
+.cvC-grid.hover-labels .cvC-tile p { position: absolute; left: 12px; right: 12px; bottom: 12px; margin: 0; padding: 40px 16px 14px; border-radius: 0 0 6px 6px; color: #fff; background: linear-gradient(rgba(0, 20, 26, 0), rgba(0, 20, 26, .92)); opacity: 0; transform: translateY(6px); transition: opacity .25s, transform .25s; }
+.cvC-grid.hover-labels .cvC-tile:hover p { opacity: 1; transform: none; }
+.cvC-box { position: fixed; inset: 0; z-index: 50; background: rgba(0, 20, 26, .86); display: grid; place-items: center; padding: 4vh 4vw; }
+.cvC-box[hidden] { display: none; }
+.cvC-in { width: min(1280px, 100%, calc((92vh - 110px) * 1728 / 1117)); }
+.cvC-in .cv-label, .cvC-in .cv-num { color: #fff; }
+.cvC-in .cv-num { color: #ff5aa5; }
+.cvC-bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 18px; }
+.cvC-bar button { width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, .3); background: none; color: #fff; font-size: 18px; cursor: pointer; }
+
+/* D · Stacked */
+.cvD-row { display: grid; grid-template-columns: minmax(0, .32fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 64px); padding: clamp(28px, 4vw, 56px) 0; border-top: 1px solid var(--hairline); }
+.cvD-row:first-child { border-top: 0; padding-top: 0; }
+.cvD-side { position: sticky; top: 96px; align-self: start; display: flex; flex-direction: column; gap: 16px; }
+.cvD-state { font: 500 11px/1 var(--f-label); letter-spacing: .14em; text-transform: uppercase; color: var(--n300); }
+.cvD-row.is-on .cvD-state { color: var(--pink); }
+
+/* E · Expanding strips */
+.cvE-tweaks { display: flex; flex-wrap: wrap; gap: 12px 28px; margin-top: 4px; }
+.cvE-tweaks:empty { display: none; }
+.cvE-head { margin-bottom: 28px; }
+.cvE-info { display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows .7s var(--cvE-e), opacity .45s; }
+.cvE-info.is-open { grid-template-rows: 1fr; opacity: 1; }
+.cvE-info > div { overflow: hidden; min-height: 0; }
+.cvE-in { transition: opacity .26s; }
+.cvE-lab { display: flex; align-items: flex-start; gap: 14px; margin-top: 16px; }
+.cvE-in .cv-label { margin: 0; max-width: 40ch; }
+/* The number sits in a box one headline-line tall, so it centres on the first line */
+.cvE-no2 { display: none; flex: none; align-items: center; height: 1.3em; font-size: clamp(17px, 1.5vw, 22px); }
+.cvE-no2 b { font: 500 12px/1 var(--f-label); letter-spacing: .16em; color: var(--pink); font-variant-numeric: tabular-nums; }
+.cvE-info.cols .cvE-no2 { display: flex; }
+.cvE-info.cols .cvE-in { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); column-gap: clamp(24px, 4vw, 64px); align-items: start; }
+.cvE-info.cols .cvE-in p { margin-top: 16px; padding-top: .2em; }
+.cvE-info.cols.below .cvE-in p { margin-top: 24px; }
+.cvE-in p { margin: 8px 0 0; font-size: 14px; line-height: 1.5; color: var(--text-body); max-width: 60ch; }
+.cvE-info.below .cvE-lab { margin-top: 24px; }
+.cvE-head.beside { display: flex; align-items: flex-end; justify-content: space-between; gap: 32px; min-height: 104px; }
+.cvE-head.beside .cvE-info { width: min(440px, 46%); grid-template-rows: 1fr; }
+.cvE-head.beside .cvE-lab { margin-top: 0; }
+:root { --cvE-e: cubic-bezier(.45, 0, .15, 1); }
+.cvE-row { display: flex; justify-content: center; gap: 12px; transition: height .85s var(--cvE-e); }
+.cvE-strip { all: unset; position: relative; flex: none; overflow: hidden; border-radius: var(--r, 4px); background: #0b1418; cursor: pointer; transition: width .85s var(--cvE-e), height .85s var(--cvE-e); }
+.cvE-strip.is-on { cursor: default; }
+.cvE-strip:focus-visible { outline: 2px solid var(--pink); outline-offset: 4px; }
+.cvE-strip .cv-frame { border-radius: 0; aspect-ratio: auto; }
+.cvE-hero { position: absolute; left: 0; top: 0; transition: left .85s var(--cvE-e), top .85s var(--cvE-e), width .85s var(--cvE-e), height .85s var(--cvE-e), filter .5s; }
+.cvE-hero img { display: block; width: 100%; height: 100%; }
+.cvE-live { position: absolute; left: 0; top: 0; opacity: 0; transition: opacity .9s ease; }
+.cvE-live.is-in { opacity: 1; }
+.cvE-shade { position: absolute; inset: 0; background: linear-gradient(rgba(0, 20, 26, .35), rgba(0, 20, 26, 0) 22%, rgba(0, 20, 26, 0) 52%, rgba(0, 20, 26, .9)); transition: opacity .6s; pointer-events: none; }
+.cvE-tint { position: absolute; inset: 0; background: var(--teal-900); mix-blend-mode: color; opacity: 0; transition: opacity .6s; pointer-events: none; }
+.cvE-strip.is-on .cvE-shade, .cvE-strip.is-on .cvE-tint { opacity: 0; }
+.cvE-name { position: absolute; left: 18px; right: 14px; bottom: 18px; font-family: var(--f-display); font-size: 21px; line-height: 1.12; color: #fff; transition: opacity .35s; }
+.cvE-vert { position: absolute; left: 50%; bottom: 18px; writing-mode: vertical-rl; transform: translateX(-50%) rotate(180deg); white-space: nowrap; font: 500 12px/1 var(--f-label); letter-spacing: .14em; text-transform: uppercase; color: #fff; opacity: 0; transition: opacity .35s; }
+.cvE-row.has-on .cvE-strip:not(.is-on) .cvE-name, .cvE-strip.is-on .cvE-name { opacity: 0; }
+.cvE-row.has-on .cvE-strip:not(.is-on) .cvE-vert { opacity: 1; transition-delay: .45s; }
+.cvE-strip:not(.is-on):hover .cvE-hero { filter: brightness(1.12); }
+.cvE-row.tinted .cvE-strip:not(.is-on) .cvE-hero { filter: grayscale(1) contrast(1.1) brightness(.9); }
+.cvE-row.tinted .cvE-strip:not(.is-on) .cvE-tint { opacity: .85; }
+.cvE-row.tinted .cvE-strip:not(.is-on):hover .cvE-hero { filter: none; }
+.cvE-row.tinted .cvE-strip:not(.is-on):hover .cvE-tint { opacity: 0; }
+.cvE-close { position: absolute; right: 14px; top: 14px; width: 36px; height: 36px; border-radius: 50%; background: rgba(0, 20, 26, .7); color: #fff; font: 400 15px/36px var(--f-sans); text-align: center; opacity: 0; pointer-events: none; transition: opacity .3s; }
+.cvE-strip.is-on .cvE-close { opacity: 1; pointer-events: auto; cursor: pointer; transition-delay: .6s; }
+/* Full view: the live animation itself grows out of its strip, so it keeps playing where it was */
+.cvE-full { position: absolute; right: 58px; top: 14px; width: 36px; height: 36px; border-radius: 50%; background: rgba(0, 20, 26, .7); display: grid; place-items: center; opacity: 0; pointer-events: none; transition: opacity .3s; }
+.cvE-full svg { pointer-events: none; }
+.cvE-strip.is-on.is-live .cvE-full { opacity: 1; pointer-events: auto; cursor: zoom-in; }
+.cvE-strip.is-on.is-live .cvE-full:hover, .cvE-strip.is-on .cvE-close:hover { background: rgba(0, 20, 26, .92); }
+.cvE-live.is-full { position: fixed; z-index: 61; border-radius: var(--r, 4px); overflow: hidden; box-shadow: 0 40px 100px -30px rgba(0, 0, 0, .75); }
+.cvE-live.is-moving { transition: opacity .9s ease, left .65s var(--cvE-e), top .65s var(--cvE-e), width .65s var(--cvE-e), height .65s var(--cvE-e); }
+.cvE-back { position: fixed; inset: 0; z-index: 60; background: rgba(0, 20, 26, .9); opacity: 0; transition: opacity .45s; cursor: zoom-out; }
+.cvE-back.is-in { opacity: 1; }
+.cvE-fcap { position: fixed; z-index: 61; display: flex; gap: 16px; align-items: baseline; opacity: 0; transform: translateY(8px); transition: opacity .4s, transform .4s; }
+.cvE-fcap.is-in { opacity: 1; transform: none; transition-delay: .25s; }
+.cvE-fcap .cv-num { color: #ff5aa5; }
+.cvE-fcap .cv-label { color: #fff; }
+.cvE-fcap p { margin: 6px 0 0; font-size: 14px; line-height: 1.5; color: var(--slate-100); max-width: 72ch; }
+.cvE-fx { position: fixed; z-index: 64; width: 40px; height: 40px; border-radius: 50%; border: 0; background: rgba(0, 20, 26, .75); color: #fff; font: 400 16px/40px var(--f-sans); cursor: pointer; opacity: 0; transition: opacity .3s; }
+.cvE-fx.is-in { opacity: 1; transition-delay: .35s; }
+.cvE-fx:focus-visible, .cvE-fnav button:focus-visible { outline: 2px solid var(--pink); outline-offset: 3px; }
+.cvE-fnav { position: fixed; z-index: 64; display: flex; gap: 8px; opacity: 0; transition: opacity .3s; }
+.cvE-fnav.is-in { opacity: 1; transition-delay: .35s; }
+.cvE-fnav button { width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, .3); background: none; color: #fff; font: 400 18px/1 var(--f-sans); cursor: pointer; transition: background-color .2s; }
+.cvE-fnav button:hover { background: rgba(255, 255, 255, .1); }
+
+@media (max-width: 900px) {
+  .cvE-head.beside { display: block; min-height: 0; }
+  .cvE-head.beside .cvE-info { width: auto; }
+  .cvE-head.beside .cvE-lab { margin-top: 16px; }
+  .cvE-info.cols .cvE-in { display: block; }
+  .cvE-info.cols .cvE-in p { margin-top: 8px; padding-top: 0; }
+  .cvB-thumbs { grid-template-columns: repeat(5, 62%); overflow-x: auto; }
+  .cvC-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .cvD-row { grid-template-columns: 1fr; }
+  .cvD-side { position: static; }
+  .cvA-card { flex-basis: 88%; }
+}
+</style>
+</head>
+<body>
+<main class="cv-wrap">
+  <span class="cv-eyebrow">Step 5 · Context views · display options</span>
+  <h1 class="cv-h1">Five ways to show the context views</h1>
+  <p class="cv-lead">The same five animations and the same five labels, laid out five ways. In every option only one animation plays at a time; the rest hold a still frame.</p>
+
+  <div class="cv-switch" id="switch" role="group" aria-label="Display option"></div>
+  <p class="cv-note" id="note"></p>
+  <div class="cvE-tweaks" id="tweaks"></div>
+  <section class="cv-stage" id="stage"></section>
+</main>
+
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const h = (html) => { const d = document.createElement('div'); d.innerHTML = html.trim(); return d.firstChild; };
+  const pad = (n) => String(n + 1).padStart(2, '0');
+
+  // The five views, in the order the step 5 page lists them. poster = the still frame shown while not playing
+  const V = [
+    { file: 'storm-context.html', label: 'Hurricane map view for severe-weather planning', poster: 4.5 },
+    { file: 'cost-context.html', label: 'Price per barrel for market context', poster: 7.8 },
+    { file: 'flare-context.html', label: 'Flaring by platform, how much and for how long', poster: 3.8 },
+    { file: 'compressor-context.html', label: 'A 3D model of a booster gas compressor, with metrics on the equipment', poster: 4.3 },
+    { file: 'subsea-context.html', label: 'Underwater views of pipelines and the wells they tap into', poster: 5.2 }];
+
+  // One animation in an iframe. It loads still on its poster frame; play() restarts it from the top, still() puts the poster back
+  function frame(v) {
+    const el = h(`<div class="cv-frame"><iframe src="${v.file}?embed&t=${v.poster}" title="${v.label}" loading="lazy" tabindex="-1"></iframe></div>`);
+    const f = el.firstChild; let ready = false, want = null, on = false;
+    const send = (m) => { if (ready) f.contentWindow.postMessage(m, '*'); else want = m; };
+    f.addEventListener('load', () => { ready = true; if (want) f.contentWindow.postMessage(want, '*'); });
+    return { el, play(from = 0) { if (!on) { on = true; send({ seek: from, play: true }); } }, still() { if (on || !ready) { on = false; send({ play: false, seek: v.poster }); } } };
+  }
+  const cap = (i) => `<div class="cv-cap"><span class="cv-num">${pad(i)}</span><h3 class="cv-label">${V[i].label}</h3></div>`;
+  const head = (extra = '') => `<div class="cv-head"><div><h2 class="cv-h2">Context views</h2><p class="cv-sub">Each one was added at the oil and gas company because it made a decision faster or clearer.</p></div>${extra}</div>`;
+
+  const OPTIONS = [
+    { name: 'A · Carousel', note: 'Like “How to apply it”: the views sit side by side and you move through them with the arrows, the ticks, a swipe or a click on the next card. The one in front plays; the others are dimmed and still. The label sits under each card.',
+      build(root) {
+        root.append(h(head(`<div class="cvA-meter"><span class="meter-count"><b id="aCur">01</b> / 05</span><div class="cvA-nav"><button type="button" id="aPrev" aria-label="Previous view">←</button><button type="button" id="aNext" aria-label="Next view">→</button></div></div>`)));
+        const view = h('<div class="cvA-view"></div>'); root.append(view);
+        const fr = V.map((v, i) => { const f = frame(v), card = h(`<article class="cvA-card"></article>`); card.append(f.el, h(cap(i))); view.append(card); return { f, card }; });
+        let cur = -1;
+        const set = (i) => { if (i === cur) return; cur = i; fr.forEach((x, k) => { x.card.classList.toggle('is-on', k === i); k === i ? x.f.play() : x.f.still(); }); $('aCur').textContent = pad(i); $('aPrev').disabled = i === 0; $('aNext').disabled = i === V.length - 1; };
+        const go = (i) => view.scrollTo({ left: fr[Math.max(0, Math.min(V.length - 1, i))].card.offsetLeft - fr[0].card.offsetLeft, behavior: 'smooth' });
+        const nearest = () => { const x = view.scrollLeft, base = fr[0].card.offsetLeft; let best = 0, d = 1e9; fr.forEach((c, k) => { const dd = Math.abs(c.card.offsetLeft - base - x); if (dd < d) { d = dd; best = k; } }); set(best); };
+        view.addEventListener('scroll', nearest, { passive: true });
+        fr.forEach((x, k) => x.card.addEventListener('click', () => { if (k !== cur) go(k); }));
+        $('aPrev').onclick = () => go(cur - 1); $('aNext').onclick = () => go(cur + 1);
+        set(0);
+      } },
+    { name: 'B · Player + thumbnails', note: 'One large player with a row of five still thumbnails under it. Click a thumbnail and the large player switches to that view and plays it. Labels sit under the thumbnails, and the selected one repeats beside the player’s number.',
+      build(root) {
+        root.append(h(head()));
+        const big = h('<div></div>'), capEl = h('<div></div>'), thumbs = h('<div class="cvB-thumbs"></div>'); root.append(big, capEl, thumbs);
+        const btns = V.map((v, i) => { const b = h(`<button class="cvB-thumb" type="button"></button>`); b.append(frame(v).el, h(`<span>${v.label}</span>`)); b.onclick = () => pick(i); thumbs.append(b); return b; });
+        function pick(i) { const f = frame(V[i]); big.replaceChildren(f.el); f.play(); capEl.innerHTML = cap(i); btns.forEach((b, k) => { b.classList.toggle('is-on', k === i); b.setAttribute('aria-pressed', k === i); }); }
+        pick(0);
+      } },
+    { name: 'C · Grid that opens larger', note: 'All five as still tiles. Hovering a tile plays it in place; clicking opens it large over the page, with arrows to step through the rest. Use the switch to compare labels under the tiles with labels that appear on hover.',
+      build(root) {
+        root.append(h(head(`<div class="cv-mini"><span>Labels</span><button type="button" id="cBelow" aria-pressed="true">Below</button><button type="button" id="cHover" aria-pressed="false">On hover</button></div>`)));
+        const grid = h('<div class="cvC-grid"></div>'), box = h('<div class="cvC-box" hidden><div class="cvC-in"><div id="cBig"></div><div class="cvC-bar"><div id="cCap" style="flex:1"></div><button type="button" id="cP" aria-label="Previous view">←</button><button type="button" id="cN" aria-label="Next view">→</button><button type="button" id="cX" aria-label="Close">✕</button></div></div></div>');
+        root.append(grid, box);
+        V.forEach((v, i) => { const f = frame(v), t = h('<button class="cvC-tile" type="button"><i>⤢</i></button>'); t.prepend(f.el); t.append(h(`<p>${v.label}</p>`)); t.onmouseenter = () => f.play(); t.onmouseleave = () => f.still(); t.onclick = () => { f.still(); open(i); }; grid.append(t); });
+        let cur = 0;
+        function open(i) { cur = (i + V.length) % V.length; const f = frame(V[cur]); $('cBig').replaceChildren(f.el); f.play(); $('cCap').innerHTML = cap(cur); $('cCap').firstChild.style.marginTop = 0; box.hidden = false; }
+        const close = () => { box.hidden = true; $('cBig').replaceChildren(); };
+        $('cP').onclick = () => open(cur - 1); $('cN').onclick = () => open(cur + 1); $('cX').onclick = close;
+        box.addEventListener('click', (e) => { if (e.target === box) close(); });
+        keyHandler = (e) => { if (box.hidden) return; if (e.key === 'Escape') close(); if (e.key === 'ArrowLeft') open(cur - 1); if (e.key === 'ArrowRight') open(cur + 1); };
+        const mode = (hov) => { grid.classList.toggle('hover-labels', hov); $('cBelow').setAttribute('aria-pressed', !hov); $('cHover').setAttribute('aria-pressed', hov); };
+        $('cBelow').onclick = () => mode(false); $('cHover').onclick = () => mode(true);
+      } },
+    { name: 'D · Stacked', note: 'The views run down the page one after another, each with its number and label in a column beside it that stays put while the view scrolls past. Whichever view is most in sight plays; the others hold still. No clicks needed.',
+      build(root) {
+        root.append(h(head()));
+        const rows = V.map((v, i) => { const f = frame(v), r = h(`<div class="cvD-row"><div class="cvD-side"><span class="cv-num">${pad(i)}</span><h3 class="cv-label">${v.label}</h3><span class="cvD-state">Still</span></div></div>`); r.append(f.el); root.append(r); return { f, r, vis: 0 }; });
+        observer = new IntersectionObserver((es) => {
+          es.forEach((e) => { rows.find((x) => x.f.el === e.target).vis = e.intersectionRatio; });
+          const best = rows.reduce((a, b) => b.vis > a.vis ? b : a);
+          rows.forEach((x) => { const on = x === best && x.vis > .5; x.r.classList.toggle('is-on', on); x.r.querySelector('.cvD-state').textContent = on ? 'Playing' : 'Still'; on ? x.f.play() : x.f.still(); });
+        }, { threshold: [0, .25, .5, .75, 1] });
+        rows.forEach((x) => observer.observe(x.f.el));
+      } },
+    { name: 'E · Expanding strips', note: 'Five tall strips, each a zoomed-in hero shot of its view. Click one and it opens out, then fades into the full animation, while the others narrow to slivers. The label and explanation appear under the title. Use the switches below to compare the variations.',
+      build(root) { strips(root); } }];
+
+  // E: strips that open out. A hero is either the animation held still on its poster frame (the 1728 × 1117 stage) or a photograph (img, nw × nh).
+  // focus = the point an idle strip centres on, span = how much of the hero fits across it, open = where a photograph centres once opened
+  const DETAIL = [
+    { short: 'Hurricane map', poster: 4.6, focus: [860, 590], span: 330, why: 'When a storm enters the Gulf, the team sees its forecast track against every platform, and how ready each one is.', body: 'A map view for severe-weather planning. When a storm enters the Gulf, the team sees its forecast track against every platform, and how ready each one is.' },
+    { short: 'Price per barrel', poster: 7.8, focus: [78, 402], span: 150, why: 'What each platform’s barrels cost, set against budget and the day’s WTI and Brent prices.', body: 'Market context for cost decisions: what each platform’s barrels cost, set against budget and the day’s WTI and Brent prices.' },
+    { short: 'Flaring', poster: 3.8, img: 'flare/hero.jpg', nw: 3200, nh: 1800, focus: [1135, 430], span: 240, open: [1560, 760], why: 'The moment a platform starts flaring, its duration, volume and monthly quota are one click away.', body: 'How much each platform flares, and for how long. The moment one starts, its duration, volume and monthly quota are one click away.' },
+    { short: 'Booster compressor', poster: 4.3, focus: [640, 470], span: 330, why: 'A 3D model of the compressor skid, with live readings on each numbered section and the monitor behind them.', body: 'A 3D model of the booster gas compressor skid, with live readings on each numbered section and the performance monitor behind them.' },
+    { short: 'Subsea', poster: 9.3, focus: [600, 470], span: 330, why: 'From the platform down to its flow lines and sensors, out to a drill center and the manifold on the seabed.', body: 'Underwater views of the pipelines and the wells they tap into: from the platform down to its flow lines and sensors, out to a drill center and the manifold on the seabed.' }];
+  const ES = { r: 4, tr: 'start', cap: 'under', lay: 'stack', hl: 'full', tint: location.hash === '#f' };
+  const TWEAKS = [['Corners', 'r', [['4 px', 4], ['8 px', 8]]], ['Transition', 'tr', [['Fade in from the start', 'start'], ['Carry on from the hero shot', 'carry']]], ['Caption', 'cap', [['Under the title', 'under'], ['Beside the title', 'beside'], ['Below the strips', 'below']]], ['Headline', 'hl', [['Full label', 'full'], ['Short', 'short']]], ['Caption layout', 'lay', [['Stacked', 'stack'], ['Two columns, numbered', 'cols']]], ['Colour', 'tint', [['Full colour', false], ['Tinted', true]]]];
+  function strips(root) {
+    const head = h('<div class="cvE-head"><h2 class="cv-h2">Context views</h2><div class="cvE-info"><div><div class="cvE-in"></div></div></div></div>');
+    const info = head.querySelector('.cvE-info'), inner = head.querySelector('.cvE-in');
+    const row = h('<div class="cvE-row"></div>'); root.append(head, row);
+    const tw = $('tweaks');
+    TWEAKS.forEach(([name, key, opts]) => {
+      const g = h(`<div class="cv-mini"><span>${name}</span></div>`);
+      opts.forEach(([l, v]) => { const b = h(`<button type="button" data-k="${key}" data-v="${v}">${l}</button>`); b.onclick = () => { ES[key] = v; apply(); }; g.append(b); });
+      tw.append(g);
+    });
+    function apply() {
+      row.style.setProperty('--r', ES.r + 'px'); row.classList.toggle('tinted', ES.tint); head.classList.toggle('beside', ES.cap === 'beside');
+      if (ES.cap === 'below') row.after(info); else head.append(info);
+      info.classList.toggle('below', ES.cap === 'below');
+      info.classList.toggle('cols', ES.lay === 'cols' && ES.cap !== 'beside');   // two columns don't fit in the narrow block beside the title
+      tw.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(ES[b.dataset.k]) === b.dataset.v));
+      if (cur >= 0) setInfo(cur, true);   // re-word an open caption in place
+    }
+    const items = V.map((v, i) => {
+      const d = DETAIL[i], hero = d.img ? h(`<div><img src="${d.img}" alt=""></div>`) : frame({ ...v, poster: d.poster }).el;
+      hero.classList.add('cvE-hero');
+      const b = h(`<button class="cvE-strip" type="button" aria-label="${v.label}"><i class="cvE-tint"></i><i class="cvE-shade"></i><span class="cvE-name">${d.short}</span><span class="cvE-vert">${d.short}</span><span class="cvE-full" role="button" aria-label="Expand to full view"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 1.5h4v4M12.5 1.5L8 6M5.5 12.5h-4v-4M1.5 12.5L6 8"/></svg></span><span class="cvE-close" role="button" aria-label="Back to all five">✕</span></button>`);
+      b.prepend(hero); row.append(b);
+      b.addEventListener('click', (e) => { if (e.target.closest('.cvE-full')) expand(i); else if (e.target.classList.contains('cvE-close')) open(-1); else if (i !== cur) open(i); });
+      return { b, hero, d, nw: d.nw || 1728, nh: d.nh || 1117, live: null };
+    });
+    let cur = -1, W0 = -1;
+    // Size and offset a hero so its focus sits in the middle of a w × hh window, without showing past its edges
+    const place = (el, w, hh, sc, f, nw, nh) => {
+      const L = Math.min(0, Math.max(w - nw * sc, w / 2 - f[0] * sc)), T = Math.min(0, Math.max(hh - nh * sc, hh / 2 - f[1] * sc));
+      Object.assign(el.style, { left: L.toFixed(1) + 'px', top: T.toFixed(1) + 'px', width: (nw * sc).toFixed(1) + 'px', height: (nh * sc).toFixed(1) + 'px' });
+    };
+    function layout() {
+      const W = row.clientWidth, gap = 12, thin = W < 900 ? 44 : 72;
+      const we = W - 4 * thin - 4 * gap, he = we * 1117 / 1728;      // the opened strip
+      const wi = Math.min(200, (W - 4 * gap) / 5), hi = wi * 2;       // an idle strip
+      row.style.height = (cur < 0 ? hi : he) + 'px'; row.classList.toggle('has-on', cur >= 0);
+      items.forEach((x, i) => {
+        const on = i === cur, w = cur < 0 ? wi : on ? we : thin, hh = cur < 0 ? hi : he;
+        x.b.style.width = w + 'px'; x.b.style.height = hh + 'px'; x.b.classList.toggle('is-on', on);
+        if (on) place(x.hero, we, he, Math.max(we / x.nw, he / x.nh), x.d.open || [x.nw / 2, x.nh / 2], x.nw, x.nh);
+        else place(x.hero, w, hh, Math.max(wi / x.d.span, hh / x.nh), x.d.focus, x.nw, x.nh);
+        if (x.live && !x.live.el.classList.contains('is-full')) Object.assign(x.live.el.style, { width: we + 'px', height: he + 'px' });
+      });
+    }
+    // The live animation sits over the hero and fades in once the strip has opened; it fades away again when the strip closes
+    function drop(x) { const l = x.live; if (!l) return; x.live = null; x.b.classList.remove('is-live'); l.still(); l.el.classList.remove('is-in'); setTimeout(() => l.el.remove(), 950); }
+    // Start a view's live animation over its hero. fixed = a window rect when it should appear straight into full view
+    function startLive(i, fixed) {
+      const x = items[i], start = ES.tr === 'start' ? 0 : x.d.poster, live = frame({ ...V[i], poster: start });
+      live.el.classList.add('cvE-live'); x.live = live; x.b.insertBefore(live.el, x.hero.nextSibling);
+      if (fixed) { live.el.classList.add('is-full', 'is-moving'); live.el.style.zIndex = 62; box(live.el, fixed); } else layout();
+      let n = 0; const go = () => { if (++n === 2 && x.live === live) { live.el.classList.add('is-in'); x.b.classList.add('is-live'); live.play(start); } };
+      live.el.firstChild.addEventListener('load', go, { once: true }); setTimeout(go, fixed ? 0 : 820);
+    }
+    function open(i, fixed) {
+      items.forEach((x, k) => { if (k !== i) drop(x); });
+      cur = i; layout(); setInfo(i);
+      if (i >= 0) startLive(i, fixed);
+    }
+    // Full view: lift the live animation out of its strip (position: fixed, so the iframe never reloads) and grow it to fill the window
+    let full = null;
+    const box = (el, r) => Object.assign(el.style, { left: r.left + 'px', top: r.top + 'px', width: r.width + 'px', height: r.height + 'px' });
+    function fullRect() {
+      const capH = 96, w = Math.min(1480, innerWidth * .92, (innerHeight * .92 - capH) * 1728 / 1117), hh = w * 1117 / 1728;
+      return { left: (innerWidth - w) / 2, top: Math.max(16, (innerHeight - hh - capH) / 2), width: w, height: hh };
+    }
+    const fullCap = (i) => { const short = ES.hl === 'short'; return `<span class="cv-num">${pad(i)}</span><div><h3 class="cv-label">${short ? DETAIL[i].short : V[i].label}</h3><p>${short ? DETAIL[i].body : DETAIL[i].why}</p></div>`; };
+    function placeExtras(r) {
+      Object.assign(full.cap.style, { left: r.left + 'px', top: r.top + r.height + 22 + 'px', width: r.width - 128 + 'px' });
+      Object.assign(full.nav.style, { left: r.left + r.width - 96 + 'px', top: r.top + r.height + 18 + 'px' });
+      Object.assign(full.xb.style, { left: r.left + r.width - 54 + 'px', top: r.top + 14 + 'px' });
+    }
+    function expand(i) {
+      const x = items[i]; if (!x.live || full) return;
+      const el = x.live.el;
+      full = { x, el,
+        back: h('<div class="cvE-back"></div>'),
+        cap: h(`<div class="cvE-fcap">${fullCap(i)}</div>`),
+        nav: h('<div class="cvE-fnav"><button type="button" aria-label="Previous view">←</button><button type="button" aria-label="Next view">→</button></div>'),
+        xb: h('<button class="cvE-fx" type="button" aria-label="Close full view">✕</button>'),
+        onResize: () => { const r = fullRect(); box(full.el, r); placeExtras(r); } };
+      const parts = [full.back, full.cap, full.nav, full.xb];
+      document.body.append(...parts);
+      box(el, el.getBoundingClientRect()); el.classList.add('is-full'); el.getBoundingClientRect(); el.classList.add('is-moving');
+      document.documentElement.style.overflow = 'hidden';
+      requestAnimationFrame(() => { full.onResize(); parts.forEach((k) => k.classList.add('is-in')); full.xb.focus({ preventScroll: true }); });
+      addEventListener('resize', full.onResize);
+      full.back.onclick = full.xb.onclick = collapse;
+      full.nav.children[0].onclick = () => step(-1); full.nav.children[1].onclick = () => step(1);
+    }
+    // Step to the previous or next view without leaving full view: the new animation fades in over the old one, and the strips follow behind the backdrop
+    function step(dir) {
+      if (!full) return;
+      const j = (cur + dir + V.length) % V.length;
+      full.el.style.zIndex = '';
+      open(j, fullRect());
+      full.x = items[j]; full.el = items[j].live.el;
+      full.cap.classList.remove('is-in');
+      setTimeout(() => { if (full && cur === j) { full.cap.innerHTML = fullCap(j); full.cap.classList.add('is-in'); } }, 280);
+    }
+    function collapse() {
+      if (!full) return; const f = full; full = null;
+      removeEventListener('resize', f.onResize);
+      const parts = [f.back, f.cap, f.nav, f.xb];
+      parts.forEach((k) => k.classList.remove('is-in'));
+      f.el.classList.add('is-moving'); f.el.getBoundingClientRect();
+      box(f.el, f.x.b.getBoundingClientRect());
+      setTimeout(() => {
+        f.el.classList.remove('is-full', 'is-moving'); f.el.style.left = f.el.style.top = f.el.style.zIndex = '';
+        document.documentElement.style.overflow = ''; layout(); parts.forEach((k) => k.remove());
+        const btn = f.x.b.querySelector('.cvE-full'); if (btn) btn.focus({ preventScroll: true });
+      }, 680);
+    }
+    function setInfo(i, swap) {
+      if (i < 0) { info.classList.remove('is-open'); return; }
+      const html = `<div class="cvE-lab"><span class="cvE-no2"><b>${pad(i)}</b></span><h3 class="cv-label">${ES.hl === 'short' ? DETAIL[i].short : V[i].label}</h3></div><p>${ES.hl === 'short' ? DETAIL[i].body : DETAIL[i].why}</p>`;
+      if (!swap && !info.classList.contains('is-open')) { inner.innerHTML = html; inner.style.opacity = 1; info.classList.add('is-open'); return; }
+      inner.style.opacity = 0; setTimeout(() => { if (cur === i) { inner.innerHTML = html; inner.style.opacity = 1; } }, 270);
+    }
+    apply();
+    observer = new ResizeObserver(() => { if (row.clientWidth !== W0) { W0 = row.clientWidth; layout(); } }); observer.observe(row); layout();
+    keyHandler = (e) => {
+      if (full) { if (e.key === 'Escape') collapse(); if (e.key === 'ArrowLeft') step(-1); if (e.key === 'ArrowRight') step(1); return; }
+      if (e.key === 'Escape' && cur >= 0) open(-1);
+    };
+  }
+
+  let observer = null, keyHandler = null;
+  addEventListener('keydown', (e) => keyHandler && keyHandler(e));
+  const btns = OPTIONS.map((o, i) => { const b = h(`<button type="button">${o.name}</button>`); b.onclick = () => show(i); $('switch').append(b); return b; });
+  function show(i) {
+    if (observer) { observer.disconnect(); observer = null; } keyHandler = null;
+    btns.forEach((b, k) => b.setAttribute('aria-pressed', k === i));
+    $('note').textContent = OPTIONS[i].note;
+    $('stage').replaceChildren(); $('tweaks').replaceChildren(); OPTIONS[i].build($('stage'));
+    history.replaceState(null, '', '#' + 'abcde'[i]);
+  }
+  show({ a: 0, b: 1, c: 2, d: 3, e: 4, f: 4 }[location.hash.slice(1)] || 0);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>One Test at a Time</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;500&family=Inter:wght@300;400;500&display=swap">
+<style>
+:root {
+  --pink: #ff0074;
+  --teal-950: #07171b;
+  --teal-900: #002a32;
+  --canvas: #f6f6f6;
+  --white: #ffffff;
+  --n700: #474646;
+  --hair: rgba(7, 23, 27, 0.1);
+  --f-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --f-label: "IBM Plex Sans", "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+* { box-sizing: border-box; margin: 0; }
+body { background: var(--canvas); color: var(--teal-950); font-family: var(--f-sans); -webkit-font-smoothing: antialiased; }
+.wrap { max-width: 1240px; margin: 0 auto; padding: 56px max(16px, 3vw) 40vh; }
+.eyebrow { font: 500 12px/1 var(--f-label); letter-spacing: .16em; text-transform: uppercase; color: var(--pink); }
+.top h1 { margin-top: 20px; font-size: clamp(34px, 4.4vw, 60px); font-weight: 300; line-height: 1.08; }
+.top p { margin-top: 18px; color: var(--n700); font-size: 18px; line-height: 1.5; max-width: 66ch; }
+
+.bar {
+  position: sticky; top: 0; z-index: 5; margin: 40px calc(-1 * max(16px, 3vw)) 0; padding: 12px max(16px, 3vw);
+  background: rgba(246, 246, 246, .9); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--hair); display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none;
+}
+.bar a {
+  flex: none; font: 500 12px/1 var(--f-label); letter-spacing: .16em; text-transform: uppercase; text-decoration: none;
+  color: var(--teal-950); border: 1px solid var(--hair); background: #fff; padding: 11px 14px; border-radius: 999px;
+}
+.bar a:hover { border-color: var(--teal-900); }
+
+.opt { padding-top: 96px; }
+.opt-head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px 48px; align-items: end; }
+.opt-head h2 { margin-top: 14px; font-size: clamp(28px, 3.2vw, 44px); font-weight: 300; line-height: 1.15; }
+.opt-head p { color: var(--n700); font-size: 17px; line-height: 1.5; }
+
+.track { position: relative; height: 300vh; }
+.pin { position: sticky; top: 0; height: 100vh; display: flex; align-items: center; padding: 64px 0 24px; }
+.stage { position: relative; width: 100%; background: var(--white); border-radius: 8px; padding: clamp(20px, 3vw, 48px); padding-top: 64px; }
+.stage svg { display: block; width: 100%; height: auto; max-height: calc(100vh - 200px); overflow: visible; margin: 0 auto; }
+.badge {
+  position: absolute; top: 18px; left: 18px;
+  font: 500 11px/1 var(--f-label); letter-spacing: .16em; text-transform: uppercase;
+  color: var(--teal-900); border: 1px solid rgba(0, 42, 50, .18); padding: 7px 10px; border-radius: 999px;
+}
+.prog { position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--hair); border-radius: 0 0 8px 8px; overflow: hidden; }
+.prog i { display: block; height: 100%; width: 100%; background: var(--teal-900); transform-origin: 0 50%; transform: scaleX(0); }
+
+/* No card: the art sits straight on the page background, with no edge or progress line */
+.stage.bare { background: transparent; }
+.stage.bare .prog { display: none; }
+.stage.bare .node { fill: var(--canvas); }
+
+.split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(24px, 5vw, 80px); align-items: center; width: 100%; }
+.split .copy h3 { font-size: clamp(30px, 3.4vw, 48px); font-weight: 300; line-height: 1.15; }
+.split .copy p { margin-top: 20px; color: var(--n700); font-size: 18px; line-height: 1.55; max-width: 48ch; }
+.split .stage { padding: 56px clamp(16px, 2.4vw, 36px) 28px; }
+
+/* SVG language: light-card rules (dark teal lines, opacity for hierarchy, pink is the ball only) */
+.ln { fill: none; stroke: var(--teal-900); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.hl { fill: none; stroke: var(--teal-900); stroke-width: 1; }
+.ball { fill: var(--pink); }
+.dot { fill: var(--teal-900); }
+.node { fill: var(--white); stroke: var(--teal-900); stroke-width: 1.5; }
+.lbl { font: 400 17px/1 var(--f-sans); fill: var(--teal-950); }
+.lbl-s { font: 300 14px/1 var(--f-sans); fill: var(--n700); }
+.axis { font: 500 11px/1 var(--f-label); letter-spacing: .16em; text-transform: uppercase; fill: var(--teal-900); }
+
+@media (max-width: 760px) {
+  .opt-head, .split { grid-template-columns: minmax(0, 1fr); }
+  .split .copy p { font-size: 16px; margin-top: 12px; }
+  .stage { padding: 56px 12px 20px; }
+}
+</style>
+<style>
+/* Every outline 1px on this page */
+.ln, .node { stroke-width: 1; }
+.m { stroke-width: 1; }
+.big { font: 300 26px/1.2 var(--f-sans); fill: var(--teal-950); }
+.cat { font: 400 15px/1 var(--f-sans); fill: var(--teal-950); }
+.stage.tall svg { max-height: calc(100vh - 150px); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <p class="eyebrow">Step 4 · Option D, refined</p>
+    <h1>One test at a time</h1>
+    <p>Option D, tightened, in three spacings between the tests: 20, 40 and 64. Measures start dark gray and turn more pink with every test they pass, so the finalists land fully pink. The line being applied is drawn in pink. The categories now share one hairline, with a small tick above each name. They're evenly spaced across the same width as the tests, so everything sits within one set of margins.</p>
+  </header>
+  <nav class="bar">
+    <a href="#s20">20 between tests</a>
+    <a href="#s40">40 between tests</a>
+    <a href="#s64">64 between tests</a>
+  </nav>
+
+  <section class="opt" id="s20">
+    <div class="opt-head"><div><p class="eyebrow">Spacing 20</p><h2>Tight</h2></div><div><p>The tests sit close together, almost like a single filter with five layers. This is the most compact version, and the categories end up close to the tests.</p></div></div>
+    <div class="track"><div class="pin"><div class="stage tall"><span class="badge">D · 20</span><svg data-sp="20" role="img" aria-label="Measures pass through five tests one at a time, turning pink as they pass, and the few that pass every test settle into five categories."></svg><div class="prog"><i></i></div></div></div></div>
+  </section>
+
+  <section class="opt" id="s40">
+    <div class="opt-head"><div><p class="eyebrow">Spacing 40</p><h2>Balanced</h2></div><div><p>Enough room to see the measures resting on each test before they go through, while still reading as one compact unit.</p></div></div>
+    <div class="track"><div class="pin"><div class="stage tall"><span class="badge">D · 40</span><svg data-sp="40" role="img" aria-label="Measures pass through five tests one at a time, turning pink as they pass, and the few that pass every test settle into five categories."></svg><div class="prog"><i></i></div></div></div></div>
+  </section>
+
+  <section class="opt" id="s64">
+    <div class="opt-head"><div><p class="eyebrow">Spacing 64</p><h2>Open</h2></div><div><p>Closest to the original, but still tighter. Each test gets its own band of space, and the color change from gray to pink has the most room to build.</p></div></div>
+    <div class="track"><div class="pin"><div class="stage tall"><span class="badge">D · 64</span><svg data-sp="64" role="img" aria-label="Measures pass through five tests one at a time, turning pink as they pass, and the few that pass every test settle into five categories."></svg><div class="prog"><i></i></div></div></div></div>
+  </section>
+</div>
+
+<script>
+(() => {
+const NS = "http://www.w3.org/2000/svg";
+const el = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; };
+const set = (e, attrs) => { for (const k in attrs) e.setAttribute(k, attrs[k]); };
+const cl = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const sm = (a, b, x) => { const t = cl((x - a) / (b - a)); return t * t * (3 - 2 * t); };
+const lerp = (a, b, t) => a + (b - a) * t;
+const f1 = (n) => n.toFixed(1), f3 = (n) => n.toFixed(3);
+const rng = (seed) => () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+const REDUCE = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const FORCE = new URLSearchParams(location.search).get("p"); // ?p=0.5 freezes every option at that point
+const text = (parent, cls, x, y, str, anchor = "middle", extra = {}) => { const t = el("text", { class: cls, x, y, "text-anchor": anchor, ...extra }, parent); t.textContent = str; return t; };
+
+const TESTS = [["Decision", ["Would anyone", "act on it?"]], ["Shared", ["Do several", "roles use it?"]], ["Available", ["Can we measure", "it today?"]], ["Trusted", ["Is the source", "reliable?"]], ["Important", ["Does it move", "the business?"]]];
+const CATS = ["Safety", "Quality", "Delivery", "Cost", "People"];
+const PINK = "#ff0074", TEAL = "#002a32";
+// Dark gray at the start, pink once a measure has passed every test
+const GRAY = [74, 84, 88], PK = [255, 0, 116];
+const tint = (t) => `rgb(${GRAY.map((c, i) => Math.round(lerp(c, PK[i], t))).join(",")})`;
+const P = (i) => .14 + i * .15;
+const FINAL = [.8, .93];
+function measures(seed) {
+  const R = rng(seed), fails = [];
+  [22, 12, 8, 5, 3, 10].forEach((n, f) => { for (let i = 0; i < n; i++) fails.push(f); });
+  fails.sort(() => R() - .5);
+  let s = 0;
+  return fails.map((f) => ({ f, u: R(), v: R(), d: R() * .05, ...(f === 5 ? { cat: s % 5, row: Math.floor(s++ / 5) } : {}) }));
+}
+
+function build(svg, SP) {
+  // One set of margins for the tests, the hairline and the categories
+  const FX0 = 380, FX1 = 940, TOP = 40, CLOUD = 70;
+  const BAR = Array.from({ length: 5 }, (_, i) => TOP + CLOUD + 34 + i * SP);
+  const HL = BAR[4] + Math.max(64, SP + 24), H = HL + 46;
+  svg.setAttribute("viewBox", `0 0 1000 ${H}`);
+  const binX = (c) => FX0 + (FX1 - FX0) * (c + .5) / 5;
+  // Each test's number, with a hairline ring that appears while it's the one being applied
+  const nums = BAR.map((y, i) => ({
+    ring: el("circle", { cx: FX0 - 18, cy: y, r: 9, fill: "none", stroke: PINK, "stroke-width": .5, "stroke-opacity": 0 }, svg),
+    // centred on the ring: middle anchor, central baseline, and no letter-spacing (it would push the digit right)
+    t: text(svg, "axis", FX0 - 18, y, String(i + 1), "middle", { "fill-opacity": .4, "dominant-baseline": "central", style: "letter-spacing: 0" }),
+  }));
+  const bars = BAR.map((y, i) => {
+    return el("line", { class: "ln", x1: FX0, x2: FX1, y1: y, y2: y, "stroke-dasharray": "3 5", "stroke-opacity": .18 }, svg);
+  });
+  // One hairline across every category, a delicate tick above each name
+  el("line", { class: "ln", x1: FX0, x2: FX1, y1: HL, y2: HL, "stroke-opacity": .25 }, svg);
+  CATS.forEach((c, i) => { el("line", { class: "ln", x1: binX(i), x2: binX(i), y1: HL + 4, y2: HL + 9, "stroke-opacity": .35 }, svg); text(svg, "cat", binX(i), HL + 30, c); });
+  // The caption: only the test being applied
+  const mid = (BAR[0] + BAR[4]) / 2;
+  const capG = el("g", {}, svg);
+  const cap = { k: text(capG, "axis", 60, mid - 28, "", "start", { "fill-opacity": .6 }), q1: text(capG, "big", 60, mid + 6, "", "start"), q2: text(capG, "big", 60, mid + 38, "", "start"), cur: null };
+  const M = measures(7), g = el("g", {}, svg);
+  M.forEach((m) => { m.c = el("circle", { class: "m", r: 4.5 }, g); m.sx = FX0 + 12 + m.u * (FX1 - FX0 - 24); m.sy = TOP + m.v * CLOUD; });
+  return (p) => {
+    M.forEach((m) => {
+      const lim = Math.min(m.f, 4);
+      let s = 0; for (let i = 0; i <= lim; i++) s += sm(P(i) - .11 + m.d, P(i) + m.d, p);
+      if (m.f === 5) s += sm(FINAL[0] + m.d, FINAL[1] + m.d, p);
+      const k = Math.floor(s), fr = s - k, k2 = fr > 0 ? Math.min(k + 1, 6) : k;
+      const Y = (n) => (n === 0 ? m.sy : n <= 5 ? BAR[n - 1] - 5.5 : HL - 7 - m.row * 11);
+      const X = (n) => (n <= 5 ? m.sx : binX(m.cat));
+      let x = lerp(X(k), X(k2), fr), y = lerp(Y(k), Y(k2), fr);
+      const passed = cl(Math.max(0, s - 1) / 5), col = tint(passed ** .9);
+      let fillO = lerp(.7, 1, passed), strokeO = 0, base = 1;
+      if (m.f < 5) {
+        const t = P(m.f) + m.d, r = sm(t + .02, t + .1, p);
+        x = lerp(x, FX1 + 40 + m.u * 30, r); base = 1 - sm(.45, 1, r);
+        fillO *= 1 - r; strokeO = .5 * r;
+      }
+      set(m.c, { cx: f1(x), cy: f1(y), fill: col, stroke: col, "fill-opacity": f3(fillO * base), "stroke-opacity": f3(strokeO * base) });
+    });
+    // The test being applied is drawn in pink
+    const active = TESTS.findIndex((_, i) => p < P(i) + .07);
+    bars.forEach((b, i) => {
+      const on = i === active && p > P(0) - .12;
+      set(b, { style: `stroke: ${on ? PINK : TEAL}`, "stroke-opacity": on ? .9 : .18 }); // inline, so it beats the .ln colour
+      set(nums[i].ring, { "stroke-opacity": on ? 1 : 0 });
+      set(nums[i].t, { fill: on ? PINK : TEAL, "fill-opacity": on ? 1 : .4 });
+    });
+    const key = p < P(0) - .12 ? "intro" : active === -1 ? "end" : active;
+    if (key !== cap.cur) {
+      cap.cur = key;
+      if (key === "intro") { cap.k.textContent = "Five tests"; cap.q1.textContent = "Every measure"; cap.q2.textContent = "must pass all five."; }
+      else if (key === "end") { cap.k.textContent = "What’s left"; cap.q1.textContent = "A few measures,"; cap.q2.textContent = "each with one owner."; }
+      else { cap.k.textContent = `Test ${key + 1} of 5 · ${TESTS[key][0]}`; cap.q1.textContent = TESTS[key][1][0]; cap.q2.textContent = TESTS[key][1][1]; }
+    }
+  };
+}
+
+const runs = [...document.querySelectorAll(".opt")].map((sec) => {
+  const svg = sec.querySelector("svg");
+  return { track: sec.querySelector(".track"), bar: sec.querySelector(".prog i"), draw: build(svg, +svg.dataset.sp), p: REDUCE ? 1 : 0 };
+});
+if (FORCE !== null) { runs.forEach((r) => { r.draw(+FORCE); r.bar.style.transform = `scaleX(${+FORCE})`; }); return; }
+const target = (r) => { const b = r.track.getBoundingClientRect(); return cl(-b.top / (b.height - innerHeight)); };
+const frame = () => {
+  runs.forEach((r) => {
+    const b = r.track.getBoundingClientRect();
+    if (b.bottom < -50 || b.top > innerHeight + 50) return;
+    if (!REDUCE) r.p += (target(r) - r.p) * .14;
+    r.bar.style.transform = `scaleX(${r.p.toFixed(4)})`;
+    r.draw(r.p);
+  });
+  requestAnimationFrame(frame);
+};
+runs.forEach((r) => r.draw(r.p));
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
