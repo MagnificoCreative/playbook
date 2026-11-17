@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Many Measures Options</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;500&family=Inter:wght@300;400;500&display=swap">
+<style>
+:root {
+  --pink: #ff0074;
+  --teal-950: #07171b;
+  --teal-900: #002a32;
+  --canvas: #f6f6f6;
+  --white: #ffffff;
+  --n700: #474646;
+  --hair: rgba(7, 23, 27, 0.1);
+  --f-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --f-label: "IBM Plex Sans", "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+* { box-sizing: border-box; margin: 0; }
+body { background: var(--canvas); color: var(--teal-950); font-family: var(--f-sans); -webkit-font-smoothing: antialiased; }
+.wrap { max-width: 1240px; margin: 0 auto; padding: 56px max(16px, 3vw) 40vh; }
+.eyebrow { font: 500 12px/1 var(--f-label); letter-spacing: .16em; text-transform: uppercase; color: var(--pink); }
+.top h1 { margin-top: 20px; font-size: clamp(34px, 4.4vw, 60px); font-weight: 300; line-height: 1.08; }
+.top p { margin-top: 18px; color: var(--n700); font-size: 18px; line-height: 1.5; max-width: 66ch; }
+
+.bar {
+  position: sticky; top: 0; z-index: 5; margin: 40px calc(-1 * max(16px, 3vw)) 0; padding: 12px max(16px, 3vw);
+  background: rgba(246, 246, 246, .9); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--hair); display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none;
+}
+.bar a {
+  flex: none; font: 500 12px/1 var(--f-label); letter-spacing: .16em; text-transform: uppercase; text-decoration: none;
+  color: var(--teal-950); border: 1px solid var(--hair); background: #fff; padding: 11px 14px; border-radius: 999px;
+}
+.bar a:hover { border-color: var(--teal-900); }
+
+.opt { padding-top: 96px; }
+.opt-head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px 48px; align-items: end; }
+.opt-head h2 { margin-top: 14px; font-size: clamp(28px, 3.2vw, 44px); font-weight: 300; line-height: 1.15; }
+.opt-head p { color: var(--n700); font-size: 17px; line-height: 1.5; }
+
+.track { position: relative; height: 300vh; }
+.pin { position: sticky; top: 0; height: 100vh; display: flex; align-items: center; padding: 64px 0 24px; }
+.stage { position: relative; width: 100%; background: var(--white); border-radius: 8px; padding: clamp(20px, 3vw, 48px); padding-top: 64px; }
+.stage svg { display: block; width: 100%; height: auto; max-height: calc(100vh - 200px); overflow: visible; margin: 0 auto; }
+.badge {
+  position: absolute; top: 18px; left: 18px;
+  font: 500 11px/1 var(--f-label); letter-spacing: .16em; text-transform: uppercase;
+  color: var(--teal-900); border: 1px solid rgba(0, 42, 50, .18); padding: 7px 10px; border-radius: 999px;
+}
+.prog { position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--hair); border-radius: 0 0 8px 8px; overflow: hidden; }
+.prog i { display: block; height: 100%; width: 100%; background: var(--teal-900); transform-origin: 0 50%; transform: scaleX(0); }
+
+/* No card: the art sits straight on the page background, with no edge or progress line */
+.stage.bare { background: transparent; }
+.stage.bare .prog { display: none; }
+.stage.bare .node { fill: var(--canvas); }
+
+.split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(24px, 5vw, 80px); align-items: center; width: 100%; }
+.split .copy h3 { font-size: clamp(30px, 3.4vw, 48px); font-weight: 300; line-height: 1.15; }
+.split .copy p { margin-top: 20px; color: var(--n700); font-size: 18px; line-height: 1.55; max-width: 48ch; }
+.split .stage { padding: 56px clamp(16px, 2.4vw, 36px) 28px; }
+
+/* SVG language: light-card rules (dark teal lines, opacity for hierarchy, pink is the ball only) */
+.ln { fill: none; stroke: var(--teal-900); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.hl { fill: none; stroke: var(--teal-900); stroke-width: 1; }
+.ball { fill: var(--pink); }
+.dot { fill: var(--teal-900); }
+.node { fill: var(--white); stroke: var(--teal-900); stroke-width: 1.5; }
+.lbl { font: 400 17px/1 var(--f-sans); fill: var(--teal-950); }
+.lbl-s { font: 300 14px/1 var(--f-sans); fill: var(--n700); }
+.axis { font: 500 11px/1 var(--f-label); letter-spacing: .16em; text-transform: uppercase; fill: var(--teal-900); }
+
+@media (max-width: 760px) {
+  .opt-head, .split { grid-template-columns: minmax(0, 1fr); }
+  .split .copy p { font-size: 16px; margin-top: 12px; }
+  .stage { padding: 56px 12px 20px; }
+}
+</style>
+<style>
+/* Every outline 1px on this page */
+.ln, .node { stroke-width: 1; }
+.m { fill: var(--teal-900); stroke: var(--teal-900); stroke-width: 1; }
+.big { font: 300 26px/1.2 var(--f-sans); fill: var(--teal-950); }
+.q13 { font: 300 13px/1 var(--f-sans); fill: var(--n700); }
+.name { font: 400 15px/1 var(--f-sans); fill: var(--teal-950); }
+.stage.tall svg { max-height: calc(100vh - 150px); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <p class="eyebrow">Step 4 · Infographic options</p>
+    <h1>From many measures to a few</h1>
+    <p>Six ways to show every measure going through the same five tests. Measures that fail a test are let go right there, and the few that pass all five end up in Safety, Quality, Delivery, Cost and People. Five of the six run top to bottom. The barriers are named as tests, each with a plain question:</p>
+    <p><strong>1 · Decision:</strong> Would anyone act on it? <strong>2 · Shared:</strong> Do several roles use it? <strong>3 · Available:</strong> Can we measure it today? <strong>4 · Trusted:</strong> Is the source reliable? <strong>5 · Important:</strong> Does it move the business?</p>
+    <p>A solid dot is still in. A hollow dot didn't pass. Each option is pinned and scrubbed by scroll.</p>
+  </header>
+  <nav class="bar">
+    <a href="#a">A · The sieve</a>
+    <a href="#b">B · What each test let go</a>
+    <a href="#c">C · The funnel</a>
+    <a href="#d">D · One test at a time</a>
+    <a href="#e">E · The sheet</a>
+    <a href="#f">F · Left to right</a>
+  </nav>
+
+  <section class="opt" id="a">
+    <div class="opt-head">
+      <div><p class="eyebrow">Option A · Vertical</p><h2>The sieve</h2></div>
+      <div><p>Measures fall from the top. Each dashed line is a test, labelled on the left with its name and question. Measures that fail a test land on that line, turn hollow and roll off the edge. The ones that pass every test drop into the five categories at the bottom. Each line pulses as the measures reach it.</p></div>
+    </div>
+    <div class="track"><div class="pin"><div class="stage tall"><span class="badge">A · The sieve</span><svg viewBox="0 0 1000 660" role="img" aria-label="Measures fall through five tests; those that fail roll away, and the few that pass every test settle into Safety, Quality, Delivery, Cost and People."></svg><div class="prog"><i></i></div></div></div></div>
+  </section>
+
+  <section class="opt" id="b">
+    <div class="opt-head">
+      <div><p class="eyebrow">Option B · Vertical</p><h2>What each test let go</h2></div>
+      <div><p>The same fall, but nothing disappears. Each measure that fails a test slides to a “Let go” column on the right and stays there, lined up next to the test that stopped it. By the end you can see which tests did the most work (the first one catches the most) and how few measures are left at the bottom.</p></div>
+    </div>
+    <div class="track"><div class="pin"><div class="stage tall"><span class="badge">B · What each test let go</span><svg viewBox="0 0 1000 660" role="img" aria-label="Measures fall through five tests; each failed measure is kept in a Let go column beside the test that stopped it."></svg><div class="prog"><i></i></div></div></div></div>
+  </section>
+
+  <section class="opt" id="c">
+    <div class="opt-head">
+      <div><p class="eyebrow">Option C · Vertical</p><h2>The funnel</h2></div>
+      <div><p>Each test is narrower than the one above it, so the five lines make a funnel. Measures that fail get pushed out past the edge of their line and fade away, and the stream narrows as it falls. Below the last test, the survivors spread out again into the five categories.</p></div>
+    </div>
+    <div class="track"><div class="pin"><div class="stage tall"><span class="badge">C · The funnel</span><svg viewBox="0 0 1000 660" role="img" aria-label="Measures fall through a funnel of five ever-narrower tests and the few that pass spread into five categories."></svg><div class="prog"><i></i></div></div></div></div>
+  </section>
+
+  <section class="opt" id="d">
+    <div class="opt-head">
+      <div><p class="eyebrow">Option D · Vertical</p><h2>One test at a time</h2></div>
+      <div><p>The tests are introduced one by one, so nobody has to read all five at once. A large caption on the left shows only the test being applied right now: its name and question. Its line darkens while the others stay faint. At the end, the caption changes to sum up what's left.</p></div>
+    </div>
+    <div class="track"><div class="pin"><div class="stage tall"><span class="badge">D · One test at a time</span><svg viewBox="0 0 1000 660" role="img" aria-label="Five tests are applied one at a time with a large caption naming each; failed measures fade away and survivors settle into five categories."></svg><div class="prog"><i></i></div></div></div></div>
+  </section>
+
+  <section class="opt" id="e">
+    <div class="opt-head">
+      <div><p class="eyebrow">Option E · Vertical</p><h2>The sheet</h2></div>
+      <div><p>This one is calmer and has no physics. The measures sit in a tidy grid that steps down onto each test. The ones that fail stay stuck on that line as a hollow row, and the rest close ranks into a smaller grid and move down to the next test. The few left at the end drop into the categories.</p></div>
+    </div>
+    <div class="track"><div class="pin"><div class="stage tall"><span class="badge">E · The sheet</span><svg viewBox="0 0 1000 660" role="img" aria-label="A grid of measures steps down through five tests, leaving a row of failed measures on each, until a few remain for five categories."></svg><div class="prog"><i></i></div></div></div></div>
+  </section>
+
+  <section class="opt" id="f">
+    <div class="opt-head">
+      <div><p class="eyebrow">Option F · Horizontal</p><h2>Left to right</h2></div>
+      <div><p>The current direction, redone. The tests are columns with a clear header (number, name and a two-line question). Measures travel left to right, and those that fail drop to the floor under the test that stopped them, where they pile up. The survivors line up next to the categories on the right.</p></div>
+    </div>
+    <div class="track"><div class="pin"><div class="stage"><span class="badge">F · Left to right</span><svg viewBox="0 0 1000 480" role="img" aria-label="Measures travel left to right through five test columns; failed measures pile up under the test that stopped them, and survivors line up beside five categories."></svg><div class="prog"><i></i></div></div></div></div>
+  </section>
+</div>
+
+<script>
+(() => {
+const NS = "http://www.w3.org/2000/svg";
+const el = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; };
+const set = (e, attrs) => { for (const k in attrs) e.setAttribute(k, attrs[k]); };
+const cl = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const sm = (a, b, x) => { const t = cl((x - a) / (b - a)); return t * t * (3 - 2 * t); };
+const lerp = (a, b, t) => a + (b - a) * t;
+const f1 = (n) => n.toFixed(1), f3 = (n) => n.toFixed(3);
+const rng = (seed) => () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+const REDUCE = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const FORCE = new URLSearchParams(location.search).get("p"); // ?p=0.5 freezes every option at that point
+const text = (parent, cls, x, y, str, anchor = "middle", extra = {}) => { const t = el("text", { class: cls, x, y, "text-anchor": anchor, ...extra }, parent); t.textContent = str; return t; };
+
+const TESTS = [["Decision", "Would anyone act on it?", ["Would anyone", "act on it?"]], ["Shared", "Do several roles use it?", ["Do several", "roles use it?"]], ["Available", "Can we measure it today?", ["Can we measure", "it today?"]], ["Trusted", "Is the source reliable?", ["Is the source", "reliable?"]], ["Important", "Does it move the business?", ["Does it move", "the business?"]]];
+const CATS = ["Safety", "Quality", "Delivery", "Cost", "People"];
+const P = (i) => .14 + i * .15; // when test i is applied
+const FINAL = [.8, .93];        // survivors settle
+// 60 measures: most fail the first test, fewer each test after, ten survive (two per category)
+function measures(seed) {
+  const R = rng(seed), fails = [];
+  [22, 12, 8, 5, 3, 10].forEach((n, f) => { for (let i = 0; i < n; i++) fails.push(f); });
+  fails.sort(() => R() - .5);
+  const slot = [0, 0, 0, 0, 0, 0]; let s = 0;
+  return fails.map((f) => ({ f, u: R(), v: R(), d: R() * .05, j: slot[f]++, ...(f === 5 ? { cat: s % 5, row: Math.floor(s++ / 5) } : {}) }));
+}
+// A measure dot: solid while it's in, hollow once a test lets it go
+const dotEl = (g) => el("circle", { class: "m", r: 4.5, "fill-opacity": .6, "stroke-opacity": 0 }, g);
+const hollow = (c, r, base = 1) => set(c, { "fill-opacity": f3(.6 * (1 - r) * base), "stroke-opacity": f3((.55 * (1 - r) + .4 * r) * base) });
+
+/* ---------- Vertical: A sieve · B let go · C funnel · D one at a time ---------- */
+function vertical(svg, mode) {
+  const CX = 640, FX0 = 400, FX1 = 880, BAR = [180, 260, 340, 420, 500], BIN_Y = 588;
+  const HW = mode === "funnel" ? [240, 196, 152, 110, 70] : [240, 240, 240, 240, 240];
+  const binX = (c) => 440 + c * 100;
+  const M = measures(mode === "funnel" ? 3 : 7);
+  const spot = mode === "spot";
+  if (!spot) {
+    text(svg, "axis", 60, 40, "Five tests every measure must pass", "start", { "fill-opacity": .45 });
+    TESTS.forEach(([k, q], i) => { text(svg, "axis", 60, BAR[i] - 4, `Test ${i + 1} · ${k}`, "start", { "fill-opacity": .65 }); text(svg, "lbl-s", 60, BAR[i] + 16, q, "start"); });
+    text(svg, "axis", 60, BIN_Y + 4, "What’s left", "start", { "fill-opacity": .45 });
+  }
+  if (mode === "stack") text(svg, "axis", 912, 118, "Let go", "start", { "fill-opacity": .45 });
+  const bars = BAR.map((y, i) => el("line", { class: "ln", x1: CX - HW[i] - 12, x2: CX + HW[i] + 12, y1: y, y2: y, "stroke-dasharray": "3 5", "stroke-opacity": .3 }, svg));
+  if (spot) BAR.forEach((y, i) => text(svg, "axis", CX - HW[i] - 28, y + 4, String(i + 1), "end", { "fill-opacity": .4 }));
+  if (mode === "funnel") [-1, 1].forEach((sd) => el("path", { class: "ln", d: "M" + BAR.map((y, i) => `${CX + sd * (HW[i] + 12)} ${y}`).join(" L"), "stroke-opacity": .1 }, svg));
+  CATS.forEach((c, i) => { el("line", { class: "ln", x1: binX(i) - 30, x2: binX(i) + 30, y1: BIN_Y + 8, y2: BIN_Y + 8, "stroke-opacity": .35 }, svg); text(svg, "lbl", binX(i), BIN_Y + 36, c); });
+  // Big caption for "one test at a time"
+  let cap;
+  if (spot) {
+    const g = el("g", {}, svg);
+    cap = { k: text(g, "axis", 60, 300, "", "start", { "fill-opacity": .6 }), q1: text(g, "big", 60, 338, "", "start"), q2: text(g, "big", 60, 372, "", "start"), cur: null };
+  }
+  const g = el("g", {}, svg);
+  M.forEach((m) => { m.c = dotEl(g); m.sx = FX0 + 10 + m.u * (FX1 - FX0 - 20); m.sy = 50 + m.v * 80; });
+  const xAt = (m, k) => (mode === "funnel" ? CX + (m.sx - CX) * (k ? HW[k - 1] / 240 : 1) : m.sx);
+  return (p) => {
+    M.forEach((m) => {
+      const lim = Math.min(m.f, 4);
+      // how many tests this measure has reached (rests on each line before going through)
+      let s = 0; for (let i = 0; i <= lim; i++) s += sm(P(i) - .11 + m.d, P(i) + m.d, p);
+      if (m.f === 5) s += sm(FINAL[0] + m.d, FINAL[1] + m.d, p);
+      const k = Math.floor(s), fr = s - k;
+      const Y = (n) => (n === 0 ? m.sy : n <= 5 ? BAR[n - 1] - 5.5 : BIN_Y - m.row * 11);
+      const X = (n) => (n <= 5 ? xAt(m, n) : binX(m.cat));
+      const k2 = fr > 0 ? Math.min(k + 1, 6) : k;
+      let x = lerp(X(k), X(k2), fr), y = lerp(Y(k), Y(k2), fr);
+      let base = 1;
+      if (m.f < 5) {
+        const t = P(m.f) + m.d, r = sm(t + .02, t + .1, p);
+        if (mode === "stack") { x = lerp(x, 920 + (m.j % 7) * 10, r); y = lerp(y, BAR[m.f] - 5.5 - Math.floor(m.j / 7) * 10, r); }
+        else if (mode === "funnel") { const sd = m.sx < CX ? -1 : 1; x = lerp(x, CX + sd * (HW[m.f] + 30 + m.u * 30), r); y = lerp(y, BAR[m.f] - 5.5 + r * 14, r); base = 1 - sm(.5, 1, r); }
+        else { x = lerp(x, FX1 + 60 + m.u * 40, r); base = 1 - sm(.45, 1, r); }
+        hollow(m.c, r, base);
+      } else hollow(m.c, 0);
+      set(m.c, { cx: f1(x), cy: f1(y) });
+    });
+    // Each line pulses while measures reach it; in D the active test darkens
+    const active = TESTS.findIndex((_, i) => p < P(i) + .07);
+    bars.forEach((b, i) => {
+      const pulse = sm(P(i) - .1, P(i), p) * (1 - sm(P(i) + .04, P(i) + .12, p));
+      b.setAttribute("stroke-opacity", f3(spot ? (i === active && p > P(0) - .12 ? .7 : .18) : .3 + .35 * pulse));
+    });
+    if (spot) {
+      const key = p < P(0) - .12 ? "intro" : active === -1 ? "end" : active;
+      if (key !== cap.cur) {
+        cap.cur = key;
+        if (key === "intro") { cap.k.textContent = "Five tests"; cap.q1.textContent = "Every measure"; cap.q2.textContent = "must pass all five."; }
+        else if (key === "end") { cap.k.textContent = "What’s left"; cap.q1.textContent = "A few measures,"; cap.q2.textContent = "each with one owner."; }
+        else { cap.k.textContent = `Test ${key + 1} of 5 · ${TESTS[key][0]}`; cap.q1.textContent = TESTS[key][2][0]; cap.q2.textContent = TESTS[key][2][1]; }
+      }
+    }
+  };
+}
+
+/* ---------- E · The sheet ---------- */
+function sheet(svg) {
+  const CX = 640, BAR = [180, 260, 340, 420, 500], BIN_Y = 588, GAP = 13, COLS = 15;
+  const binX = (c) => 440 + c * 100;
+  const M = measures(5);
+  M.forEach((m, i) => (m.id = i));
+  text(svg, "axis", 60, 40, "Five tests every measure must pass", "start", { "fill-opacity": .45 });
+  TESTS.forEach(([k, q], i) => { text(svg, "axis", 60, BAR[i] - 4, `Test ${i + 1} · ${k}`, "start", { "fill-opacity": .65 }); text(svg, "lbl-s", 60, BAR[i] + 16, q, "start"); });
+  text(svg, "axis", 60, BIN_Y + 4, "What’s left", "start", { "fill-opacity": .45 });
+  BAR.forEach((y) => el("line", { class: "ln", x1: 390, x2: 890, y1: y, y2: y, "stroke-dasharray": "3 5", "stroke-opacity": .3 }, svg));
+  CATS.forEach((c, i) => { el("line", { class: "ln", x1: binX(i) - 30, x2: binX(i) + 30, y1: BIN_Y + 8, y2: BIN_Y + 8, "stroke-opacity": .35 }, svg); text(svg, "lbl", binX(i), BIN_Y + 36, c); });
+  const g = el("g", {}, svg);
+  M.forEach((m) => (m.c = dotEl(g)));
+  // Grid layout of whoever is still in, sitting just above test k
+  const layout = (k) => {
+    const rem = M.filter((m) => m.f >= k), cols = Math.min(COLS, rem.length), pos = new Map();
+    rem.forEach((m, i) => { const r = Math.floor(i / cols), c = i % cols, inRow = Math.min(cols, rem.length - r * cols); pos.set(m, [CX + (c - (inRow - 1) / 2) * GAP, BAR[k] - 12 - r * GAP]); });
+    return pos;
+  };
+  const L = [0, 1, 2, 3, 4].map(layout);
+  const caught = [0, 1, 2, 3, 4].map((k) => M.filter((m) => m.f === k));
+  const T = (k) => .1 + k * .15;
+  return (p) => M.forEach((m) => {
+    let [x, y] = L[0].get(m);
+    const enter = sm(0, .07, p);
+    y -= (1 - enter) * 50;
+    for (let k = 1; k <= Math.min(m.f, 4); k++) {
+      const u = sm(T(k - 1) + .05, T(k) - .03, p), [x2, y2] = L[k].get(m);
+      x = lerp(x, x2, u); y = lerp(y, y2, u);
+    }
+    if (m.f < 5) {
+      const r = sm(T(m.f), T(m.f) + .05, p), list = caught[m.f], i = list.indexOf(m), n = list.length;
+      const sp = Math.min(12, 460 / n);
+      x = lerp(x, CX + (i - (n - 1) / 2) * sp, r); y = lerp(y, BAR[m.f], r);
+      hollow(m.c, r, enter);
+    } else {
+      const u = sm(FINAL[0], FINAL[1], p);
+      x = lerp(x, binX(m.cat), u); y = lerp(y, BIN_Y - m.row * 11, u);
+      hollow(m.c, 0, enter);
+    }
+    set(m.c, { cx: f1(x), cy: f1(y) });
+  });
+}
+
+/* ---------- F · Left to right ---------- */
+function horizontal(svg) {
+  const GX = [300, 410, 520, 630, 740], FLOOR = 452, CAT_X = 900;
+  const catY = (c) => 150 + c * 58;
+  const M = measures(11);
+  text(svg, "axis", 40, 30, "Five tests every", "start", { "fill-opacity": .45 });
+  text(svg, "axis", 40, 46, "measure must pass", "start", { "fill-opacity": .45 });
+  const cols = GX.map((x, i) => {
+    text(svg, "axis", x, 30, `Test ${i + 1}`, "middle", { "fill-opacity": .5 });
+    text(svg, "name", x, 52, TESTS[i][0]);
+    TESTS[i][2].forEach((s, n) => text(svg, "q13", x, 72 + n * 16, s));
+    return el("line", { class: "ln", x1: x, x2: x, y1: 108, y2: FLOOR, "stroke-dasharray": "3 5", "stroke-opacity": .3 }, svg);
+  });
+  el("line", { class: "ln", x1: 250, x2: 790, y1: FLOOR + 8, y2: FLOOR + 8, "stroke-opacity": .15 }, svg);
+  text(svg, "axis", CAT_X, 112, "What’s left", "middle", { "fill-opacity": .45 });
+  CATS.forEach((c, i) => text(svg, "lbl", CAT_X, catY(i) + 5, c, "start"));
+  const g = el("g", {}, svg);
+  M.forEach((m) => { m.c = dotEl(g); m.sx = 50 + m.u * 170; m.sy = 140 + m.v * 220; });
+  return (p) => {
+    M.forEach((m) => {
+      const lim = Math.min(m.f, 4);
+      let s = 0; for (let i = 0; i <= lim; i++) s += sm(P(i) - .11 + m.d, P(i) + m.d, p);
+      if (m.f === 5) s += sm(FINAL[0] + m.d, FINAL[1] + m.d, p);
+      const k = Math.floor(s), fr = s - k;
+      const X = (n) => (n === 0 ? m.sx : n <= 5 ? GX[n - 1] - 6 : CAT_X - 20 - m.row * 12);
+      const Y = (n) => (n <= 5 ? m.sy : catY(m.cat));
+      const k2 = fr > 0 ? Math.min(k + 1, 6) : k;
+      let x = lerp(X(k), X(k2), fr), y = lerp(Y(k), Y(k2), fr);
+      if (m.f < 5) {
+        const t = P(m.f) + m.d, r = sm(t + .02, t + .11, p);
+        x = lerp(x, GX[m.f] - 26 + (m.j % 5) * 10, r); y = lerp(y, FLOOR - Math.floor(m.j / 5) * 10, r);
+        hollow(m.c, r);
+      } else hollow(m.c, 0);
+      set(m.c, { cx: f1(x), cy: f1(y) });
+    });
+    cols.forEach((l, i) => l.setAttribute("stroke-opacity", f3(.3 + .35 * sm(P(i) - .1, P(i), p) * (1 - sm(P(i) + .04, P(i) + .12, p)))));
+  };
+}
+
+/* ---------- Scroll driver ---------- */
+const builders = { a: (s) => vertical(s, "roll"), b: (s) => vertical(s, "stack"), c: (s) => vertical(s, "funnel"), d: (s) => vertical(s, "spot"), e: sheet, f: horizontal };
+const runs = Object.entries(builders).map(([id, fn]) => {
+  const sec = document.getElementById(id);
+  return { track: sec.querySelector(".track"), bar: sec.querySelector(".prog i"), draw: fn(sec.querySelector("svg")), p: REDUCE ? 1 : 0 };
+});
+if (FORCE !== null) { runs.forEach((r) => { r.draw(+FORCE); r.bar.style.transform = `scaleX(${+FORCE})`; }); return; }
+const target = (r) => { const b = r.track.getBoundingClientRect(); return cl(-b.top / (b.height - innerHeight)); };
+const frame = () => {
+  runs.forEach((r) => {
+    const b = r.track.getBoundingClientRect();
+    if (b.bottom < -50 || b.top > innerHeight + 50) return;
+    if (!REDUCE) r.p += (target(r) - r.p) * .14;
+    r.bar.style.transform = `scaleX(${r.p.toFixed(4)})`;
+    r.draw(r.p);
+  });
+  requestAnimationFrame(frame);
+};
+runs.forEach((r) => r.draw(r.p));
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Layers Options</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;500&family=Syne:wght@400;500;600&family=Inter:ital,wght@0,300;0,400;0,500;1,300&display=swap">
+<!-- The playbook's own tokens and type, so these read as they would on the page -->
+<link rel="stylesheet" href="../assets/playbook.css">
+<style>
+body { background: var(--bg-canvas); }
+.wrap { max-width: 1040px; margin: 0 auto; padding: 56px max(16px, 3vw) 30vh; }
+.eyebrow-x { font: 500 12px/1 var(--f-label); letter-spacing: .16em; text-transform: uppercase; color: var(--pink); }
+.top h1 { margin-top: 20px; font-family: var(--f-display); font-size: clamp(34px, 4.4vw, 56px); font-weight: 400; line-height: 1.08; }
+.top p { margin-top: 18px; color: var(--text-body); font-size: 18px; line-height: 1.5; max-width: 66ch; }
+.optnav { position: sticky; top: 0; z-index: 5; margin: 32px calc(-1 * max(16px, 3vw)) 0; padding: 12px max(16px, 3vw); background: rgba(246,246,246,.92); backdrop-filter: blur(10px); border-bottom: 1px solid var(--hairline); display: flex; gap: 8px; overflow-x: auto; }
+.optnav a { flex: none; font: 500 12px/1 var(--f-label); letter-spacing: .16em; text-transform: uppercase; text-decoration: none; color: var(--text-primary); border: 1px solid var(--hairline); background: #fff; padding: 11px 14px; border-radius: 999px; }
+.opt { padding-top: 88px; }
+.opt-head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px 48px; align-items: end; margin-bottom: 8px; }
+.opt-head h2 { margin-top: 14px; font-family: var(--f-display); font-size: clamp(26px, 3vw, 40px); font-weight: 400; line-height: 1.15; }
+.opt-head p { color: var(--text-body); font-size: 17px; line-height: 1.5; }
+.track { position: relative; height: 220vh; }
+.pin { position: sticky; top: 0; height: 100vh; display: flex; align-items: center; }
+/* The section sits on a white panel on the page, so these do too */
+.sheet { width: 100%; background: var(--bg-surface); border-radius: var(--radius); padding: clamp(20px, 3vw, 48px); }
+
+/* Illustration on the left, a small key on the right */
+.ww { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(24px, 5vw, 72px); align-items: center; }
+.ww svg { display: block; width: 100%; max-width: 380px; height: auto; justify-self: center; overflow: visible; }
+.ln { fill: none; stroke: var(--teal-900); stroke-width: 1; stroke-linecap: round; }
+.key { display: flex; flex-direction: column; }
+.key li { display: grid; grid-template-columns: 14px minmax(0, 1fr); column-gap: 14px; padding: 16px 0; border-top: 1px solid var(--hairline); transition: opacity .5s var(--ease-out); }
+.key li:last-child { border-bottom: 1px solid var(--hairline); }
+.key svg { width: 14px; height: 14px; margin-top: 2px; }
+.key h3 { font-family: var(--f-display); font-size: 15px; font-weight: 400; line-height: 1.3; color: var(--text-primary); }
+.key p { grid-column: 2; margin-top: 4px; font-size: 14px; line-height: 1.45; font-weight: 300; color: var(--text-body); }
+.key li.dim { opacity: .3; }
+
+/* E: type only */
+.typo { display: flex; flex-direction: column; max-width: 560px; }
+.typo li { display: grid; grid-template-columns: 14px minmax(0, 1fr); column-gap: 16px; align-items: baseline; padding: 22px 0; border-top: 1px solid var(--hairline); transition: opacity .6s var(--ease-out), transform .6s var(--ease-out); }
+.typo li:last-child { border-bottom: 1px solid var(--hairline); }
+.typo h3 { font-family: var(--f-display); font-weight: 400; color: var(--text-primary); line-height: 1.2; }
+.typo p { grid-column: 2; margin-top: 6px; font-size: 12px; line-height: 1.45; color: var(--text-body); font-weight: 300; }
+.typo .t1 h3 { font-size: 28px; } .typo .t2 h3 { font-size: 19px; opacity: .7; } .typo .t3 h3 { font-size: 15px; opacity: .45; }
+.typo i { width: 7px; height: 7px; border-radius: 50%; align-self: center; }
+.typo li.off { opacity: 0; transform: translateY(10px); }
+
+@media (max-width: 760px) { .opt-head, .ww { grid-template-columns: minmax(0, 1fr); } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <p class="eyebrow-x">Step 5 · What goes where · Option B</p>
+    <h1>Layers, refined</h1>
+    <p>The three layers, each in its tier's color, with no pink dot. They start as outlines, and the tier being presented turns solid as you scroll. Once all three have been shown, they draw together into a tighter stack that overlaps a little. The three versions differ in what stays solid and how the overlap reads.</p>
+  </header>
+  <nav class="optnav">
+    <a href="#b1">B1 · One at a time</a>
+    <a href="#b2">B2 · Builds up</a>
+    <a href="#b3">B3 · See-through</a>
+  </nav>
+
+  <section class="opt" id="b1">
+    <div class="opt-head"><div><p class="eyebrow-x">Option B1</p><h2>One at a time</h2></div><div><p>Exactly as you described. Only the tier being presented is solid: always visible goes solid, then back to an outline as on demand goes solid, then investigation. At the end, all three return to outlines and draw together, overlapping slightly.</p></div></div>
+    <div class="track"><div class="pin"><div class="sheet"><div class="ww" data-v="one"></div></div></div></div>
+  </section>
+
+  <section class="opt" id="b2">
+    <div class="opt-head"><div><p class="eyebrow-x">Option B2</p><h2>Builds up</h2></div><div><p>Each tier stays solid once it has been presented, so the stack fills in from the top down. When they draw together, the solid layers overlap like stacked cards, with always visible on top.</p></div></div>
+    <div class="track"><div class="pin"><div class="sheet"><div class="ww" data-v="build"></div></div></div></div>
+  </section>
+
+  <section class="opt" id="b3">
+    <div class="opt-head"><div><p class="eyebrow-x">Option B3</p><h2>See-through</h2></div><div><p>Like B2, but the fills are slightly transparent. When the layers draw together, you can see each one through the one above it, so the overlap reads as layering rather than covering.</p></div></div>
+    <div class="track"><div class="pin"><div class="sheet"><div class="ww" data-v="glass"></div></div></div></div>
+  </section>
+</div>
+
+<script>
+(() => {
+const NS = "http://www.w3.org/2000/svg";
+const el = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; };
+const set = (e, attrs) => { for (const k in attrs) e.setAttribute(k, attrs[k]); };
+const cl = (x) => Math.min(1, Math.max(0, x));
+const sm = (a, b, x) => { const t = cl((x - a) / (b - a)); return t * t * (3 - 2 * t); };
+const lerp = (a, b, t) => a + (b - a) * t;
+const f1 = (n) => n.toFixed(1), f3 = (n) => n.toFixed(3);
+const REDUCE = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const FORCE = new URLSearchParams(location.search).get("p");
+
+const TIERS = [["Always visible", "Keep the first tier small."], ["Available on demand", "Useful only on request."], ["Revealed during investigation", "Only matters once someone starts investigating."]];
+// Each tier's colour (the pyramid's), its outline, and its width
+const L = [
+  { fill: "#ff0074", line: "#ff0074", lo: .9, w: 96 },
+  { fill: "#00424f", line: "#002a32", lo: .5, w: 200 },
+  { fill: "#d5def0", line: "#002a32", lo: .28, w: 300 },
+];
+const ON = [.08, .3, .52], DONE = .74, TIGHT = [.76, .94]; // when each tier is presented; when they draw together
+const SPREAD = [64, 150, 236], CLOSE = [116, 150, 188];    // layer centres, apart and drawn together
+const plane = (w) => `M${-w / 2} 0 L0 ${-w / 4} L${w / 2} 0 L0 ${w / 4}Z`;
+
+function build(box) {
+  const mode = box.dataset.v;
+  const svg = el("svg", { viewBox: "0 0 320 300", role: "img", "aria-label": "Three layers: a small pink one for what's always visible, a wider teal one for what's on demand, and the widest, palest one for what's revealed during investigation. Each turns solid in turn, then they draw together." }, box);
+  // Drawn bottom first, so the smaller layers sit on top
+  const P = [2, 1, 0].map((i) => ({ i, e: el("path", { d: plane(L[i].w), "stroke-width": 1, "stroke-linejoin": "round" }, svg) })).reverse();
+  // The key: small diamonds that turn solid with their layer
+  const ol = document.createElement("ol"); ol.className = "key";
+  ol.innerHTML = TIERS.map(([h, p], i) => `<li><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M1 7 L7 4 L13 7 L7 10Z" stroke="${L[i].line}" stroke-opacity="${L[i].lo}" stroke-width="1"/></svg><h3>${h}</h3><p>${p}</p></li>`).join("");
+  box.appendChild(ol);
+  const rows = [...ol.children], marks = rows.map((li) => li.querySelector("path"));
+  return (p) => {
+    const tight = sm(TIGHT[0], TIGHT[1], p);
+    P.forEach(({ i, e }) => {
+      const on = sm(ON[i], ON[i] + .08, p);
+      const next = i < 2 ? sm(ON[i + 1], ON[i + 1] + .08, p) : sm(DONE, DONE + .06, p);
+      // how solid this layer is right now
+      let s = mode === "one" ? on * (1 - next) : on;
+      const alpha = mode === "glass" ? [.82, .72, .8][i] : 1;
+      const y = lerp(lerp(150, SPREAD[i], sm(.0, .08, p)), CLOSE[i], tight);
+      set(e, { transform: `translate(160 ${f1(y)})`, fill: L[i].fill, "fill-opacity": f3(s * alpha), stroke: L[i].line, "stroke-opacity": f3(lerp(L[i].lo, i === 2 ? .35 : L[i].lo, s)), "stroke-dasharray": i === 2 && s < .5 ? "2 4" : "none" });
+      set(marks[i], { fill: L[i].fill, "fill-opacity": f3(s * alpha) });
+      rows[i].classList.toggle("dim", p < ON[i] - .02);
+    });
+  };
+}
+
+const runs = [...document.querySelectorAll(".opt")].map((sec) => ({ track: sec.querySelector(".track"), draw: build(sec.querySelector("[data-v]")), p: REDUCE ? 1 : 0 }));
+if (FORCE !== null) { runs.forEach((r) => r.draw(+FORCE)); return; }
+const target = (r) => { const b = r.track.getBoundingClientRect(); return cl(-b.top / (b.height - innerHeight)); };
+const frame = () => {
+  runs.forEach((r) => {
+    const b = r.track.getBoundingClientRect();
+    if (b.bottom < -50 || b.top > innerHeight + 50) return;
+    if (!REDUCE) r.p += (target(r) - r.p) * .14;
+    r.draw(r.p);
+  });
+  requestAnimationFrame(frame);
+};
+runs.forEach((r) => r.draw(r.p));
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

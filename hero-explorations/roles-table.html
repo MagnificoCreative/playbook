@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Five Roles Tables</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;500&family=Inter:wght@300;400;500&family=Syne:wght@400;500&display=swap">
+<style>
+:root {
+  --pink: #ff0074;
+  --teal-950: #07171b;
+  --teal-900: #002a32;
+  --canvas: #f6f6f6;
+  --white: #ffffff;
+  --n700: #474646;
+  --n400: #9a9a9a;
+  --hair: rgba(7, 23, 27, 0.1);
+  --ease-out: cubic-bezier(.22, 1, .36, 1);
+  --f-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --f-label: "IBM Plex Sans", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --f-display: "Syne", "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+* { box-sizing: border-box; margin: 0; }
+body { background: var(--canvas); color: var(--teal-950); font-family: var(--f-sans); -webkit-font-smoothing: antialiased; }
+.wrap { max-width: 1240px; margin: 0 auto; padding: 56px max(16px, 3vw) 30vh; }
+.eyebrow { font: 500 12px/1 var(--f-label); letter-spacing: .16em; text-transform: uppercase; color: var(--pink); }
+.top h1 { margin-top: 20px; font-family: var(--f-display); font-size: clamp(34px, 4.4vw, 60px); font-weight: 400; line-height: 1.08; }
+.top p { margin-top: 18px; color: var(--n700); font-size: 18px; line-height: 1.5; max-width: 66ch; }
+.opt { padding-top: 96px; }
+.opt-head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px 48px; align-items: end; margin-bottom: 40px; }
+.opt-head h2 { margin-top: 14px; font-family: var(--f-display); font-size: clamp(28px, 3.2vw, 44px); font-weight: 400; line-height: 1.15; }
+.opt-head p { color: var(--n700); font-size: 17px; line-height: 1.5; }
+
+/* Shared */
+table { width: 100%; border-collapse: collapse; }
+th { text-align: left; font: 500 11px/1.4 var(--f-label); letter-spacing: .16em; text-transform: uppercase; color: var(--teal-900); }
+td { vertical-align: top; font-size: 16px; line-height: 1.5; color: var(--n700); }
+.role { font-size: 18px; line-height: 1.3; color: var(--teal-950); }
+.lead { display: block; color: var(--teal-950); }
+.reveal { opacity: 0; transform: translateY(12px); transition: opacity .7s var(--ease-out), transform .7s var(--ease-out); }
+.reveal.in { opacity: 1; transform: none; }
+/* Depth: five short steps, filled up to the role's depth */
+.depth { display: inline-flex; gap: 3px; margin-bottom: 10px; }
+.depth i { width: 14px; height: 3px; border-radius: 2px; background: var(--teal-900); opacity: .1; transition: opacity .5s var(--ease-out); }
+.depth i.on { opacity: .7; }
+.depth i.on:last-of-type, .depth i.on.end { background: var(--pink); opacity: 1; }
+
+/* Option 1: one row per role, ordered from a glance to a single asset */
+.t1 th { padding: 0 20px 14px 0; border-bottom: 1px solid var(--teal-900); }
+.t1 td { padding: 24px 20px 24px 0; border-bottom: 1px solid var(--hair); }
+.t1 td:last-child, .t1 th:last-child { padding-right: 0; }
+.t1 col.c-role { width: 20%; } .t1 col.c-need { width: 24%; } .t1 col.c-fr { width: 22%; } .t1 col.c-sees { width: 34%; }
+.t1 tbody tr { transition: background-color .3s var(--ease-out); }
+.t1 td:first-child { padding-left: 12px; } .t1 th:first-child { padding-left: 12px; }
+.t1 .mlabel { display: none; }
+/* Chart-sized type: smaller role names and cell copy, with a 4px gap under the Sees headline */
+.t1 td { font-size: 14px; line-height: 1.5; }
+.t1 td.role { font-size: 14px; line-height: 1.5; }
+.t1 .lead { margin-bottom: 4px; }
+.t1 td { padding-top: 20px; padding-bottom: 20px; }
+
+/* Option 2: roles across the top, on a white card */
+.card { background: var(--white); border-radius: 8px; padding: clamp(16px, 2.6vw, 36px); overflow-x: auto; }
+.t2 { min-width: 980px; }
+.t2 thead th { padding: 0 16px 18px 0; vertical-align: bottom; border-bottom: 1px solid var(--teal-900); }
+.t2 thead th.role { font: 400 18px/1.3 var(--f-sans); letter-spacing: 0; text-transform: none; color: var(--teal-950); }
+.t2 tbody th { padding: 22px 24px 22px 0; width: 120px; white-space: nowrap; border-bottom: 1px solid var(--hair); vertical-align: top; }
+.t2 tbody td { padding: 22px 16px 22px 0; border-bottom: 1px solid var(--hair); width: 20%; }
+.t2 tbody tr:last-child th, .t2 tbody tr:last-child td { border-bottom: 0; }
+.t2 .col-hover { background: rgba(0, 42, 50, .03); }
+.t2 .lvl { font: 500 11px/1 var(--f-label); letter-spacing: .16em; text-transform: uppercase; color: var(--teal-900); opacity: .55; display: block; margin-bottom: 10px; }
+.t2 thead th.role .depth { display: flex; margin: 0 0 12px; }
+
+@media (max-width: 860px) {
+  .opt-head { grid-template-columns: minmax(0, 1fr); }
+  /* Option 1 stacks: each role becomes a block with labels */
+  .t1, .t1 tbody, .t1 tr, .t1 td { display: block; width: 100%; }
+  .t1 thead, .t1 colgroup { display: none; }
+  .t1 tr { padding: 22px 0; border-bottom: 1px solid var(--hair); }
+  .t1 tr:first-child { border-top: 1px solid var(--teal-900); }
+  .t1 td, .t1 td:first-child { padding: 0; border: 0; }
+  .t1 td + td { margin-top: 14px; }
+  .t1 .mlabel { display: block; font: 500 11px/1.4 var(--f-label); letter-spacing: .16em; text-transform: uppercase; color: var(--teal-900); opacity: .55; margin-bottom: 4px; }
+  /* Option 2 keeps its grid and scrolls sideways, with the row labels pinned */
+  .t2 { min-width: 860px; }
+  .t2 tbody th { position: sticky; left: 0; background: var(--white); z-index: 1; width: 120px; padding-left: 16px; padding-right: 16px; box-shadow: 1px 0 0 var(--hair); }
+  .card { padding-left: 0; }
+  .t2 thead th:first-child { position: sticky; left: 0; background: var(--white); z-index: 1; }
+  .t2 tbody td:nth-child(2) { padding-left: 16px; }
+  .t2 thead th:nth-child(2) { padding-left: 16px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <p class="eyebrow">Step 2 · Table options</p>
+    <h1>Five roles, one truth</h1>
+    <p>Two table layouts with the same content: what each role needs, what slows it down, and what it sees. I've expanded “Sees” into a short headline plus a sentence on what that role actually looks at. Rows run from the shallowest view to the deepest, so you can read the depth down the table.</p>
+  </header>
+
+  <section class="opt" id="one">
+    <div class="opt-head">
+      <div><p class="eyebrow">Option 1</p><h2>One row per role</h2></div>
+      <div><p>A plain editorial table straight on the page, with hairline rows and no card. “Sees” gets the widest column and a small five-step depth bar, so the depth reads at a glance. Rows fade in one after another as the table scrolls into view, and the row under your pointer lifts to white. On phones, each role becomes a stacked block with labels.</p></div>
+    </div>
+    <table class="t1" id="t1">
+      <colgroup><col class="c-role"><col class="c-need"><col class="c-fr"><col class="c-sees"></colgroup>
+      <thead><tr><th scope="col">Role</th><th scope="col">Needs</th><th scope="col">Slowed by</th><th scope="col">Sees</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <section class="opt" id="two">
+    <div class="opt-head">
+      <div><p class="eyebrow">Option 2</p><h2>Roles across the top</h2></div>
+      <div><p>The table turned on its side, on a white card: the five roles are the columns and the attributes are the rows. That makes it easy to compare one thing, like friction, across every role. “Sees” splits into two rows, a depth headline and what that role looks for. Columns fade in from left to right, and the column under your pointer is lightly shaded. On phones, the card scrolls sideways with the row labels pinned.</p></div>
+    </div>
+    <div class="card"><table class="t2" id="t2"></table></div>
+  </section>
+</div>
+
+<script>
+(() => {
+// Ordered by depth: from a glance to a single asset's history
+const ROLES = [
+  { name: "Operations executive", d: 1, need: "A concise, trustworthy view of performance and exceptions.", fr: "Too many measures with too little context.",
+    head: "Health at a glance", sees: "Are operations healthy, and where aren’t they? Exceptions first, in seconds, with the detail one step away." },
+  { name: "Project manager", d: 2, need: "Visibility into progress, risks and dependencies.", fr: "Scattered project information.",
+    head: "Progress across every workstream", sees: "Milestones, risks and the dependencies between them, all in one place rather than spread across trackers." },
+  { name: "Maintenance lead", d: 3, need: "Fast access to operational signals and the detail behind them.", fr: "Delayed reporting and disconnected tools.",
+    head: "The signal, then the detail", sees: "An alert first, then the readings and work orders behind it, fresh enough to plan the next shift." },
+  { name: "Reliability specialist", d: 4, need: "One reliable view of equipment health.", fr: "Conflicting information and duplicate data entry.",
+    head: "Asset by asset", sees: "The condition of each piece of equipment from one trusted record, entered once and used everywhere." },
+  { name: "Engineering manager", d: 5, need: "Timely information for proactive decisions.", fr: "Limited access to detail they could depend on.",
+    head: "A single asset’s history", sees: "Readings, changes and failures over time, detailed and dependable enough to act before something breaks." },
+];
+const DEPTH = ["Glance", "Workstreams", "Signals", "Assets", "History"];
+const bar = (d) => `<span class="depth" role="img" aria-label="Depth ${d} of 5">${[1, 2, 3, 4, 5].map((k) => `<i class="${k <= d ? "on" : ""}${k === d ? " end" : ""}"></i>`).join("")}</span>`;
+
+// Option 1
+document.querySelector("#t1 tbody").innerHTML = ROLES.map((r) => `<tr class="reveal">
+  <td class="role">${r.name}</td>
+  <td><span class="mlabel">Needs</span>${r.need}</td>
+  <td><span class="mlabel">Slowed by</span>${r.fr}</td>
+  <td><span class="mlabel">Sees</span><span class="lead">${r.head}</span>${r.sees}</td>
+</tr>`).join("");
+
+// Option 2
+const rows = [
+  ["Needs", (r) => r.need],
+  ["Slowed by", (r) => r.fr],
+  ["Sees", (r) => `<span class="lvl">${DEPTH[r.d - 1]}</span><span class="lead">${r.head}</span>`],
+  ["Looks for", (r) => r.sees],
+];
+document.getElementById("t2").innerHTML =
+  `<thead><tr><th scope="col"><span class="sr" style="position:absolute;left:-9999px">Attribute</span></th>${ROLES.map((r, i) => `<th scope="col" class="role reveal" data-c="${i}">${bar(r.d)}${r.name}</th>`).join("")}</tr></thead>` +
+  `<tbody>${rows.map(([label, f]) => `<tr><th scope="row">${label}</th>${ROLES.map((r, i) => `<td class="reveal" data-c="${i}">${f(r)}</td>`).join("")}</tr>`).join("")}</tbody>`;
+
+// Column hover in option 2
+const t2 = document.getElementById("t2");
+t2.addEventListener("mouseover", (e) => {
+  const c = e.target.closest("[data-c]")?.dataset.c;
+  t2.querySelectorAll("[data-c]").forEach((n) => n.classList.toggle("col-hover", n.dataset.c === c));
+});
+t2.addEventListener("mouseleave", () => t2.querySelectorAll(".col-hover").forEach((n) => n.classList.remove("col-hover")));
+
+// Reveal: rows (option 1) and columns (option 2) fade in in sequence
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const go = (els, step) => els.forEach((n) => { n.style.transitionDelay = step(n) + "ms"; n.classList.add("in"); });
+if (reduce) { document.querySelectorAll(".reveal").forEach((n) => n.classList.add("in")); return; }
+const io = new IntersectionObserver((entries) => entries.forEach((e) => {
+  if (!e.isIntersecting) return;
+  io.unobserve(e.target);
+  if (e.target.id === "t1") go([...e.target.querySelectorAll(".reveal")], (n) => n.sectionRowIndex * 110);
+  else go([...e.target.querySelectorAll(".reveal")], (n) => n.dataset.c * 110 + (n.closest("tbody") ? (n.parentNode.sectionRowIndex + 1) * 40 : 0));
+}), { threshold: .2 });
+io.observe(document.getElementById("t1"));
+io.observe(t2);
+})();
+</script>
+</body>
+</html>

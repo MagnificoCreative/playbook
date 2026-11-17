@@ -1,0 +1,436 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>One Number Options</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;500&family=Inter:wght@300;400;500&family=Syne:wght@400;500&display=swap">
+<style>
+:root {
+  --pink: #ff0074;
+  --teal-950: #07171b;
+  --teal-900: #002a32;
+  --canvas: #f6f6f6;
+  --white: #ffffff;
+  --n700: #474646;
+  --hair: rgba(7, 23, 27, 0.1);
+  --f-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --f-display: "Syne", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --f-label: "IBM Plex Sans", "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+* { box-sizing: border-box; margin: 0; }
+body { background: var(--canvas); color: var(--teal-950); font-family: var(--f-sans); -webkit-font-smoothing: antialiased; }
+.wrap { max-width: 1240px; margin: 0 auto; padding: 56px max(16px, 3vw) 40vh; }
+.eyebrow { font: 500 12px/1 var(--f-label); letter-spacing: .16em; text-transform: uppercase; color: var(--pink); }
+.top h1 { margin-top: 20px; font-family: var(--f-display); font-size: clamp(34px, 4.4vw, 60px); font-weight: 400; letter-spacing: -0.01em; line-height: 1.08; }
+.top p { margin-top: 18px; color: var(--n700); font-size: 18px; line-height: 1.5; max-width: 66ch; }
+
+.bar {
+  position: sticky; top: 0; z-index: 5; margin: 40px calc(-1 * max(16px, 3vw)) 0; padding: 12px max(16px, 3vw);
+  background: rgba(246, 246, 246, .9); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--hair); display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none;
+}
+.bar a {
+  flex: none; font: 500 12px/1 var(--f-label); letter-spacing: .16em; text-transform: uppercase; text-decoration: none;
+  color: var(--teal-950); border: 1px solid var(--hair); background: #fff; padding: 11px 14px; border-radius: 999px;
+}
+.bar a:hover { border-color: var(--teal-900); }
+
+.opt { padding-top: 96px; }
+.opt-head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px 48px; align-items: end; }
+.opt-head h2 { margin-top: 14px; font-family: var(--f-display); font-size: clamp(28px, 3.2vw, 44px); font-weight: 400; letter-spacing: -0.01em; line-height: 1.15; }
+.opt-head p { color: var(--n700); font-size: 17px; line-height: 1.5; }
+
+.track { position: relative; height: 300vh; }
+.pin { position: sticky; top: 0; height: 100vh; display: flex; align-items: center; padding: 64px 0 24px; }
+.stage { position: relative; width: 100%; background: var(--white); border-radius: 8px; padding: clamp(20px, 3vw, 48px); padding-top: 64px; }
+.stage svg { display: block; width: 100%; height: auto; max-height: calc(100vh - 200px); overflow: visible; margin: 0 auto; }
+.badge {
+  position: absolute; top: 18px; left: 18px;
+  font: 500 11px/1 var(--f-label); letter-spacing: .16em; text-transform: uppercase;
+  color: var(--teal-900); border: 1px solid rgba(0, 42, 50, .18); padding: 7px 10px; border-radius: 999px;
+}
+.prog { position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--hair); border-radius: 0 0 8px 8px; overflow: hidden; }
+.prog i { display: block; height: 100%; width: 100%; background: var(--teal-900); transform-origin: 0 50%; transform: scaleX(0); }
+
+/* The playbook's infographic scale: names in Syne 15, body in Inter 300 14, labels 11.
+   --u (viewBox units per screen pixel, capped at 1) keeps that size on screen as a drawing scales. */
+.ln { fill: none; stroke: var(--teal-900); stroke-width: 1; stroke-linecap: round; stroke-linejoin: round; }
+.hair { fill: none; stroke: var(--teal-900); stroke-width: .5; }
+.name { font: 400 calc(15px * var(--u, 1))/1 var(--f-display); letter-spacing: -0.01em; fill: var(--teal-950); }
+.body { font: 300 calc(14px * var(--u, 1))/1 var(--f-sans); fill: var(--n700); }
+.axis { font: 500 calc(11px * var(--u, 1))/1 var(--f-label); letter-spacing: .16em; text-transform: uppercase; fill: var(--teal-900); }
+.pinktxt { fill: var(--pink); }
+
+@media (max-width: 760px) {
+  .opt-head { grid-template-columns: minmax(0, 1fr); }
+  .stage { padding: 56px 12px 20px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <p class="eyebrow">Step 3 · One number, many copies</p>
+    <h1>One number, many copies</h1>
+    <p>Five ways to show the same idea, with no made-up figures. A number is drawn as a small grid of dots. Each copy of it keeps a slightly different set: a dot goes missing here, half a dot there. The paths are dotted, as in the other steps, and pink marks only what moves and what's agreed.</p>
+  </header>
+  <nav class="bar">
+    <a href="#o1">1 · Dots for the number</a>
+    <a href="#o2">2 · A copy of a copy</a>
+    <a href="#o3">3 · Drift and reconcile</a>
+    <a href="#o4">4 · Nothing retired</a>
+    <a href="#o5">5 · One screen</a>
+  </nav>
+
+  <section class="opt" id="o1">
+    <div class="opt-head"><div><p class="eyebrow">Option 1</p><h2>Dots for the number</h2></div><div><p>Your idea, on the current layout. The source holds a full set of dots. Its copies split off along three dotted paths, and each copy keeps a slightly different set. Further down the line, a second copy loses a little more. The paths only meet again where a definition is agreed, and that set is whole again.</p></div></div>
+    <div class="track"><div class="pin"><div class="stage"><span class="badge">1 · Dots for the number</span><svg data-v="o1" role="img" aria-label="A full set of dots leaves the source, splits into copies that each lose a different few dots, and is only whole again at the agreed definition."></svg><div class="prog"><i></i></div></div></div></div>
+  </section>
+
+  <section class="opt" id="o2">
+    <div class="opt-head"><div><p class="eyebrow">Option 2</p><h2>A copy of a copy</h2></div><div><p>One line, one copy after another. Each step is named for what happens to the number: it's copied, re-keyed, adjusted, reconciled by hand. A little is lost at every step. Then the line is traced back to its source, an owner is named there, and every copy fills back in.</p></div></div>
+    <div class="track"><div class="pin"><div class="stage"><span class="badge">2 · A copy of a copy</span><svg data-v="o2" role="img" aria-label="A set of dots is copied along a chain, losing a little at each step, until the chain is traced back to its source and every copy fills back in."></svg><div class="prog"><i></i></div></div></div></div>
+  </section>
+
+  <section class="opt" id="o3">
+    <div class="opt-head"><div><p class="eyebrow">Option 3</p><h2>Drift and reconcile</h2></div><div><p>The source is a dotted line across the card. Three copies start on it and slowly drift away as their definitions shift. Twice, someone pulls them back by hand, and twice they drift again. Only an agreed definition holds them on the line for good.</p></div></div>
+    <div class="track"><div class="pin"><div class="stage"><span class="badge">3 · Drift and reconcile</span><svg data-v="o3" role="img" aria-label="Three copies start on the source line, drift away, are pulled back by hand twice, and only stay on the line once a definition is agreed."></svg><div class="prog"><i></i></div></div></div></div>
+  </section>
+
+  <section class="opt" id="o4">
+    <div class="opt-head"><div><p class="eyebrow">Option 4</p><h2>Nothing retired</h2></div><div><p>New tools keep arriving, and each takes its own copy of the number. None of the old ones ever leave, so the copies pile up, each a little different. Then all but one are retired, and the one that's left has an owner.</p></div></div>
+    <div class="track"><div class="pin"><div class="stage"><span class="badge">4 · Nothing retired</span><svg data-v="o4" role="img" aria-label="Six tools take their own copy of the number one after another; none leave until all are retired in favour of one agreed view with one owner."></svg><div class="prog"><i></i></div></div></div></div>
+  </section>
+
+  <section class="opt" id="o5">
+    <div class="opt-head"><div><p class="eyebrow">Option 5</p><h2>One screen</h2></div><div><p>The three copies are brought together on one screen. Side by side, the gaps between them are easy to see, and they're marked in pink, but nothing is fixed. A dot then travels back to the source, an owner is named where the data is born, and the copies on the screen fill in to match.</p></div></div>
+    <div class="track"><div class="pin"><div class="stage"><span class="badge">5 · One screen</span><svg data-v="o5" role="img" aria-label="Three differing copies are put side by side on one screen, which only shows their gaps, until the number is fixed at its source and every copy matches."></svg><div class="prog"><i></i></div></div></div></div>
+  </section>
+</div>
+
+<script>
+(() => {
+const NS = "http://www.w3.org/2000/svg", PINK = "#ff0074", TEAL = "#002a32";
+const el = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; };
+const set = (e, attrs) => { for (const k in attrs) e.setAttribute(k, attrs[k]); };
+const cl = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const sm = (a, b, x) => { const t = cl((x - a) / (b - a)); return t * t * (3 - 2 * t); };
+const lerp = (a, b, t) => a + (b - a) * t;
+const ease = (t) => (t < .5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
+const f1 = (n) => n.toFixed(1), f3 = (n) => n.toFixed(3);
+const REDUCE = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const FORCE = new URLSearchParams(location.search).get("p");
+const text = (g, cls, x, y, s, anchor = "middle") => { const t = el("text", { class: cls, x, y, "text-anchor": anchor }, g); t.textContent = s; return t; };
+const fade = (e, o) => e.setAttribute("opacity", f3(o));
+let uid = 0;
+
+// Type holds its on-screen size as the drawing scales
+const fit = (svg) => { const f = () => { const w = svg.getBoundingClientRect().width; if (w) svg.style.setProperty("--u", Math.min(1, svg.viewBox.baseVal.width / w).toFixed(4)); }; f(); new ResizeObserver(f).observe(svg); };
+
+/* ───── A number, drawn as a 4 × 3 grid of dots. Each slot is whole (1), half (.5) or missing (0).
+   A missing slot keeps a faint hairline ring, so the gap reads as a gap. ───── */
+const COLS = 4, ROWS = 3, GAP = 11, R = 2.9;
+function cluster(g, cx, cy, { bg = "#fff" } = {}) {
+  const grp = el("g", {}, g);
+  const w = (COLS - 1) * GAP, h = (ROWS - 1) * GAP;
+  el("rect", { x: f1(cx - w / 2 - 9), y: f1(cy - h / 2 - 9), width: w + 18, height: h + 18, fill: bg }, grp); // lifts the cluster off any line behind it
+  const slots = [];
+  for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
+    const x = cx - w / 2 + c * GAP, y = cy - h / 2 + r * GAP;
+    const ring = el("circle", { cx: f1(x), cy: f1(y), r: R, fill: "none", stroke: TEAL, "stroke-width": .5, "stroke-opacity": .3 }, grp);
+    const half = el("path", { d: `M${f1(x)} ${f1(y - R)}A${R} ${R} 0 0 0 ${f1(x)} ${f1(y + R)}Z`, fill: TEAL }, grp);
+    const full = el("circle", { cx: f1(x), cy: f1(y), r: R, fill: TEAL }, grp);
+    slots.push({ ring, half, full });
+  }
+  return {
+    g: grp, cx, cy,
+    // v: 12 slot values; o: overall opacity; col: fill; mark: slots to ring in pink
+    draw(v, o = 1, col = TEAL, mark = null) {
+      fade(grp, o);
+      slots.forEach((s, i) => {
+        const x = v[i];
+        set(s.full, { fill: col, opacity: f3(cl((x - .5) * 2)) });
+        set(s.half, { fill: col, opacity: f3(cl(x * 2)) });
+        const m = mark && mark[i];
+        set(s.ring, { stroke: m ? PINK : TEAL, "stroke-opacity": m ? f3(m) : .3, "stroke-width": m ? .75 : .5 });
+      });
+    },
+  };
+}
+// A full set, and a copy that has lost some: `lose` lists [slot, value] pairs
+const FULL = Array(12).fill(1);
+const copyOf = (lose) => { const v = FULL.slice(); lose.forEach(([i, x]) => (v[i] = x)); return v; };
+const mix = (a, b, t) => a.map((x, i) => lerp(x, b[i], t));
+const gapsOf = (v) => v.map((x) => (x < 1 ? 1 : 0));
+
+/* ───── A dotted path that draws on as t runs 0→1 (a solid mask reveals the dots) ───── */
+function dotted(g, d, { o = .5, dash = "1 4" } = {}) {
+  const id = "m" + (++uid);
+  const mask = el("mask", { id, maskUnits: "userSpaceOnUse" }, g);
+  const mp = el("path", { d, fill: "none", stroke: "#fff", "stroke-width": 8, pathLength: 1, "stroke-dasharray": "1 1", "stroke-dashoffset": 1 }, mask);
+  const p = el("path", { class: "ln", d, "stroke-opacity": o, "stroke-dasharray": dash, mask: `url(#${id})` }, g);
+  const len = p.getTotalLength();
+  return { p, at: (t) => { const q = p.getPointAtLength(cl(t) * len); return [q.x, q.y]; }, draw: (t) => mp.setAttribute("stroke-dashoffset", f3(1 - cl(t))) };
+}
+const ball = (g, r = 4.5) => el("circle", { r, fill: PINK, opacity: 0 }, g);
+const put = (b, [x, y], o = 1) => set(b, { cx: f1(x), cy: f1(y), opacity: f3(o) });
+
+/* ───── 1 · Dots for the number: the current layout, with dots in place of figures ───── */
+function o1(svg) {
+  svg.setAttribute("viewBox", "50 34 900 276");
+  const Y = 172, SPL = 210, JOIN = 800;
+  const src = cluster(svg, 110, Y);
+  text(svg, "name", 110, Y + 44, "Source");
+  const lead = dotted(svg, `M140 ${Y}H${SPL}`, { o: .6 });
+  const lanes = [
+    { d: `M${SPL} ${Y}C280 ${Y} 290 88 360 88H640C710 88 730 ${Y} ${JOIN} ${Y}`, stops: [[420, 88, "Spreadsheet", -26, [[2, 0]]], [590, 88, "", 0, [[2, 0], [9, .5]]]] },
+    { d: `M${SPL} ${Y}H${JOIN}`, stops: [[505, Y, "Team dashboard", -26, [[5, .5], [11, 0]]]] },
+    { d: `M${SPL} ${Y}C280 ${Y} 290 256 360 256H640C710 256 730 ${Y} ${JOIN} ${Y}`, stops: [[420, 256, "Monthly report", 38, [[7, .5]]], [590, 256, "", 0, [[7, 0], [0, .5], [10, 0]]]] },
+  ].map((ln) => ({ ...ln, path: dotted(svg, ln.d, { o: .45 }) }));
+  const stops = [];
+  lanes.forEach((ln, li) => ln.stops.forEach(([x, y, name, dy, lose], k) => {
+    const c = cluster(svg, x, y);
+    const lab = name ? text(svg, "name", x, y + dy, name) : null;
+    const sub = k === 1 ? text(svg, "axis", x, y + (y < Y ? -26 : 38), "Copy of it") : null;
+    if (sub) sub.setAttribute("fill-opacity", .5);
+    // where along its lane this stop sits, as a share of the lane
+    stops.push({ c, lab, sub, li, v: copyOf(lose), x });
+  }));
+  const tail = dotted(svg, `M${JOIN + 50} ${Y}H930`, { o: .6 });
+  const agreed = cluster(svg, JOIN + 30, Y);
+  const aLab = text(svg, "name", JOIN + 30, Y + 44, "Agreed definition");
+  const aSub = text(svg, "body", JOIN + 30, Y + 64, "One owner");
+  const balls = lanes.map(() => ball(svg)), lb = ball(svg, 5);
+  // the lane's x at its share t: found once, so a stop knows when its ball passes
+  const xs = lanes.map((ln) => Array.from({ length: 101 }, (_, i) => ln.path.at(i / 100)[0]));
+  const shareAt = (li, x) => xs[li].findIndex((v) => v >= x) / 100;
+  return (p) => {
+    src.draw(FULL, sm(0, .05, p));
+    const t0 = sm(.04, .14, p);
+    lead.draw(t0);
+    put(lb, [lerp(140, SPL, t0), Y], p > .04 && p < .15 ? 1 : 0);
+    const tl = cl((p - .14) / .56);
+    lanes.forEach((ln, i) => { ln.path.draw(ease(tl)); put(balls[i], ln.path.at(ease(tl)), p > .14 && p < .72 ? 1 : 0); });
+    stops.forEach((s) => {
+      const at = .14 + shareAt(s.li, s.x) * .56;
+      const seen = sm(at - .02, at + .02, p), lost = sm(at + .03, at + .1, p);
+      s.c.draw(mix(FULL, s.v, lost), seen);
+      if (s.lab) fade(s.lab, seen);
+      if (s.sub) fade(s.sub, seen);
+    });
+    const a = sm(.72, .82, p);
+    agreed.draw(FULL, a, a > 0 ? PINK : TEAL);
+    fade(aLab, a); fade(aSub, sm(.8, .88, p));
+    tail.draw(sm(.84, .96, p));
+  };
+}
+
+/* ───── 2 · A copy of a copy: one chain, a little lost at each step, then traced back ───── */
+function o2(svg) {
+  svg.setAttribute("viewBox", "50 40 900 200");
+  const Y = 160, XS = [110, 290, 470, 650, 830];
+  const NAMES = ["Source", "Extract", "Spreadsheet", "Team dashboard", "Monthly report"];
+  const STEPS = ["Copied", "Re-keyed", "Adjusted", "Reconciled by hand"];
+  const LOSS = [[], [[4, .5]], [[4, 0], [9, .5]], [[4, 0], [9, 0], [2, .5]], [[4, 0], [9, 0], [2, 0], [7, .5], [11, 0]]].map(copyOf);
+  const links = XS.slice(1).map((x, i) => dotted(svg, `M${XS[i] + 30} ${Y}H${x - 30}`, { o: .5 }));
+  const stepT = STEPS.map((s, i) => { const t = text(svg, "body", (XS[i] + XS[i + 1]) / 2, Y - 14, s); return t; });
+  const back = dotted(svg, `M${XS[4]} ${Y - 30}C${XS[4]} 70 ${XS[4] - 60} 64 ${XS[2]} 64S${XS[0]} 70 ${XS[0]} ${Y - 30}`, { o: .9 });
+  back.p.style.stroke = PINK;
+  const backLab = text(svg, "axis", XS[2], 52, "Traced back to the source"); backLab.classList.add("pinktxt");
+  const cs = XS.map((x) => cluster(svg, x, Y));
+  const labs = XS.map((x, i) => text(svg, "name", x, Y + 44, NAMES[i]));
+  const owner = text(svg, "body", XS[0], Y + 64, "One owner");
+  const b = ball(svg);
+  return (p) => {
+    const run = cl((p - .04) / .56);                      // the dot runs the chain
+    const pos = run * 4;                                   // 0..4, which link it's on
+    XS.forEach((x, i) => {
+      const reached = sm(i - .15, i + .05, pos + (i === 0 ? 1 : 0));
+      const lost = sm(i + .05, i + .35, pos);
+      const fixed = sm(.82 + i * .03, .9 + i * .03, p);   // fills back in, left to right, once an owner is named
+      cs[i].draw(mix(mix(FULL, LOSS[i], i ? lost : 0), FULL, fixed), i ? reached : sm(0, .04, p), fixed > .5 || (i === 0 && p > .8) ? PINK : TEAL);
+      fade(labs[i], i ? reached : sm(0, .04, p));
+    });
+    links.forEach((l, i) => { l.draw(cl(pos - i)); fade(stepT[i], sm(i + .1, i + .5, pos) * (1 - sm(.82, .9, p) * .6)); });
+    put(b, [lerp(XS[0] + 30, XS[4] - 30, run), Y], p > .04 && p < .6 ? 1 : 0);
+    const bt = sm(.62, .8, p);
+    back.draw(bt); fade(backLab, sm(.66, .74, p));
+    if (p >= .6 && p < .8) put(b, back.at(bt), 1);
+    fade(owner, sm(.8, .86, p));
+  };
+}
+
+/* ───── 3 · Drift and reconcile: copies drift off the source line, are pulled back by hand, then held by an agreed definition ───── */
+function o3(svg) {
+  svg.setAttribute("viewBox", "50 40 900 260");
+  const Y = 170, X0 = 150, X1 = 900, REC = [380, 590], AG = 760;
+  const src = cluster(svg, 100, Y);
+  text(svg, "name", 100, Y + 44, "Source");
+  const ref = dotted(svg, `M${X0 - 10} ${Y}H${X1}`, { o: .35 });
+  const NAMES = ["Spreadsheet", "Team dashboard", "Monthly report"];
+  const AMP = [-62, 30, 74], PH = [0, 1.7, .6];
+  // a copy's offset from the source line at x: drifts away, snaps back at each reconcile, gone after the agreement
+  const off = (i, x) => {
+    if (x >= AG) return AMP[i] * (1 - sm(AG, AG + 40, x)) * (x < AG + 40 ? .25 : 0);
+    const seg = x < REC[0] ? [X0, REC[0]] : x < REC[1] ? [REC[0], REC[1]] : [REC[1], AG];
+    const k = (x - seg[0]) / (seg[1] - seg[0]);
+    const wob = 1 + .12 * Math.sin(x / 23 + PH[i]);
+    return AMP[i] * sm(0, 1, k) * wob * (x < REC[0] ? .7 : x < REC[1] ? .85 : 1) * (1 - .72 * sm(.9, 1, k));
+  };
+  const trails = NAMES.map(() => el("path", { class: "ln", "stroke-opacity": .5, "stroke-dasharray": "1 4" }, svg));
+  const heads = NAMES.map(() => el("circle", { r: 4, fill: TEAL }, svg));
+  const names = NAMES.map((n) => text(svg, "name", 0, 0, n, "start"));
+  const recs = REC.map((x) => ({ l: el("line", { x1: x, x2: x, y1: Y - 84, y2: Y + 84, stroke: PINK, "stroke-width": .5, "stroke-dasharray": "1 3", opacity: 0 }, svg), t: text(svg, "axis", x, Y + 104, "Reconciled by hand") }));
+  recs.forEach((r) => r.t.classList.add("pinktxt"));
+  const agLine = el("line", { x1: AG, x2: AG, y1: Y - 84, y2: Y + 84, stroke: TEAL, "stroke-width": .5, opacity: 0 }, svg);
+  const agT = text(svg, "name", AG + 14, Y - 70, "Agreed definition", "start");
+  const agS = text(svg, "body", AG + 14, Y - 50, "One owner", "start");
+  const one = el("circle", { r: 5, fill: PINK, opacity: 0 }, svg);
+  return (p) => {
+    src.draw(FULL, sm(0, .05, p));
+    const run = cl((p - .05) / .85), xh = lerp(X0, X1, run);
+    ref.draw(sm(.0, .9, p));
+    // names sit beside their heads, pushed apart so they never overlap
+    const hys = NAMES.map((_, i) => Y + off(i, xh));
+    const order = [0, 1, 2].sort((a, b) => hys[a] - hys[b]), ly = [];
+    order.forEach((i, k) => { ly[i] = k ? Math.max(hys[i], ly[order[k - 1]] + 18) : hys[i]; });
+    const shift = (ly[order[2]] - hys[order[2]]) / 2; order.forEach((i) => (ly[i] -= shift));
+    trails.forEach((tr, i) => {
+      const pts = []; for (let x = X0; x <= xh; x += 4) pts.push(`${f1(x)} ${f1(Y + off(i, x))}`);
+      set(tr, { d: pts.length > 1 ? "M" + pts.join("L") : "" });
+      const hy = hys[i], merged = xh > AG + 40;
+      set(heads[i], { cx: f1(xh), cy: f1(hy), opacity: f3(p > .05 && !merged ? 1 : 0) });
+      set(names[i], { x: f1(xh + 10), y: f1(ly[i] + 5) });
+      fade(names[i], (p > .05 ? 1 : 0) * (1 - sm(AG - 40, AG, xh)));
+    });
+    recs.forEach((r, i) => { const near = sm(REC[i] - 30, REC[i], xh); fade(r.l, near * .9); fade(r.t, near); });
+    const a = sm(AG - 10, AG + 30, xh);
+    fade(agLine, a * .4); fade(agT, a); fade(agS, sm(AG + 20, AG + 60, xh));
+    set(one, { cx: f1(xh), cy: Y, opacity: f3(xh > AG + 40 ? 1 : 0) });
+  };
+}
+
+/* ───── 4 · Nothing retired: tool after tool takes a copy; then all but one are retired ───── */
+function o4(svg) {
+  svg.setAttribute("viewBox", "50 34 900 284");
+  const Y = 175;
+  const src = cluster(svg, 110, Y);
+  text(svg, "name", 110, Y + 44, "Source");
+  const TOOLS = [
+    ["Legacy system", 470, 50, [[3, .5]]], ["Spreadsheet", 470, 100, [[6, 0]]], ["Team dashboard", 470, 150, [[1, .5], [10, 0]]],
+    ["Monthly report", 470, 200, [[8, 0], [2, .5]]], ["New dashboard", 470, 250, [[11, .5]]], ["Another dashboard", 470, 300, [[0, 0], [5, .5]]],
+  ];
+  const tools = TOOLS.map(([n, x, y, lose], i) => {
+    const path = dotted(svg, `M140 ${Y}C260 ${Y} 300 ${y} ${x - 40} ${y}`, { o: .4 });
+    const c = cluster(svg, x, y);
+    const lab = text(svg, "name", x + 30, y + 5, n, "start");
+    const ret = text(svg, "axis", x + 30, y + 24, "Still running", "start"); ret.setAttribute("fill-opacity", .5);
+    return { path, c, lab, ret, v: copyOf(lose), at: .06 + i * .1 };
+  });
+  const keep = dotted(svg, `M640 ${Y}H790`, { o: .7 });
+  keep.p.style.stroke = PINK;
+  const agreed = cluster(svg, 840, Y);
+  const aLab = text(svg, "name", 840, Y + 44, "One agreed view");
+  const aSub = text(svg, "body", 840, Y + 64, "One owner");
+  const b = ball(svg);
+  return (p) => {
+    src.draw(FULL, sm(0, .04, p));
+    tools.forEach((t, i) => {
+      const go = sm(t.at, t.at + .08, p), retire = sm(.7 + i * .015, .78 + i * .015, p);
+      t.path.draw(go);
+      fade(t.path.p, 1 - retire * .85);
+      t.c.draw(t.v, sm(t.at + .06, t.at + .09, p) * (1 - retire * .8));
+      fade(t.lab, sm(t.at + .06, t.at + .09, p) * (1 - retire * .6));
+      t.ret.textContent = retire > .5 ? "Retired" : "Still running";
+      fade(t.ret, sm(t.at + .08, t.at + .1, p));
+      if (p >= t.at && p < t.at + .09) put(b, t.path.at(go), 1);
+    });
+    if (p >= .66) b.setAttribute("opacity", 0);
+    const k = sm(.8, .92, p);
+    keep.draw(k);
+    if (p >= .8 && p < .93) put(b, keep.at(k), 1);
+    const a = sm(.9, .96, p);
+    agreed.draw(FULL, a, PINK); fade(aLab, a); fade(aSub, sm(.93, .98, p));
+  };
+}
+
+/* ───── 5 · One screen: side by side, the gaps only become easier to see; fixed at the source, they close ───── */
+function o5(svg) {
+  svg.setAttribute("viewBox", "50 36 900 274");
+  const Y = 170;
+  const src = cluster(svg, 110, Y);
+  const sLab = text(svg, "name", 110, Y + 44, "Source");
+  const sOwn = text(svg, "body", 110, Y + 64, "One owner");
+  const C = [["Spreadsheet", 88, [[2, 0], [9, .5]]], ["Team dashboard", 170, [[5, .5], [11, 0]]], ["Monthly report", 252, [[7, .5], [0, 0]]]];
+  const paths = C.map(([, y]) => dotted(svg, `M140 ${Y}C230 ${Y} 240 ${y} 330 ${y}`, { o: .45 }));
+  const copies = C.map(([n, y, lose]) => ({ c: cluster(svg, 360, y), lab: text(svg, "name", 360, y - 24, n), v: copyOf(lose), y }));
+  // the screen: one frame, the three copies side by side inside it
+  const SX = 580, SW = 300, SY = 100, SH = 150;
+  const frame = el("rect", { x: SX, y: SY, width: SW, height: SH, rx: 6, fill: "#fff", stroke: TEAL, "stroke-width": 1, "stroke-opacity": .5, opacity: 0 }, svg);
+  const bar = el("line", { x1: SX, x2: SX + SW, y1: SY + 22, y2: SY + 22, stroke: TEAL, "stroke-width": .5, "stroke-opacity": .3, opacity: 0 }, svg);
+  const sTitle = text(svg, "axis", SX + 14, SY + 15, "One screen", "start");
+  const into = dotted(svg, `M400 ${Y}H${SX - 14}`, { o: .45 });
+  const slots = [SX + 60, SX + 150, SX + 240];
+  const onScreen = C.map((_, i) => ({ c: cluster(svg, slots[i], SY + 82), t: text(svg, "body", slots[i], SY + 126, ["Spreadsheet", "Dashboard", "Report"][i]) }));
+  const note = text(svg, "body", SX + SW / 2, SY - 18, "The gaps are easier to see. Nothing is fixed.");
+  const back = dotted(svg, `M${SX + SW / 2} ${SY + SH + 8}V292H124Q110 292 110 278V${Y + 80}`, { o: .9 });
+  back.p.style.stroke = PINK;
+  const b = ball(svg);
+  return (p) => {
+    const fixed = sm(.84, .94, p);
+    src.draw(FULL, sm(0, .04, p), p > .8 ? PINK : TEAL);
+    fade(sLab, sm(0, .04, p)); fade(sOwn, sm(.8, .86, p));
+    copies.forEach((k, i) => {
+      const at = .04 + i * .05, go = sm(at, at + .1, p);
+      paths[i].draw(go);
+      const seen = sm(at + .08, at + .12, p);
+      k.c.draw(mix(mix(FULL, k.v, sm(at + .12, at + .18, p)), FULL, fixed), seen * (1 - sm(.36, .44, p) * .6));
+      fade(k.lab, seen * (1 - sm(.36, .44, p) * .6));
+    });
+    if (p > .04 && p < .2) put(b, paths[1].at(sm(.09, .19, p)), 1);
+    const sc = sm(.3, .42, p);
+    into.draw(sc);
+    fade(frame, sc); fade(bar, sc); fade(sTitle, sc);
+    if (p >= .3 && p < .44) put(b, into.at(sc), 1);
+    onScreen.forEach((s, i) => {
+      const o = sm(.4 + i * .03, .46 + i * .03, p), gaps = sm(.52, .6, p) * (1 - fixed);
+      s.c.draw(mix(C.map((c) => copyOf(c[2]))[i], FULL, fixed), o, fixed > .5 ? PINK : TEAL, gapsOf(copyOf(C[i][2])).map((g) => g * gaps));
+      fade(s.t, o);
+    });
+    note.textContent = p < .84 ? "The gaps are easier to see. Nothing is fixed." : "Fixed where the data is born, every copy matches.";
+    fade(note, sm(.56, .62, p));
+    const bt = sm(.66, .82, p);
+    back.draw(bt);
+    if (p >= .66 && p < .84) put(b, back.at(bt), 1);
+    if ((p >= .2 && p < .3) || p >= .84) b.setAttribute("opacity", 0);
+  };
+}
+
+/* ───── Scroll driver ───── */
+const builders = { o1, o2, o3, o4, o5 };
+const runs = [...document.querySelectorAll(".opt")].map((sec) => {
+  const svg = sec.querySelector("svg[data-v]");
+  const draw = builders[svg.dataset.v](svg); fit(svg);
+  return { track: sec.querySelector(".track"), bar: sec.querySelector(".prog i"), draw, p: REDUCE ? 1 : 0 };
+});
+if (FORCE !== null) { runs.forEach((r) => { r.draw(+FORCE); r.bar.style.transform = `scaleX(${+FORCE})`; }); return; }
+const target = (r) => { const b = r.track.getBoundingClientRect(); return cl(-b.top / (b.height - innerHeight)); };
+const frame = () => {
+  runs.forEach((r) => {
+    const b = r.track.getBoundingClientRect();
+    if (b.bottom < -50 || b.top > innerHeight + 50) return;
+    if (!REDUCE) r.p += (target(r) - r.p) * .14;
+    r.bar.style.transform = `scaleX(${r.p.toFixed(4)})`;
+    r.draw(r.p);
+  });
+  requestAnimationFrame(frame);
+};
+runs.forEach((r) => r.draw(r.p));
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

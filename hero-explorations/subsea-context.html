@@ -1,0 +1,570 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Context view: underwater pipelines and wells</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;500&family=Syne:wght@400;500;600&family=Inter:wght@300;400;500&family=Poppins:wght@400;500;600&display=swap">
+<style>
+/* The playbook's tokens, copied here so the app's class names can't collide with playbook.css */
+:root { --pink: #ff0074; --bg-canvas: #f6f6f6; --text-primary: #07171b; --text-body: #3c4a4e; --hairline: rgba(7, 23, 27, .1); --f-label: "IBM Plex Sans", "Inter", ui-sans-serif, system-ui, sans-serif; --f-display: "Syne", "Inter", ui-sans-serif, system-ui, sans-serif; }
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; background: var(--bg-canvas); color: var(--text-primary); font-family: "Inter", ui-sans-serif, system-ui, sans-serif; }
+h1, p { margin: 0; }
+button { cursor: pointer; }
+.wrap { max-width: 1240px; margin: 0 auto; padding: 56px max(16px, 3vw) 96px; }
+.eyebrow-x { font: 500 12px/1 var(--f-label); letter-spacing: .16em; text-transform: uppercase; color: var(--pink); }
+.top h1 { margin-top: 20px; font-family: var(--f-display); font-size: clamp(34px, 4.4vw, 56px); font-weight: 400; line-height: 1.08; }
+.top p { margin-top: 18px; color: var(--text-body); font-size: 18px; line-height: 1.5; max-width: 66ch; }
+
+/* ── The player ── */
+.vp { position: relative; margin-top: 40px; width: 100%; aspect-ratio: 1728 / 1117; overflow: hidden; border-radius: 14px; background: #111519; box-shadow: 0 30px 80px -40px rgba(0, 42, 50, .55); }
+.ctl { display: flex; align-items: center; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
+.ctl button { font: 500 12px/1 var(--f-label); letter-spacing: .12em; text-transform: uppercase; color: var(--text-primary); border: 1px solid var(--hairline); background: #fff; padding: 11px 14px; border-radius: 999px; }
+.ctl button.is-on { background: #002a32; color: #fff; border-color: #002a32; }
+.ctl .play { min-width: 84px; }
+.prog { flex: 1 1 120px; height: 2px; background: var(--hairline); border-radius: 2px; overflow: hidden; min-width: 80px; }
+.prog i { display: block; height: 100%; width: 100%; background: var(--pink); transform-origin: 0 50%; transform: scaleX(0); }
+
+/* ── The stage: the Figma frame, 1728 × 1117, scaled to fit ── */
+.stage { position: absolute; left: 0; top: 0; width: 1728px; height: 1117px; transform-origin: 0 0; overflow: hidden; background: #111519; color: #fff; font-family: "Poppins", ui-sans-serif, system-ui, sans-serif; font-size: 12px; line-height: 1; -webkit-font-smoothing: antialiased; user-select: none; }
+.stage * { box-sizing: border-box; margin: 0; }
+.stage img, .stage svg { display: block; max-width: none; }
+.stage .a { position: absolute; }
+.stage .c { position: absolute; transform: translate(-50%, -50%); white-space: nowrap; }
+.layer { position: absolute; inset: 0; }
+.g { color: #8d9097; }
+
+/* Left rail */
+.rail { position: absolute; left: 0; top: 0; width: 156px; height: 1117px; background: #1c1d22; font-size: 10px; color: #d9dbdf; z-index: 30; }
+.rail .logo { position: absolute; left: 36px; top: 19px; width: 84px; height: 50px; background: #2b2c32; }
+.rail p { position: absolute; left: 34px; white-space: nowrap; }
+.rail hr { position: absolute; left: 34px; width: 88px; border: 0; border-top: 1px solid #34363c; }
+.rail .card { position: absolute; left: 28px; top: 286px; width: 100px; height: 189px; border: 1px solid #2e3036; border-radius: 4px; }
+.rail .card p { left: 12px; }
+.rail .up { color: #52c41a; } .rail .dn { color: #ff4d4f; }
+.rail .nav { left: 19px; font-size: 13px; color: #fff; }
+.rail .act { position: absolute; left: 0; top: 706px; width: 156px; height: 33px; background: #36373d; border-right: 6px solid #52c41a; }
+.rail .ico { display: inline-block; width: 10px; height: 10px; border: 1.2px solid #9b9ea5; border-radius: 50%; margin-right: 8px; vertical-align: -1px; }
+
+/* Topside */
+#top { z-index: 20; }
+#topImg { position: absolute; left: 156px; top: 0; width: 1572px; height: 1117px; background: #0a2233; transform-origin: 902px 880px; }
+#topImg img { width: 1572px; height: 982px; }
+#topImg::after { content: ""; position: absolute; left: 0; top: 796px; width: 100%; height: 321px; background: linear-gradient(rgba(10, 34, 51, 0), #0a2233 62%); }
+#topDepth { position: absolute; left: 156px; top: 0; width: 1572px; height: 1117px; background: linear-gradient(#0a2233, #111519 55%); }
+.ttl { left: 1220px; top: 88px; font-size: 40px; font-weight: 600; line-height: 46px; color: #f3f4f5; }
+.status { left: 1572px; top: 95px; width: 92px; height: 32px; border-radius: 16px; background: #16181c; border: 1px solid #2b2d33; }
+.status i { position: absolute; top: 5px; width: 20px; height: 20px; border-radius: 50%; }
+.status .ok { left: 5px; border: 1.5px solid #52c41a; }
+.status .ok::after { content: ""; position: absolute; left: 6px; top: 3.5px; width: 5px; height: 8px; border: solid #52c41a; border-width: 0 1.5px 1.5px 0; transform: rotate(40deg); }
+.status .more { left: 55px; width: 30px; top: 4px; height: 22px; border-radius: 11px; background: #0d0e11; }
+.status .more::before, .status .more::after { content: ""; position: absolute; left: 10px; top: 10px; width: 10px; height: 1.5px; background: #ffe01b; }
+.status .more::after { transform: rotate(90deg); }
+.tabbar { left: 215px; top: 980px; width: 1454px; height: 66px; border-radius: 33px; background: #15171c; border: 1px solid #2c2e35; font-size: 16px; }
+.tabbar b { position: absolute; left: 12px; top: 12px; width: 183px; height: 40px; border-radius: 20px; background: #52c41a; font-weight: 500; display: grid; place-items: center; }
+.tabbar span { position: absolute; top: 33px; transform: translate(-50%, -50%); }
+
+/* Markers: label + plus trigger */
+.mk { position: absolute; width: 0; height: 0; }
+.mk .lb { position: absolute; left: 0; top: -60px; transform: translateX(-50%); height: 32px; padding: 0 24px; display: grid; place-items: center; white-space: nowrap; background: #15171b; border: 1px solid #8d9097; border-radius: 2px; font-size: 12px; }
+.plus { position: absolute; left: -20px; top: -20px; width: 40px; height: 40px; border-radius: 50%; border: 1.5px solid #ffe01b; }
+.plus::before { content: ""; position: absolute; inset: 3.5px; border-radius: 50%; background: var(--f, #fdf8cf); }
+.plus i, .plus u { position: absolute; left: 14px; top: 18.5px; width: 10px; height: 1.6px; background: #1a1b1f; }
+.plus u { transform: rotate(90deg); }
+.pulse { position: absolute; left: -20px; top: -20px; width: 40px; height: 40px; border-radius: 50%; border: 1.5px solid #ffe01b; opacity: 0; }
+.hot .plus { left: -30px; top: -30px; width: 60px; height: 60px; }
+.hot .plus::before { inset: 6px; }
+.hot .plus i, .hot .plus u { left: 21px; top: 28px; width: 16px; height: 2px; }
+.hot .pulse { left: -30px; top: -30px; width: 60px; height: 60px; }
+.hot .lb { left: 40px; top: -20px; transform: none; height: 40px; border: 0; border-radius: 6px; background: #1c1d22; font-size: 16px; font-weight: 500; }
+.slb { position: absolute; height: 32px; width: 89px; display: grid; place-items: center; background: #15171b; border: 1px solid #8d9097; border-radius: 2px; font-size: 12px; }
+.slb.on { border-color: #52c41a; }
+
+/* Subsea + seabed */
+#sub { transform-origin: 366px 1045px; }
+#topo { position: absolute; left: 0; top: 326px; width: 1611px; height: 556px; transform-origin: 800px 300px; }
+#bedWrap { position: absolute; left: 156px; top: 80px; width: 1572px; height: 1037px; transform-origin: 434px 490px; }
+#bedWrap img { position: absolute; left: 0; top: 0; width: 1572px; height: 1037px; }
+#bedGrad { position: absolute; left: 156px; top: 0; width: 1572px; height: 559px; background: linear-gradient(#111519 6%, rgba(17, 21, 25, .82) 30%, rgba(17, 21, 25, 0)); }
+
+/* HUD */
+.back { left: 220px; top: 40px; width: 137px; height: 32px; border-radius: 16px; background: #1c1d22; font-weight: 600; display: flex; align-items: center; gap: 10px; padding-left: 15px; }
+.back i { width: 7px; height: 7px; border: solid #ffe01b; border-width: 0 0 1.6px 1.6px; transform: rotate(45deg); }
+.eyebrow { left: 942px; top: 52px; font-size: 16px; color: #8d9097; }
+.h { left: 942px; top: 91px; font-size: 32px; font-weight: 500; }
+.tabs { left: 655px; top: 133px; width: 574px; height: 34px; border-radius: 17px; background: #14161a; border: 1px solid #2c2e35; }
+.tabs b { position: absolute; left: 0; top: 4px; width: 100px; height: 24px; border-radius: 12px; background: #52c41a; }
+.tabs span { position: absolute; top: 16px; transform: translate(-50%, -50%); white-space: nowrap; color: #c6c9ce; }
+.tabs span.on { color: #fff; font-weight: 600; }
+.sn span { position: absolute; top: 201px; transform: translate(-50%, -50%); white-space: nowrap; font-weight: 500; color: #c6c9ce; }
+.sn span.on { color: #fff; font-weight: 600; }
+.chip { position: absolute; top: 190px; height: 23px; width: 72px; border-radius: 12px; border: 1px solid #52c41a; background: rgba(82, 196, 26, .14); }
+
+/* Right panels */
+.panel { position: absolute; left: 1296px; width: 400px; overflow: hidden; background: #131519; border: 1px solid #23252a; border-radius: 8px; z-index: 10; }
+.panel .hd { position: absolute; left: 24px; top: 27px; }
+.panel .hd .g { font-size: 16px; }
+.panel .hd h4 { margin-top: 33px; font-size: 32px; font-weight: 500; line-height: 36px; }
+.panel .hd small { display: block; margin-top: 10px; font-size: 12px; color: #8d9097; }
+.rows { position: absolute; left: 15px; top: 173px; width: 368px; display: flex; flex-direction: column; gap: 12px; }
+.row { position: relative; height: 56px; flex: none; border-radius: 4px; background: #25262b; border: 1px solid transparent; overflow: hidden; }
+.row .nm { position: absolute; left: 23px; top: 19px; font-size: 16px; display: flex; align-items: center; gap: 9px; }
+.ring { width: 16px; height: 16px; border-radius: 50%; border: 3px solid; }
+.chev { position: absolute; right: 23px; top: 15px; width: 40px; height: 24px; border-radius: 12px; background: #111316; border: 1px solid #33353b; }
+.chev i { position: absolute; left: 15px; top: 5px; width: 7px; height: 7px; border: solid #ffe01b; border-width: 0 1.5px 1.5px 0; transform: rotate(45deg); transform-origin: 70% 70%; }
+.dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 9px; }
+.dv { position: absolute; border-top: 1px dotted #4a4c53; height: 0; }
+.dvv { position: absolute; border-left: 1px dotted #4a4c53; width: 0; }
+.big { font-size: 24px; letter-spacing: .01em; color: #eceded; }
+.big small, .mid small { font-size: .55em; color: #8d9097; margin-left: 5px; letter-spacing: 0; }
+.seg { position: absolute; border: 1px solid #33353b; border-radius: 6px; }
+.seg span { position: absolute; top: 50%; transform: translate(-50%, -50%); font-weight: 500; color: #c6c9ce; }
+.seg span.on { color: #fff; font-weight: 600; }
+.seg b { position: absolute; top: 7px; height: 24px; border-radius: 12px; border: 1px solid #52c41a; background: rgba(82, 196, 26, .14); }
+.ax { position: absolute; font-size: 11px; color: #c6c9ce; text-align: right; width: 44px; transform: translateY(-50%); }
+.dt { position: absolute; font-size: 11px; color: #c6c9ce; transform: translate(-50%, -50%); }
+.lg { position: absolute; height: 24px; padding: 0 11px; border: 1px solid #5a5d64; border-radius: 12px; display: flex; align-items: center; white-space: nowrap; }
+.lg .dot { margin-right: 8px; }
+
+#drawer { left: 1304px; top: 32px; height: 1053px; background: rgba(22, 23, 27, .9); border: 0; border-radius: 6px; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+#drawer .head { position: absolute; left: 0; top: 0; width: 400px; height: 152px; background: #131519; }
+#drawer .tb { position: absolute; left: 0; top: 152px; width: 400px; height: 46px; background: #25262b; font-size: 14px; }
+#drawer .tb span { position: absolute; top: 23px; transform: translate(-50%, -50%); color: #e3e4e6; }
+#drawer .tb span.on { color: #52c41a; font-weight: 600; }
+#drawer .tb i { position: absolute; left: 24px; bottom: 0; width: 118px; height: 2px; background: #52c41a; transform-origin: 0 50%; }
+.bar { position: absolute; left: 40px; width: 219px; height: 6px; border-radius: 3px; background: #45474d; overflow: hidden; }
+.bar i { display: block; height: 100%; width: 100px; border-radius: 3px; transform-origin: 0 50%; }
+.mid { font-size: 20px; letter-spacing: .01em; color: #eceded; }
+.arr { display: inline-block; width: 9px; height: 9px; border: solid #52c41a; border-width: 1.8px 0 0 1.8px; transform: rotate(45deg); margin-right: 9px; position: relative; top: 3px; }
+.arr::after { content: ""; position: absolute; left: -1px; top: -1px; width: 15px; height: 1.8px; background: #52c41a; transform-origin: 0 50%; transform: rotate(45deg); }
+.cta { position: absolute; left: 110px; top: 996px; width: 180px; height: 40px; border: 1px solid #ffe01b; border-radius: 3px; background: #131519; font-size: 14px; font-weight: 600; display: grid; place-items: center; }
+
+#cursor { position: absolute; left: 0; top: 0; z-index: 50; width: 28px; height: 28px; transform-origin: 3px 2px; filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .5)); }
+#ripple { position: absolute; left: -24px; top: -24px; width: 48px; height: 48px; border-radius: 50%; border: 2px solid #fff; z-index: 49; opacity: 0; }
+/* Embed mode (?embed): just the player, filling the frame, driven by the page that holds it */
+.embed body { background: #111519; overflow: hidden; }
+.embed .top, .embed .ctl { display: none; }
+.embed .wrap { max-width: none; padding: 0; }
+.embed .vp { margin: 0; border-radius: 0; box-shadow: none; }
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header class="top">
+    <span class="eyebrow-x">Step 5 · Context views</span>
+    <h1>Underwater pipelines and the wells they tap into</h1>
+    <p>A ten-second replay of the subsea context view at the oil and gas company: from the platform above the water, down to its flow lines, into one line’s sensors, then out to a drill center and the manifold on the seabed.</p>
+  </header>
+
+  <div class="vp" id="vp" role="img" aria-label="Animated replay of the subsea context view: the platform, its six flow lines and four drill centers, the sensors on flow line 1, Drill Center 01 on the seabed, and the manifold's flow rates.">
+    <div class="stage" id="stage" aria-hidden="true">
+
+      <!-- Scene 2 + 3: subsea map -->
+      <div class="layer" id="sub">
+        <img id="topo" src="subsea/topo.svg" alt="">
+        <svg class="a" id="lines" width="1728" height="1117" viewBox="0 0 1728 1117" style="left:0;top:0">
+          <defs>
+            <mask id="mDraw" maskUnits="userSpaceOnUse" x="0" y="0" width="1728" height="1117">
+              <rect id="mRig" x="1090" y="215" width="110" height="135" fill="#fff"/>
+              <g fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round">
+                <path id="mTrunk" pathLength="1" stroke-dasharray="1" stroke-width="150" d="M1146 345C1146 400 1130 428 1088 436L925 505 855 573 645 773 366 1050"/>
+                <path id="mLoop" pathLength="1" stroke-dasharray="1" stroke-width="60" d="M1146 345L1150 432 1188 470 1150 482 1030 482"/>
+                <path id="mBranch" pathLength="1" stroke-dasharray="1" stroke-width="70" d="M1088 436L376 586"/>
+              </g>
+            </mask>
+            <mask id="mBase" maskUnits="userSpaceOnUse" x="0" y="0" width="1728" height="1117">
+              <rect width="1728" height="1117" fill="#fff"/>
+              <g id="mBaseCuts" stroke="#000" stroke-width="8" fill="#000"></g>
+            </mask>
+            <mask id="mSens" maskUnits="userSpaceOnUse" x="0" y="0" width="1728" height="1117">
+              <g id="mSensShow" stroke="#fff" stroke-width="8" fill="#fff"></g>
+            </mask>
+            <filter id="soft" x="-200%" y="-200%" width="500%" height="500%"><feGaussianBlur stdDeviation="5"/></filter>
+          </defs>
+          <image id="imgAll" href="subsea/flowlines.png" x="0" y="163" width="1711" height="954" mask="url(#mDraw)"/>
+          <g id="imgOne" opacity="0">
+            <image href="subsea/flowline-1.png" x="0" y="164" width="1708" height="953" mask="url(#mBase)"/>
+            <image href="subsea/flowline-1.png" x="0" y="164" width="1708" height="953" mask="url(#mSens)"/>
+            <path id="flowPath" d="M386 582L1086 428C1128 419 1146 392 1147 338" fill="none" stroke="none"/>
+            <circle id="flowGlow" r="9" fill="#ff7fb0" filter="url(#soft)" opacity="0"/>
+            <circle id="flowDot" r="3" fill="#fff" opacity="0"/>
+          </g>
+        </svg>
+        <div id="dcMarks"></div>
+        <div id="sensLabels"></div>
+      </div>
+
+      <!-- Scene 4 + 5: seabed -->
+      <div class="layer" id="bed">
+        <div id="bedWrap">
+          <img src="subsea/seabed.jpg" alt="">
+          <img id="lit" src="subsea/seabed-lit.jpg" alt="">
+        </div>
+        <div id="bedGrad"></div>
+        <div id="bedMarks"></div>
+      </div>
+
+      <!-- HUD -->
+      <div class="layer" id="hud">
+        <div class="a back" id="hBack"><i></i>Back to Topside</div>
+        <div class="c eyebrow" id="hEye">Platform 1</div>
+        <div class="c h" id="hA">Subsea Infrastructure</div>
+        <div class="c h" id="hB">Drill Center 01</div>
+        <div class="a tabs" id="hTabs"><b id="tabPill"></b></div>
+        <div class="sn" id="snA"><i class="chip" id="chipA"></i></div>
+        <div class="sn" id="snB"><i class="chip" id="chipB" style="left:906px"></i></div>
+      </div>
+
+      <!-- Flow Operations panel -->
+      <div class="panel" id="flow">
+        <div class="hd"><span class="g">Platform 1</span><h4>Flow Operations</h4><small>Updated 06/03/2024 @ 06:30 pm</small></div>
+        <div class="rows" id="rows"></div>
+      </div>
+
+      <!-- Manifold drawer -->
+      <div class="panel" id="drawer">
+        <div class="head">
+          <span class="a g" style="left:24px;top:28px;font-size:16px">Drill Center 01</span>
+          <span class="a" style="left:24px;top:74px;font-size:24px;font-weight:500;line-height:28px">Manifold</span>
+          <span class="a g" style="left:24px;top:112px">Updated 06/03/2024 @ 06:30 pm</span>
+        </div>
+        <div class="tb"><span class="on" style="left:82px">Flow Rates</span><span style="left:199px">Reliability</span><span style="left:317px">Integrity</span><i id="tbLine"></i></div>
+        <div id="dBody"></div>
+        <div class="cta">Component Overview</div>
+      </div>
+
+      <!-- Scene 1: topside (also covers everything for the loop's last half second) -->
+      <div class="layer" id="top">
+        <div id="topImg"><img src="subsea/topside.jpg" alt=""></div>
+        <div id="topDepth"></div>
+        <div class="layer" id="topUi">
+          <div class="a ttl">Platform 1</div>
+          <div class="a status"><i class="ok"></i><i class="more"></i></div>
+          <div class="a tabbar"><b>Platform 1</b><span style="left:353px">Safety</span><span style="left:602px">Quality</span><span style="left:851px">Delivery</span><span style="left:1100px">Cost</span><span style="left:1349px">People</span></div>
+          <div class="mk hot" id="hot" style="left:1058px;top:782px"><span class="pulse"></span><span class="plus"><i></i><u></u></span><span class="lb">Subsea Infrastructure</span></div>
+        </div>
+      </div>
+
+      <!-- App rail -->
+      <div class="rail">
+        <div class="logo"></div>
+        <p style="top:105px">Mon 03 Jun 18:53</p><p style="top:128px">GMT-05:00</p><p style="top:152px">America/Chicago</p>
+        <hr style="top:172px"><p style="top:182px"><b>WTI</b></p><p style="top:199px">▤ &nbsp;<b>$135</b> &nbsp;&nbsp;<span class="up">↑</span> <span class="g">.05%</span></p>
+        <hr style="top:218px"><p style="top:229px"><b>Brent</b></p><p style="top:246px">▤ &nbsp;<b>$135</b> &nbsp;&nbsp;<span class="up">↑</span> <span class="g">.05%</span></p>
+        <div class="card"><p style="top:15px"><b>$/BOE</b></p><p class="g" style="top:33px">Past 7 days</p><p class="g" style="top:59px">Platform 1</p><p class="up" style="top:76px">$9.50</p><p class="g" style="top:103px">Platform 2</p><p class="dn" style="top:120px">$10.05</p><p class="g" style="top:147px">Platform 3</p><p class="dn" style="top:164px">$10.00</p></div>
+        <p class="nav" style="top:677px;font-weight:500">GOA</p><div class="act"></div><p class="nav" style="top:716px">Platform 1</p><p class="nav" style="top:755px">Platform 2</p><p class="nav" style="top:794px">Platform 3</p>
+        <p style="left:30px;top:1028px;font-weight:500"><i class="ico"></i>Help</p><p style="left:30px;top:1074px;font-weight:500"><i class="ico"></i>Logout</p>
+      </div>
+
+      <div id="ripple"></div>
+      <svg id="cursor" viewBox="0 0 28 28"><path d="M3 2l0 19 5.2-4.6 3.4 8 3.2-1.4-3.4-7.8 6.9-.4z" fill="#fff" stroke="#111519" stroke-width="1.4" stroke-linejoin="round"/></svg>
+    </div>
+  </div>
+
+  <div class="ctl" id="ctl">
+    <button class="play" id="play" type="button" aria-pressed="true">Pause</button>
+    <button type="button" data-t="0">1 · Topside</button>
+    <button type="button" data-t="3.05">2 · Subsea overview</button>
+    <button type="button" data-t="5.2">3 · Flow line 1</button>
+    <button type="button" data-t="7.1">4 · Drill Center 01</button>
+    <button type="button" data-t="9.35">5 · Manifold</button>
+    <span class="prog" aria-hidden="true"><i id="prog"></i></span>
+  </div>
+</main>
+
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const NS = 'http://www.w3.org/2000/svg';
+  const DUR = 10;
+
+  /* ── Build the repeated parts ── */
+  const FL = ['#ff6fa3', '#ff12e7', '#ff8f1f', '#ffe81a', '#1ad5e2', '#22e022'];
+  const DC = [ // drill centers on the map: name, plus x/y, time the lines reach it
+    ['Drill Center 03', 854, 536, 2.32], ['Drill Center 02', 644.5, 730, 2.54],
+    ['Drill Center 04', 375.5, 547, 2.72], ['Drill Center 01', 362, 995, 2.86]];
+  const BED = [['PLET 02', 401, 432], ['Manifold', 578, 472], ['Tree 01', 901, 517]];
+  const SENS = [ // sensor dot, foot of its stem on the line, label left/top
+    [364, 543, 384, 578, 318, 490], [494, 515, 515, 551, 448, 458], [623, 487, 644, 522, 577, 431],
+    [755, 459, 776, 494, 709, 404], [885, 430, 906, 466, 838, 376], [1021, 401, 1042, 436, 974, 350]];
+
+  const mk = (name, x, y) => `<div class="mk" style="left:${x}px;top:${y}px"><span class="pulse"></span><span class="lb">${name}</span><span class="plus"><i></i><u></u></span></div>`;
+  $('dcMarks').innerHTML = DC.map((d) => mk(d[0], d[1], d[2])).join('');
+  $('bedMarks').innerHTML = BED.map((d) => mk(d[0], d[1], d[2])).join('');
+  $('sensLabels').innerHTML = SENS.map((s, i) => `<div class="slb${i ? '' : ' on'}" style="left:${s[4]}px;top:${s[5]}px">Sensor 0${i + 1}</div>`).join('');
+  SENS.forEach((s) => {
+    const ex = s[0] + (s[2] - s[0]) * .82, ey = s[1] + (s[3] - s[1]) * .82;
+    $('mBaseCuts').insertAdjacentHTML('beforeend', `<circle cx="${s[0]}" cy="${s[1]}" r="16"/><line x1="${s[0]}" y1="${s[1]}" x2="${ex}" y2="${ey}"/>`);
+    $('mSensShow').insertAdjacentHTML('beforeend', `<line pathLength="1" stroke-dasharray="1" x1="${ex}" y1="${ey}" x2="${s[0]}" y2="${s[1]}"/><circle cx="${s[0]}" cy="${s[1]}" r="16"/>`);
+  });
+
+  const TABX = [54, 171, 287, 403, 518];
+  $('hTabs').insertAdjacentHTML('beforeend', ['Overview', 'Drill Center 01', 'Drill Center 02', 'Drill Center 03', 'Drill Center 04'].map((n, i) => `<span style="left:${TABX[i]}px">${n}</span>`).join(''));
+  const SNX = [707, 787, 867, 947, 1022, 1097, 1177];
+  $('snA').insertAdjacentHTML('beforeend', ['All Lines', 'FL01', 'FL02', 'FL03', 'FL04', 'FL05', 'FL06'].map((n, i) => `<span style="left:${SNX[i]}px">${n}</span>`).join(''));
+  $('snB').insertAdjacentHTML('beforeend', [['PLET 02', 861], ['Manifold', 942], ['Tree 01', 1022]].map((n) => `<span style="left:${n[1]}px">${n[0]}</span>`).join(''));
+
+  // One chart for both panels: oil, gas, water with the same shut-in dip
+  const chart = (id, w, h, lv) => {
+    const shape = [[0, 0], [.5, 0], [.53, -.5], [.57, -.62], [.65, .06], [.82, .1], [1, 0]];
+    const deep = [1, 1.9, 2.4];
+    const line = (base, k, col) => `<path pathLength="1" stroke-dasharray="1" stroke-dashoffset="1" fill="none" stroke="${col}" stroke-width="2" stroke-linejoin="round" d="M${shape.map(([x, d], i) => `${(x * w).toFixed(1)} ${(h - h * Math.max(.03, base + (d < 0 ? d * .2 * deep[k] : d * (k ? 1.5 : .6)) - (i === 6 && k ? .03 * k : 0))).toFixed(1)}`).join('L')}"/>`;
+    return `<svg class="a" id="${id}" width="${w}" height="${h + 2}" viewBox="0 -1 ${w} ${h + 2}">${[0, 1, 2, 3, 4, 5].map((i) => `<path d="M0 ${h * i / 5}H${w}" stroke="#4a4c53" stroke-dasharray="1 3"/>`).join('')}${line(lv[0], 0, '#1faa4f')}${line(lv[1], 1, '#ff5fa2')}${line(lv[2], 2, '#3b8bff')}</svg>`;
+  };
+  const num = (v, unit, cls) => `<span class="${cls || ''}" data-v="${v}">0</span>${unit ? `<small>${unit}</small>` : ''}`;
+
+  // Flow Operations rows; the first one holds the expanded detail
+  const detail = `<div class="a" id="fd" style="left:0;top:56px;width:366px;height:556px">
+    <span class="a g" style="left:23px;top:12px;font-size:14px">Temperature</span><span class="a big" style="left:23px;top:38px">${num(164)}<small>°F</small></span>
+    <span class="a g" style="left:156px;top:12px;font-size:14px">Pressure</span><span class="a big" style="left:156px;top:38px">${num(3240)}<small>psi</small></span>
+    <i class="dv" style="left:23px;top:81px;width:320px"></i>
+    <span class="a g" style="left:23px;top:102px"><i class="dot" style="background:#1faa4f"></i>Oil</span><span class="a" style="left:23px;top:122px;font-weight:600">${num(18420)} <span class="g" style="font-weight:400">bbl/d</span></span>
+    <span class="a g" style="left:156px;top:102px"><i class="dot" style="background:#ff5fa2"></i>Gas</span><span class="a" style="left:156px;top:122px;font-weight:600">${num(14860)} <span class="g" style="font-weight:400">Mscf/d</span></span>
+    <span class="a g" style="right:23px;top:102px"><i class="dot" style="background:#3b8bff"></i>Water</span><span class="a" style="right:23px;top:122px;font-weight:600">${num(11240)} <span class="g" style="font-weight:400">bbl/d</span></span>
+    <span class="a" style="left:23px;top:176px;font-weight:500">Sensor 01</span>
+    <div class="seg" style="left:23px;top:205px;width:320px;height:40px"><b style="left:15px;width:48px"></b>${[1, 2, 3, 4, 5, 6].map((n, i) => `<span class="${i ? '' : 'on'}" style="left:${39 + i * 48}px">0${n}</span>`).join('')}</div>
+    ${['25,000', '20,000', '15,000', '10,000', '5,000', '0'].map((l, i) => `<span class="ax" style="left:12px;top:${290 + i * 32}px">${l}</span>`).join('')}
+    ${chart('ch1', 262, 160, [.74, .59, .45]).replace('class="a"', 'class="a" style="left:80px;top:289px"')}
+    ${['05/13/24', '05/20/24', '05/27/24', '06/03/24'].map((l, i) => `<span class="dt" style="left:${104 + i * 71}px;top:480px">${l}</span>`).join('')}
+    <span class="lg" style="left:47px;top:514px"><i class="dot" style="background:#1faa4f"></i>Oil Flow</span><span class="lg" style="left:140px;top:514px"><i class="dot" style="background:#ff5fa2"></i>Gas Flow</span><span class="lg" style="left:240px;top:514px"><i class="dot" style="background:#3b8bff"></i>Water Flow</span>
+  </div>`;
+  $('rows').innerHTML = FL.map((c, i) => `<div class="row"><span class="nm"><i class="ring" style="border-color:${c}"></i>Flow Line ${i + 1}</span><span class="chev"><i></i></span>${i ? '' : detail}</div>`).join('');
+
+  // Manifold drawer body
+  const sect = (name, col, y, v, d7, best) => `<div class="a ds" style="left:0;top:${y}px;width:400px;height:130px">
+    <span class="a" style="left:40px;top:10px;font-size:14px;font-weight:600;color:#d5d7db">${name}</span>
+    <span class="bar" style="top:28px"><i style="background:${col}"></i></span>
+    <span class="a mid" style="right:48px;top:22px">${num(v)}</span>
+    <span class="c g" style="left:89px;top:65px">7 Day Average</span><span class="c mid" style="left:89px;top:89px"><i class="arr"></i>${num(d7)}</span>
+    <i class="dvv" style="left:199px;top:54px;height:48px"></i>
+    <span class="c g" style="left:312px;top:65px">Prior Best Day</span><span class="c mid" style="left:312px;top:89px"><i class="arr"></i>${num(best)}</span>
+    <i class="dv" style="left:16px;top:119px;width:368px"></i></div>`;
+  $('dBody').innerHTML = `
+    <span class="c ds g" style="left:200px;top:233px;font-size:14px;font-weight:600">Yesterday’s Volume</span>
+    <div class="a ds" style="left:0;top:258px;width:400px;height:70px">
+      <span class="a" style="left:24px;top:6px;font-size:14px;color:#c6c9ce">Oil</span><span class="a big" style="left:24px;top:32px">${num(41260)}<small>bbl</small></span>
+      <i class="dvv" style="left:132px;top:0;height:60px"></i>
+      <span class="a" style="left:158px;top:6px;font-size:14px;color:#c6c9ce">Gas</span><span class="a big" style="left:158px;top:32px">${num(33480)}<small>Mscf</small></span>
+      <i class="dvv" style="left:266px;top:0;height:60px"></i>
+      <span class="a" style="left:291px;top:6px;font-size:14px;color:#c6c9ce">Water</span><span class="a big" style="left:291px;top:32px">${num(12930)}<small>bbl</small></span>
+    </div>
+    <div class="seg ds" style="left:17px;top:343px;width:366px;height:38px"><span class="g" style="left:46px">Timeframe</span><span style="left:132px">1W</span><b style="left:168px;width:64px"></b><span class="on" style="left:200px">1M</span><span style="left:267px">1Y</span><span style="left:336px">YTD</span></div>
+    ${sect('Oil', '#1faa4f', 406, 40870, 412, 986)}${sect('Gas', '#ff5fa2', 536, 32950, 365, 870)}${sect('Water', '#3b8bff', 666, 12410, 128, 304)}
+    <div class="a ds" style="left:0;top:800px;width:400px;height:250px">
+      ${['50k', '40k', '30k', '20k', '10k', '0'].map((l, i) => `<span class="ax" style="left:16px;top:${61 + i * 32}px">${l}</span>`).join('')}
+      ${chart('ch2', 296, 160, [.82, .66, .26]).replace('class="a"', 'class="a" style="left:76px;top:60px"')}
+    </div>`;
+
+  /* ── Timeline helpers ── */
+  const cl = (x) => x < 0 ? 0 : x > 1 ? 1 : x;
+  const seg = (t, a, b) => cl((t - a) / (b - a));
+  const io = (x) => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+  const out = (x) => 1 - Math.pow(1 - x, 3);
+  const back = (x) => { const c = 1.9; return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); };
+  const mix = (a, b, p) => a + (b - a) * p;
+  const set = (el, o, tf) => {
+    el.style.opacity = o;
+    el.style.visibility = o < .004 ? 'hidden' : 'visible';
+    if (tf !== undefined) el.style.transform = tf;
+  };
+  const rise = (el, t, a, d = .5, dy = 14, base = '') => { const p = out(seg(t, a, a + d)); set(el, p, `${base} translateY(${(1 - p) * dy}px)`); };
+  const dash = (el, p) => { el.style.strokeDashoffset = 1 - p; el.style.visibility = p < .002 ? 'hidden' : 'visible'; };
+  const fmt = new Intl.NumberFormat('en-US');
+  const count = (els, p) => els.forEach((el) => { const s = fmt.format(Math.round(el.dataset.v * p)); if (el.textContent !== s) el.textContent = s; });
+  const cls = (el, name, on) => { if (el.classList.contains(name) !== on) el.classList.toggle(name, on); };
+
+  const el = {};
+  ['stage', 'vp', 'sub', 'topo', 'imgAll', 'imgOne', 'mRig', 'mTrunk', 'mLoop', 'mBranch', 'flowPath', 'flowGlow', 'flowDot', 'sensLabels', 'bed', 'bedWrap', 'lit', 'hud', 'hBack', 'hEye', 'hA', 'hB', 'hTabs', 'tabPill', 'snA', 'snB', 'chipA', 'chipB', 'flow', 'fd', 'drawer', 'tbLine', 'top', 'topImg', 'topDepth', 'topUi', 'hot', 'cursor', 'ripple', 'prog', 'play'].forEach((k) => el[k] = $(k));
+  const q = (root, s) => [...root.querySelectorAll(s)];
+  const dcM = q($('dcMarks'), '.mk'), bedM = q($('bedMarks'), '.mk'), sLab = q($('sensLabels'), '.slb');
+  const sStem = q($('mSensShow'), 'line'), sDot = q($('mSensShow'), 'circle');
+  const rows = q($('rows'), '.row'), row1 = rows[0], chev1 = row1.querySelector('.chev i');
+  const fdKids = [...el.fd.children], fdNums = q(el.fd, '[data-v]'), ch1 = q($('ch1'), 'path[pathLength]');
+  const dKids = q(el.drawer, '.ds'), dNums = q(el.drawer, '[data-v]'), dBars = q(el.drawer, '.bar i'), ch2 = q($('ch2'), 'path[pathLength]');
+  const tabs = q(el.hTabs, 'span'), snA = q(el.snA, 'span'), snB = q(el.snB, 'span');
+  const flowLen = el.flowPath.getTotalLength();
+  const man = bedM[1], manPlus = man.querySelector('.plus'), manBar = man.querySelector('u');
+
+  const CLICKS = [[1.1, 1058, 782], [3.5, 375.5, 547], [5.8, 826, 150], [7.7, 578, 472]];
+  const CUR = [[0, 1250, 905], [.3, 1250, 905], [1.02, 1062, 788], [2.85, 1062, 788], [3.42, 379, 551], [3.75, 379, 551], [4.4, 470, 660], [5.22, 470, 660], [5.73, 829, 153], [6.2, 829, 153], [6.9, 770, 330], [7.12, 770, 330], [7.62, 581, 476], [8.05, 581, 476], [8.7, 700, 660], [DUR, 700, 660]];
+
+  /* ── One pure frame: everything is a function of t ── */
+  function draw(t) {
+    // 1 · Topside, the dive below the waterline, and the loop's closing fade
+    const dive = t < 3 ? io(seg(t, 1.1, 1.95)) : 0, end = io(seg(t, 9.45, DUR));
+    const topOn = t < 2.1 ? 1 - seg(t, 1.7, 2.05) : end;
+    set(el.top, topOn);
+    if (topOn > 0) {
+      const push = t < 3 ? out(seg(t, 0, 1.4)) * .025 : 0;
+      el.topImg.style.transform = `translateY(${-dive * 330}px) scale(${1 + push + dive * .22})`;
+      set(el.topDepth, t < 3 ? Math.pow(dive, 1.4) : 0);
+      set(el.topUi, t < 3 ? 1 - seg(t, 1.12, 1.45) : 1, `translateY(${t < 3 ? -io(seg(t, 1.12, 1.6)) * 40 : 0}px)`);
+      const ph = (t % 1.1) / 1.1, pl = el.hot.firstChild;
+      set(pl, t < 1.1 ? (1 - ph) * .7 : 0, `scale(${1 + out(ph) * .55})`);
+      el.hot.children[1].style.transform = `scale(${1 - .12 * Math.sin(Math.PI * seg(t, 1.06, 1.3))}) rotate(${io(seg(t, 1.1, 1.4)) * 45}deg)`;
+    }
+
+    // 2 · Subsea map: contours settle, the lines run out from the platform
+    const zoom = io(seg(t, 5.8, 6.75));
+    const subOn = t < 1.6 || t > 6.4 ? 0 : 1 - io(seg(t, 5.85, 6.35));
+    set(el.sub, subOn, `scale(${1 + zoom * 2.4})`);
+    if (subOn > 0) {
+      el.sensLabels.style.opacity = 1 - seg(t, 5.8, 5.98);
+      const tp = out(seg(t, 1.7, 2.7));
+      set(el.topo, tp, `scale(${1.07 - .07 * tp})`);
+      el.mRig.style.opacity = out(seg(t, 1.75, 2.15));
+      const tr = io(seg(t, 1.95, 2.95));
+      dash(el.mTrunk, tr); dash(el.mLoop, io(seg(t, 2.0, 2.5))); dash(el.mBranch, io(seg(t, 2.12, 2.8)));
+      const one = io(seg(t, 3.5, 4.05));
+      el.imgAll.style.opacity = 1 - one;
+      el.imgOne.style.opacity = one;
+      dcM.forEach((m, i) => {
+        const a = DC[i][3], p = seg(t, a, a + .45), off = 1 - seg(t, 3.5, 3.8);
+        const pressed = i === 2 ? 1 - .14 * Math.sin(Math.PI * seg(t, 3.46, 3.7)) : 1;
+        set(m, out(p) * off, `scale(${(.6 + .4 * back(p)) * pressed})`);
+        const ph = ((t + i * .37) % 1.6) / 1.6;
+        set(m.firstChild, t > a + .4 && t < 3.5 ? (1 - ph) * .5 : 0, `scale(${1 + out(ph) * .6})`);
+      });
+      // 3 · Flow line 1: stems grow out of the line, sensors bloom, a pulse runs to the platform
+      SENS.forEach((s, i) => {
+        const a = 3.82 + i * .11, p = out(seg(t, a, a + .32)), b = seg(t, a + .2, a + .55);
+        dash(sStem[i], p);
+        sDot[i].setAttribute('r', 16 * cl(back(b)));
+        set(sLab[i], out(seg(t, a + .28, a + .62)), `translateY(${(1 - out(seg(t, a + .28, a + .62))) * 8}px)`);
+      });
+      const run = seg(t, 4.3, 5.75);
+      if (run > 0 && run < 1) {
+        const pt = el.flowPath.getPointAtLength(io(run) * flowLen), o = Math.sin(Math.PI * run);
+        [el.flowGlow, el.flowDot].forEach((c) => { c.setAttribute('cx', pt.x); c.setAttribute('cy', pt.y); c.style.opacity = o; });
+      } else { el.flowGlow.style.opacity = 0; el.flowDot.style.opacity = 0; }
+    }
+
+    // 4 · Seabed: the camera lands on Drill Center 01
+    const bedOn = t < 5.85 ? 0 : io(seg(t, 5.9, 6.6));
+    set(el.bed, bedOn);
+    if (bedOn > 0) {
+      const land = out(seg(t, 5.9, 6.9)), bl = (1 - seg(t, 5.9, 6.6)) * 7;
+      el.bedWrap.style.transform = `scale(${1.2 - .2 * land})`;
+      el.bedWrap.style.filter = bl > .05 ? `blur(${bl.toFixed(2)}px)` : 'none';
+      // 5 · Manifold: light travels out along its pipes
+      const glow = seg(t, 7.72, 9.0), r = -240 + out(glow) * 1900;
+      const m = glow <= 0 ? 'linear-gradient(transparent,transparent)' : glow >= 1 ? 'none' : `radial-gradient(circle at 434px 480px, #000 ${r.toFixed(0)}px, transparent ${(r + 240).toFixed(0)}px)`;
+      el.lit.style.webkitMaskImage = m; el.lit.style.maskImage = m;
+      el.lit.style.opacity = glow <= 0 ? 0 : .9 + .1 * Math.sin((t - 7.7) * 4.2);
+      bedM.forEach((mkr, i) => {
+        const a = 6.5 + i * .12, p = seg(t, a, a + .45);
+        const pressed = i === 1 ? 1 - .14 * Math.sin(Math.PI * seg(t, 7.66, 7.9)) : 1;
+        set(mkr, out(p), `scale(${(.6 + .4 * back(p)) * pressed})`);
+        const ph = ((t + i * .4) % 1.6) / 1.6;
+        set(mkr.firstChild, t > a + .4 && !(i === 1 && t > 7.7) ? (1 - ph) * .5 : 0, `scale(${1 + out(ph) * .6})`);
+      });
+      const sel = io(seg(t, 7.7, 8.05)), g = sel > .5;
+      manPlus.style.transform = `translateY(${sel * 12}px) scale(${1 + .6 * sel})`;
+      manPlus.style.borderColor = g ? '#52c41a' : '#ffe01b';
+      manPlus.style.setProperty('--f', g ? '#d6f0cb' : '#fdf8cf');
+      manBar.style.transform = `rotate(90deg) scaleX(${1 - sel})`;
+    }
+
+    // HUD: title, drill-center tabs, sub-navigation
+    const hudOn = t > 1.7 ? 1 : 0;
+    set(el.hud, hudOn);
+    if (hudOn) {
+      rise(el.hBack, t, 1.8, .5, 10); rise(el.hEye, t, 1.78, .5, 10, 'translate(-50%,-50%)');
+      const sw = io(seg(t, 5.8, 6.3));
+      set(el.hA, out(seg(t, 1.84, 2.34)) * (1 - seg(t, 5.8, 6.02)), `translate(-50%,-50%) translateY(${(1 - out(seg(t, 1.84, 2.34))) * 12 - sw * 14}px)`);
+      set(el.hB, seg(t, 6.0, 6.3), `translate(-50%,-50%) translateY(${(1 - out(seg(t, 5.98, 6.4))) * 14}px)`);
+      rise(el.hTabs, t, 1.92, .5, 10);
+      const tp = io(seg(t, 5.8, 6.2));
+      el.tabPill.style.transform = `translateX(${mix(4, 121, tp)}px) scaleX(${1 + .16 * Math.sin(Math.PI * tp)})`;
+      cls(tabs[0], 'on', tp < .5); cls(tabs[1], 'on', tp >= .5);
+      set(el.snA, out(seg(t, 2.0, 2.5)) * (1 - seg(t, 5.8, 6.05)), `translateY(${(1 - out(seg(t, 2.0, 2.5))) * 8}px)`);
+      const cp = io(seg(t, 3.5, 3.86));
+      el.chipA.style.transform = `translateX(${mix(671, 751, cp)}px) scaleX(${1 + .2 * Math.sin(Math.PI * cp)})`;
+      cls(snA[0], 'on', cp < .5); cls(snA[1], 'on', cp >= .5);
+      const bp = out(seg(t, 6.15, 6.6));
+      set(el.snB, bp, `translateY(${(1 - bp) * 8}px)`);
+      const mp = seg(t, 7.7, 8.0);
+      set(el.chipB, out(mp), `scaleX(${.7 + .3 * back(mp)})`);
+      cls(snB[1], 'on', mp > .3);
+    }
+
+    // Flow Operations panel: slides in, then grows as Flow Line 1 opens
+    const fIn = out(seg(t, 2.05, 2.65)), fOut = io(seg(t, 5.8, 6.3));
+    const fOn = t < 2 || t > 6.35 ? 0 : fIn * (1 - fOut);
+    set(el.flow, fOn, `translateX(${(1 - fIn) * 36 + fOut * 440}px)`);
+    if (fOn > 0) {
+      const g = io(seg(t, 3.55, 4.25));
+      el.flow.style.top = mix(249.5, 32, g) + 'px';
+      el.flow.style.height = mix(618, 1053, g) + 'px';
+      row1.style.height = mix(56, 612, g) + 'px';
+      row1.style.borderColor = g > .02 ? `rgba(82,196,26,${g})` : 'transparent';
+      chev1.style.transform = `rotate(${45 + 180 * g}deg)`;
+      rows.forEach((r, i) => rise(r, t, 2.25 + i * .07, .45, 12));
+      fdKids.forEach((k, i) => { const p = out(seg(t, 3.85 + i * .022, 4.3 + i * .022)); k.style.opacity = p; });
+      count(fdNums, out(seg(t, 3.9, 4.8)));
+      ch1.forEach((p, i) => dash(p, io(seg(t, 4.15 + i * .1, 5.0 + i * .1))));
+    }
+
+    // Manifold drawer
+    const dIn = out(seg(t, 7.8, 8.45));
+    set(el.drawer, t < 7.8 ? 0 : seg(t, 7.8, 8.05), `translateX(${(1 - dIn) * 430}px)`);
+    if (t >= 7.8) {
+      el.tbLine.style.transform = `scaleX(${out(seg(t, 8.15, 8.6))})`;
+      dKids.forEach((k, i) => rise(k, t, 8.08 + i * .07, .45, 12, k.classList.contains('c') ? 'translate(-50%,-50%)' : ''));
+      count(dNums, out(seg(t, 8.2, 9.1)));
+      dBars.forEach((b, i) => b.style.transform = `scaleX(${out(seg(t, 8.35 + i * .08, 9.05 + i * .08))})`);
+      ch2.forEach((p, i) => dash(p, io(seg(t, 8.45 + i * .08, 9.25 + i * .08))));
+    }
+
+    // Cursor and click ripple
+    let k = 0; while (k < CUR.length - 2 && t >= CUR[k + 1][0]) k++;
+    const A = CUR[k], B = CUR[k + 1], cp = io(seg(t, A[0], B[0]));
+    let press = 1, rip = 0, rx = 0, ry = 0;
+    CLICKS.forEach(([ct, x, y]) => {
+      press -= .16 * Math.sin(Math.PI * seg(t, ct - .07, ct + .16));
+      const p = seg(t, ct, ct + .5);
+      if (p > 0 && p < 1) { rip = p; rx = x; ry = y; }
+    });
+    set(el.cursor, seg(t, .12, .35) * (1 - seg(t, 9.25, 9.5)), `translate(${mix(A[1], B[1], cp)}px,${mix(A[2], B[2], cp)}px) scale(${press})`);
+    set(el.ripple, rip ? (1 - rip) * .6 : 0, `translate(${rx}px,${ry}px) scale(${.4 + out(rip) * 1.3})`);
+
+    el.prog.style.transform = `scaleX(${t / DUR})`;
+    const sc = t < 1.5 ? 0 : t < 3.5 ? 1 : t < 5.8 ? 2 : t < 7.7 ? 3 : 4;
+    chips.forEach((c, i) => cls(c, 'is-on', i === sc));
+  }
+
+  /* ── Clock, controls, sizing ── */
+  const chips = q($('ctl'), 'button[data-t]');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let t = reduce ? 9.35 : 0, playing = !reduce, onScreen = true, last = 0;
+  const label = () => { el.play.textContent = playing ? 'Pause' : 'Play'; el.play.setAttribute('aria-pressed', playing); };
+  function tick(now) {
+    const dt = Math.min(.05, (now - last) / 1000 || 0); last = now;
+    if (playing && onScreen) { t = (t + dt) % DUR; draw(t); }
+    requestAnimationFrame(tick);
+  }
+  el.play.addEventListener('click', () => { playing = !playing; label(); });
+  chips.forEach((c) => c.addEventListener('click', () => { t = +c.dataset.t; playing = false; label(); draw(t); }));
+  const fit = () => { el.stage.style.transform = `scale(${el.vp.clientWidth / 1728})`; };
+  new ResizeObserver(fit).observe(el.vp); fit();
+  new IntersectionObserver((e) => { onScreen = e[0].isIntersecting; }).observe(el.vp);
+  window.__subsea = { draw, seek: (x) => { t = x; playing = false; label(); draw(x); } };
+  label(); draw(t); requestAnimationFrame(tick);
+  // Embed mode: start still on a poster frame (?t=) and take play / pause / seek messages from the host page
+  if (/[?&]embed/.test(location.search)) {
+    document.documentElement.classList.add('embed');
+    const m = location.search.match(/[?&]t=([\d.]+)/);
+    playing = false; if (m) t = +m[1]; label(); draw(t);
+    addEventListener('message', (ev) => {
+      const d = ev.data || {};
+      if (d.seek !== undefined) { t = +d.seek; draw(t); }
+      if (d.play !== undefined) { playing = !!d.play && !reduce; label(); }
+    });
+  }
+})();
+</script>
+</body>
+</html>
