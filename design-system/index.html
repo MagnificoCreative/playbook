@@ -1,0 +1,399 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Playbook Design System</title>
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;500&family=Syne:wght@400;500;600&family=Inter:ital,wght@0,300;0,400;0,500;1,300&display=swap">
+<link rel="stylesheet" href="../assets/playbook.css">
+<style>
+  /* This page documents the playbook's design system. It loads the live stylesheet (assets/playbook.css),
+     so swatches, type samples and components always show the values in production. Page chrome only below. */
+  body { margin: 0; background: var(--bg-canvas); color: var(--text-primary); font-family: var(--f-sans); font-weight: 300; }
+  .ds { display: grid; grid-template-columns: 232px minmax(0, 1fr); min-height: 100vh; }
+  .ds-nav { position: sticky; top: 0; height: 100vh; overflow-y: auto; padding: 24px 16px; border-right: 1px solid var(--hairline); box-sizing: border-box; }
+  .ds-nav .logo-row { display: flex; align-items: center; gap: 10px; padding: 0 12px 16px; margin-bottom: 12px; border-bottom: 1px solid var(--hairline); }
+  .ds-nav .logo-row svg { width: 110px; height: auto; display: block; }
+  .ds-nav ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+  .ds-nav a { display: flex; gap: 10px; align-items: center; height: 36px; padding: 0 12px; border-radius: 4px; font-size: 14px; color: var(--text-emphasis); }
+  .ds-nav a:hover { background: rgba(7, 23, 27, .04); }
+  .ds-nav a span { font: 300 12px/1 var(--f-label); letter-spacing: .16em; width: 24px; }
+  .ds-nav a.is-on { background: var(--n200); font-weight: 500; }
+  .ds-nav a.is-on span { color: var(--pink); font-weight: 500; }
+  .ds-main { padding: 0 clamp(16px, 4vw, 64px) 120px; min-width: 0; }
+  .ds-hero { padding: 72px 0 48px; border-bottom: 1px solid var(--hairline); }
+  .ds-hero h1 { font-size: clamp(40px, 5vw, 72px); line-height: 1.04; font-weight: 400; margin: 12px 0 20px; }
+  .ds-hero p { font-size: 20px; line-height: 1.5; color: var(--text-body); max-width: 60ch; margin: 0; }
+  .ds-meta { display: flex; flex-wrap: wrap; gap: 8px 24px; margin-top: 24px; font-size: 14px; color: var(--text-body); }
+  .ds-meta b { font-weight: 500; color: var(--text-primary); }
+  .ds-sec { padding: 64px 0 8px; scroll-margin-top: 0; }
+  .ds-sec > header { display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 0 16px; margin-bottom: 32px; }
+  .ds-sec > header .n { font: 500 12px/1.9 var(--f-label); letter-spacing: .16em; color: var(--pink); }
+  .ds-sec > header h2 { font-family: var(--f-display); font-size: 32px; font-weight: 400; line-height: 1.2; margin: 0; }
+  .ds-sec > header p { grid-column: 2; font-size: 16px; line-height: 1.6; color: var(--text-body); max-width: 68ch; margin: 10px 0 0; }
+  .ds h3 { font-family: var(--f-display); font-size: 20px; font-weight: 400; margin: 40px 0 16px; }
+  .ds p.note { font-size: 14px; line-height: 1.6; color: var(--text-body); max-width: 72ch; margin: 0 0 16px; }
+  .ds code { font: 400 13px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; background: rgba(7, 23, 27, .05); padding: 1px 5px; border-radius: 4px; color: var(--text-emphasis); }
+  .card-box { background: var(--bg-surface); border-radius: var(--radius); padding: 24px; }
+  .grid { display: grid; gap: 16px; }
+  .g2 { grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); }
+  .g3 { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+  .g4 { grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); }
+
+  /* Principles */
+  .pr { background: var(--bg-surface); border-radius: var(--radius); padding: 24px; }
+  .pr b { display: block; font-family: var(--f-display); font-size: 20px; font-weight: 400; margin-bottom: 8px; }
+  .pr p { font-size: 14px; line-height: 1.6; color: var(--text-body); margin: 0; }
+
+  /* Colour */
+  .sw { background: var(--bg-surface); border-radius: var(--radius); overflow: hidden; }
+  .sw .chip { height: 96px; border-bottom: 1px solid var(--hairline); }
+  .sw .meta { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 4px; }
+  .sw .meta b { font-weight: 500; font-size: 14px; }
+  .sw .meta code { align-self: flex-start; font-size: 12px; }
+  .sw .meta span { font-size: 12px; color: var(--text-body); }
+  table.t { width: 100%; border-collapse: collapse; background: var(--bg-surface); border-radius: var(--radius); overflow: hidden; font-size: 14px; }
+  .t th { text-align: left; font: 500 12px/1.4 var(--f-label); letter-spacing: .12em; text-transform: uppercase; color: var(--text-body); padding: 14px 16px; border-bottom: 1px solid var(--hairline); }
+  .t td { padding: 14px 16px; border-bottom: 1px solid var(--hairline); vertical-align: middle; line-height: 1.5; }
+  .t tr:last-child td { border-bottom: 0; }
+  .dot { display: inline-block; width: 14px; height: 14px; border-radius: 50%; vertical-align: -2px; margin-right: 8px; box-shadow: inset 0 0 0 1px rgba(7, 23, 27, .12); }
+  .pass { color: #0a7a3d; font-weight: 500; } .fail { color: #b3261e; font-weight: 500; } .large { color: #8a5a00; font-weight: 500; }
+
+  /* Type */
+  .fam { background: var(--bg-surface); border-radius: var(--radius); padding: 24px; display: flex; flex-direction: column; gap: 10px; }
+  .fam .big { font-size: 56px; line-height: 1; }
+  .fam b { font-weight: 500; font-size: 14px; }
+  .fam p { font-size: 14px; line-height: 1.55; color: var(--text-body); margin: 0; }
+  .scale { background: var(--bg-surface); border-radius: var(--radius); }
+  .scale-row { display: grid; grid-template-columns: 120px minmax(0, 1fr) 260px; gap: 24px; align-items: baseline; padding: 22px 24px; border-bottom: 1px solid var(--hairline); }
+  .scale-row:last-child { border-bottom: 0; }
+  .scale-row .px { font: 500 12px/1.4 var(--f-label); letter-spacing: .12em; color: var(--pink); }
+  .scale-row .px small { display: block; font-weight: 300; color: var(--text-body); letter-spacing: .04em; margin-top: 4px; }
+  .scale-row .use { font-size: 12px; line-height: 1.55; color: var(--text-body); }
+  .scale-row .sample { color: var(--text-primary); overflow-wrap: anywhere; }
+
+  /* Space and layout */
+  .sp { display: flex; flex-direction: column; gap: 10px; background: var(--bg-surface); border-radius: var(--radius); padding: 20px 24px; }
+  .sp-row { display: grid; grid-template-columns: 140px 1fr 220px; gap: 16px; align-items: center; font-size: 14px; }
+  .sp-row i { display: block; height: 10px; background: var(--pink); border-radius: 2px; opacity: .85; }
+  .sp-row span { color: var(--text-body); font-size: 12px; }
+  .diagram { background: var(--bg-surface); border-radius: var(--radius); padding: 24px; }
+  .frame { display: grid; grid-template-columns: 30% 1fr; grid-template-rows: 44px 1fr; height: 260px; border: 1px solid var(--hairline); border-radius: 6px; overflow: hidden; font: 500 11px/1.3 var(--f-label); letter-spacing: .08em; color: var(--text-body); }
+  .frame > div { display: flex; align-items: center; justify-content: center; text-align: center; padding: 8px; }
+  .frame .f-logo { border-right: 1px solid var(--hairline); border-bottom: 1px solid var(--hairline); margin: 0; }
+  .frame .f-bar { position: relative; }
+  .frame .f-bar::after { content: ""; position: absolute; left: 0; width: 40%; bottom: 0; height: 2px; background: var(--pink); }
+  .frame .f-rail { border-right: 1px solid var(--hairline); align-items: flex-start; padding-top: 18px; }
+  .frame .f-page { padding: 16px; }
+  .frame .f-page b { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; background: var(--bg-brand); color: var(--slate-100); border-radius: 6px; font-weight: 500; }
+
+  /* Components */
+  .demo { background: var(--bg-surface); border-radius: var(--radius); padding: 28px; display: flex; flex-direction: column; gap: 16px; }
+  .demo.dark { background: var(--bg-brand); color: var(--slate-100); }
+  .demo > .label { font: 500 12px/1 var(--f-label); letter-spacing: .12em; text-transform: uppercase; color: var(--text-body); }
+  .demo.dark > .label { color: var(--n300); }
+  .spec { font-size: 12px; line-height: 1.6; color: var(--text-body); }
+  .demo.dark .spec { color: var(--n300); }
+  .demo .btn { margin-top: 0; }
+  .btn.is-hover { background: var(--pink-hover); }
+  .btn.is-press { background: var(--pink-press); }
+  .row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  .menu-demo { width: 280px; display: flex; flex-direction: column; gap: 4px; }
+  .menu-demo .toc-link { pointer-events: none; }
+  .bul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+  .bul li { display: grid; grid-template-columns: 6px 1fr; gap: 12px; font-size: 14px; line-height: 1.45; }
+  .bul li::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--pink); margin-top: calc((1.45em - 6px) / 2); }
+  .nx { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--hairline); padding: 24px 0 4px; }
+  .nx .t { font-family: var(--f-display); font-size: 24px; font-weight: 400; margin-top: 8px; }
+  .nx .a { width: 48px; height: 48px; border: 1px solid var(--pink); border-radius: 50%; display: grid; place-items: center; color: var(--pink); }
+  .nx .a svg { width: 20px; height: 20px; }
+
+  /* Motion */
+  .curve { background: var(--bg-surface); border-radius: var(--radius); padding: 24px; display: grid; grid-template-columns: 160px 1fr; gap: 24px; align-items: center; }
+  .curve svg { width: 160px; height: 160px; }
+  .track { position: relative; height: 24px; border-bottom: 1px solid var(--hairline); margin: 8px 0 18px; }
+  .track i { position: absolute; left: 0; top: 4px; width: 16px; height: 16px; border-radius: 50%; background: var(--pink); animation: ds-move 2.4s var(--ease-out) infinite alternate; }
+  .track.lin i { background: var(--n300); animation-timing-function: linear; }
+  @keyframes ds-move { to { left: calc(100% - 16px); } }
+  @media (prefers-reduced-motion: reduce) { .track i { animation: none; } }
+
+  /* Do / don't */
+  .dd { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+  .dd > div { background: var(--bg-surface); border-radius: var(--radius); padding: 20px 22px; border-top: 3px solid; }
+  .dd .do { border-color: #0a7a3d; } .dd .dont { border-color: #b3261e; }
+  .dd b { font-size: 12px; font-family: var(--f-label); letter-spacing: .14em; text-transform: uppercase; }
+  .dd .do b { color: #0a7a3d; } .dd .dont b { color: #b3261e; }
+  .dd ul { margin: 10px 0 0; padding-left: 18px; font-size: 14px; line-height: 1.6; color: var(--text-body); }
+
+  .logo-tiles .tile { border-radius: var(--radius); padding: 32px; display: grid; place-items: center; min-height: 140px; }
+  .logo-tiles .tile svg { width: 180px; height: auto; }
+  .logo-tiles .tile.m svg { width: 48px; }
+
+  @media (max-width: 900px) {
+    .ds { grid-template-columns: 1fr; }
+    .ds-nav { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--hairline); }
+    .ds-nav ol { flex-direction: row; flex-wrap: wrap; }
+    .scale-row { grid-template-columns: 1fr; gap: 8px; }
+    .sp-row { grid-template-columns: 110px 1fr; } .sp-row span { grid-column: 1 / -1; }
+    .curve { grid-template-columns: 1fr; }
+  }
+</style>
+
+<div class="ds">
+  <nav class="ds-nav" aria-label="Design system sections">
+    <div class="logo-row" data-logo="full"></div>
+    <ol id="ds-toc"></ol>
+  </nav>
+
+  <main class="ds-main" id="main">
+    <header class="ds-hero">
+      <p class="eyebrow">From Data Sprawl to a Single Source of Truth</p>
+      <h1>Playbook Design System</h1>
+      <p>The rules, tokens and components behind the Magnifico energy operations playbook. This page reads the live stylesheet, so every colour, size and component below is exactly what ships.</p>
+      <div class="ds-meta">
+        <span><b>Source</b> <code>assets/playbook.css</code></span>
+        <span><b>Motion</b> <a href="../animations/" style="color:var(--pink)">Animation library</a></span>
+        <span><b>Updated</b> 17 November 2026</span>
+      </div>
+    </header>
+
+    <!-- 01 · Principles -->
+    <section class="ds-sec" id="principles" data-title="Principles">
+      <header><span class="n">01</span><h2>Principles</h2><p>Five ideas that every page, component and animation in the playbook answers to.</p></header>
+      <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(190px,1fr))">
+        <div class="pr"><b>Calm over clever</b><p>Lots of space, few elements, one idea at a time. If something feels busy, remove a part before adding a fix.</p></div>
+        <div class="pr"><b>Pink is the signal</b><p>Magnifico pink marks the one thing that matters: the action, the current chapter, the ball. Never use it as decoration.</p></div>
+        <div class="pr"><b>One scale, few sizes</b><p>Type uses a short, shared scale. If two sizes look almost the same, they should be the same.</p></div>
+        <div class="pr"><b>Lines tell the story</b><p>Diagrams and heroes speak through hairlines and motion, not icons or illustration.</p></div>
+        <div class="pr"><b>Readable first</b><p>Text always wins over art. Backgrounds move behind a veil, and every animation has a still version.</p></div>
+      </div>
+    </section>
+
+    <!-- 02 · Colour -->
+    <section class="ds-sec" id="color" data-title="Colour">
+      <header><span class="n">02</span><h2>Colour</h2><p>A small palette: deep teal for the brand, warm greys for the page, and one pink for emphasis. Use the semantic tokens in code; the primitives exist to define them.</p></header>
+      <h3>Primitives</h3>
+      <div class="grid g4" id="prims"></div>
+      <h3>Semantic tokens</h3>
+      <p class="note">Always reach for these names. Changing what a role points at changes it everywhere.</p>
+      <table class="t" id="sem"><thead><tr><th>Token</th><th>Value</th><th>Use</th></tr></thead><tbody></tbody></table>
+      <h3>Contrast</h3>
+      <p class="note">Measured live from the tokens above against WCAG 2.2. AA needs 4.5:1 for body text and 3:1 for large text (24px, or 19px bold) and interface graphics.</p>
+      <table class="t" id="contrast"><thead><tr><th>Text on background</th><th>Where it's used</th><th>Ratio</th><th>Result</th></tr></thead><tbody></tbody></table>
+      <h3>Colour rules</h3>
+      <div class="dd">
+        <div class="do"><b>Do</b><ul><li>Use pink for the primary action, the current chapter number and the ball.</li><li>Set hierarchy in diagrams with opacity of one line colour, not new hues.</li><li>Use <code>--text-muted</code> for supporting copy on the dark teal.</li></ul></div>
+        <div class="dont"><b>Don't</b><ul><li>Introduce new colours for charts or states.</li><li>Put <code>--text-muted</code> grey on the light canvas; it fails contrast there.</li><li>Use pink for large areas or as a background behind text.</li></ul></div>
+      </div>
+    </section>
+
+    <!-- 03 · Typography -->
+    <section class="ds-sec" id="type" data-title="Typography">
+      <header><span class="n">03</span><h2>Typography</h2><p>Three families with clear jobs: Syne for headlines, Inter for reading, IBM Plex Sans for numbers and labels.</p></header>
+      <div class="grid g3">
+        <div class="fam"><span class="big" style="font-family:var(--f-display)">Aa</span><b>Syne · headlines</b><p>Weights 300–500. Every headline, card title, label and stat. Letter spacing −0.01em.</p><code>--f-display</code></div>
+        <div class="fam"><span class="big" style="font-family:var(--f-sans);font-weight:300">Aa</span><b>Inter · body</b><p>Weights 300 (body), 400 and 500 (UI and emphasis). All running text, lists and buttons.</p><code>--f-sans</code></div>
+        <div class="fam"><span class="big" style="font-family:var(--f-label);font-weight:300;letter-spacing:.08em">01</span><b>IBM Plex Sans · labels</b><p>Weights 300 and 500, letter spacing 0.16em. Chapter numbers, counters and small caps labels.</p><code>--f-label</code></div>
+      </div>
+
+      <h3>Type scale</h3>
+      <p class="note">Eight steps. Sizes marked "scales" grow with the window and reach the value shown at about 1440px wide. Pick the nearest step; don't add in-between sizes.</p>
+      <div class="scale">
+        <div class="scale-row"><div class="px">100<small>44–100 · scales</small></div><div class="sample" style="font:400 var(--t-display)/1.02 var(--f-display);letter-spacing:-0.01em">Data to decisions</div><div class="use">Display. Hero titles only. <code>--t-display</code></div></div>
+        <div class="scale-row"><div class="px">48<small>32–48 · scales</small></div><div class="sample h2">How this playbook works</div><div class="use">Section titles and big stat numbers. <code>--t-h2</code></div></div>
+        <div class="scale-row"><div class="px">32<small>24–32 · scales</small></div><div class="sample" style="font:400 var(--t-h4)/1.25 var(--f-display);letter-spacing:-0.01em">Know who decides what</div><div class="use">H4: card titles, next-chapter titles, comparison heads; the hero subtitle (lead) uses the same size in Inter. <code>--t-h4</code> <code>--t-lead</code></div></div>
+        <div class="scale-row"><div class="px">28<small>20–28 · scales</small></div><div class="sample" style="font:300 italic 28px/1.4 var(--f-sans)">“We should have had standards out there.”</div><div class="use">Pull and field quotes.</div></div>
+        <div class="scale-row"><div class="px">20<small>fixed</small></div><div class="sample" style="font:400 20px/1.2 var(--f-display)">Information &amp; Trust</div><div class="use">Small headings: How to apply card labels, side-panel heads, CLEAR step names, context-view names, Step 4 test titles. Large text (17–20) for intro paragraphs.</div></div>
+        <div class="scale-row"><div class="px">16<small>fixed</small></div><div class="sample" style="font:300 16px/1.55 var(--f-sans)">Body copy, card body and lists. Infographic headings in Syne sit at 16 over 14px notes.</div><div class="use">Body. <code>--t-body</code></div></div>
+        <div class="scale-row"><div class="px">14<small>fixed</small></div><div class="sample" style="font:400 14px/1.5 var(--f-sans)">Buttons, menu titles, captions, diagram labels</div><div class="use">UI and small copy.</div></div>
+        <div class="scale-row"><div class="px">12<small>fixed</small></div><div class="sample" style="font:300 12px/1.4 var(--f-sans)"><span style="font-family:var(--f-label);letter-spacing:.16em;color:var(--pink);font-weight:500;margin-right:10px">05</span>Eyebrows · menu numbers · sub-sections · axis labels</div><div class="use">Labels. The smallest size; nothing goes below 12.</div></div>
+      </div>
+
+      <h3>Type rules</h3>
+      <div class="dd">
+        <div class="do"><b>Do</b><ul><li>Use Syne for anything that reads as a heading, including card labels and diagram titles.</li><li>Keep body copy at 16px, 300 weight, line height around 1.5, and 45–70 characters per line.</li><li>Use sentence case for eyebrows and headings inside sections; title case only for chapter and hero titles.</li><li>Break short lines by hand where it improves the rag (and drop the break on phones).</li></ul></div>
+        <div class="dont"><b>Don't</b><ul><li>Set text smaller than 12px, or between steps (13, 15, 17, 18…).</li><li>Use Syne for paragraphs, or Inter for headlines.</li><li>Bold body text for emphasis; use <code>&lt;strong&gt;</code> at 500 weight sparingly.</li></ul></div>
+      </div>
+    </section>
+
+    <!-- 04 · Layout and space -->
+    <section class="ds-sec" id="layout" data-title="Layout &amp; space">
+      <header><span class="n">04</span><h2>Layout &amp; space</h2><p>A contents rail on the left, a page of full-height panels on the right, and one 16px margin everywhere the page meets the screen.</p></header>
+      <div class="grid g2">
+        <div class="diagram">
+          <div class="frame"><div class="f-logo">LOGO · CARET</div><div class="f-bar">TOP BAR · 56PX · PROGRESS FROM MENU EDGE</div><div class="f-rail">MENU<br>320 OPEN<br>68 COLLAPSED</div><div class="f-page"><b>PANEL · RADIUS 8</b></div></div>
+          <p class="note" style="margin:16px 0 0">Logo and menu are one column, closed by a vertical hairline that runs through the top bar. Below 1100px the menu becomes a drawer opened from the top bar.</p>
+        </div>
+        <div class="sp" id="space"></div>
+      </div>
+      <h3>Breakpoints</h3>
+      <table class="t"><thead><tr><th>Width</th><th>Layout</th></tr></thead><tbody>
+        <tr><td><b>1101px and up</b></td><td>Menu beside the page, collapsible to a 68px strip of numbers. Pinned diagrams and the sideways How to apply track.</td></tr>
+        <tr><td><b>768–1100px</b></td><td>Menu becomes a drawer; full logo always shows; diagrams play as you scroll past them.</td></tr>
+        <tr><td><b>767px and below</b></td><td>Logo centred in the top bar with only the chapter number on the right; stacked layouts; no sideways scroll.</td></tr>
+      </tbody></table>
+    </section>
+
+    <!-- 05 · Components -->
+    <section class="ds-sec" id="components" data-title="Components">
+      <header><span class="n">05</span><h2>Components</h2><p>The building blocks, rendered with the production classes.</p></header>
+      <div class="grid g2">
+        <div class="demo"><span class="label">Primary button</span>
+          <div class="row"><a class="btn" href="#components">Take the assessment <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a><span class="btn is-hover">Hover</span><span class="btn is-press">Pressed</span></div>
+          <p class="spec">Pill, pink, 14px Inter 500, 10 × 20 padding. The arrow nudges 3px right on hover. One per view; it's the only filled button.</p></div>
+        <div class="demo"><span class="label">Eyebrow</span>
+          <p class="eyebrow">Roadmap <span style="opacity:.5;margin:0 .4em">|</span> Step 5</p>
+          <p class="spec">12px Inter 300, sentence case, above hero titles and section openers. A thin bar separates kicker and step.</p></div>
+        <div class="demo"><span class="label">Contents menu</span>
+          <div class="menu-demo"><span class="toc-link"><span class="toc-num">04</span><span class="toc-text">Agree on what matters</span></span><span class="toc-link" style="background:var(--n200);font-weight:500"><span class="toc-num" style="color:var(--pink);font-weight:500">05</span><span class="toc-text">Design around decisions</span></span><span class="toc-link"><span class="toc-num">06</span><span class="toc-text">Test before you build</span></span></div>
+          <p class="spec">36px rows in both states, 14px titles, 12px Plex numbers. The current chapter gets a grey fill and a pink number; collapsed, it becomes a 36px square.</p></div>
+        <div class="demo"><span class="label">Bulleted list</span>
+          <ul class="bul"><li>Source data quality</li><li>Replication and duplication</li><li>No trusted central data store</li></ul>
+          <p class="spec">6px pink dots for 14px lists, 8px for 16px lists, centred on the first line. Dots gather in from a loose cluster as the list scrolls in.</p></div>
+        <div class="demo"><span class="label">Next-chapter link</span>
+          <div class="nx"><div><p class="eyebrow" style="margin:0">Next · <b style="color:var(--pink);font-weight:500">Step 2</b></p><div class="t">Know who decides what</div></div><span class="a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div>
+          <p class="spec">No card: a hairline above, H4 title, a pink outlined arrow circle that fills on hover.</p></div>
+        <div class="demo dark"><span class="label">Closing sign-off (on teal)</span>
+          <div data-logo="light" style="width:132px"></div>
+          <div><p style="margin:0 0 6px;font-size:16px;color:#fff">Want to know more about Magnifico?</p><p style="margin:0;font-size:14px;line-height:1.5;color:var(--text-muted)">We help growing energy companies turn complex operational data into clear, trusted digital experiences.</p></div>
+          <p class="spec">Full-width hairline at 16% slate; logo, then 16px white question, 14px muted copy and a white link with a pink arrow.</p></div>
+      </div>
+      <h3>Hairlines and surfaces</h3>
+      <table class="t"><thead><tr><th>Element</th><th>Spec</th></tr></thead><tbody>
+        <tr><td>Hairline on light</td><td>1px, <code>--hairline</code> (teal 950 at 10%). Section dividers, menu edge, logo rule, next-chapter rule.</td></tr>
+        <tr><td>Hairline on teal</td><td>1px, slate at 14–16%.</td></tr>
+        <tr><td>Panels and cards</td><td>8px radius (<code>--radius</code>). White surface on the canvas, or deep teal for heroes, In the field and the closing panel. No shadows.</td></tr>
+        <tr><td>Progress bar</td><td>2px pink along the bottom of the top bar, starting at the menu edge.</td></tr>
+      </tbody></table>
+    </section>
+
+    <!-- 06 · Motion -->
+    <section class="ds-sec" id="motion" data-title="Motion">
+      <header><span class="n">06</span><h2>Motion</h2><p>Smooth, calm and a little playful. Motion explains an idea or rewards scrolling; it never decorates. Full catalogue in the <a href="../animations/" style="color:var(--pink)">animation library</a>.</p></header>
+      <div class="curve">
+        <svg viewBox="0 0 100 100" aria-hidden="true"><path d="M0 100 L100 0" stroke="var(--n300)" stroke-dasharray="2 3" fill="none"/><path d="M0 100 C22 0, 36 0, 100 0" stroke="var(--pink)" stroke-width="2" fill="none"/></svg>
+        <div><b style="font-weight:500">Ease out · <code>--ease-out</code> <code>cubic-bezier(0.22, 1, 0.36, 1)</code></b>
+          <p class="note" style="margin-top:8px">The default for every interface transition: fast start, long gentle settle.</p>
+          <div class="track"><i></i></div><div class="track lin"><i></i></div>
+          <p class="note" style="margin:0">Pink: ease out. Grey: linear, kept only for steady flows such as the drifting footer texture.</p></div>
+      </div>
+      <h3>Durations</h3>
+      <table class="t"><thead><tr><th>Kind</th><th>Duration</th><th>Examples</th></tr></thead><tbody>
+        <tr><td>Hover and state</td><td>0.2–0.3s</td><td>Button colour, row hover, logo pink deepening, arrow nudge</td></tr>
+        <tr><td>Layout</td><td>0.45–0.55s</td><td>Menu open and collapse, caret turn, top-bar title sliding</td></tr>
+        <tr><td>Reveal</td><td>0.9s, staggered 0.04s</td><td>Headings and text rising 16px into place</td></tr>
+        <tr><td>Scrubbed</td><td>Tied to scroll, 0.6–0.8 smoothing</td><td>Pinned diagrams, gathering bullet dots</td></tr>
+        <tr><td>Ambient loops</td><td>7–120s</td><td>Hero scenes, card scenes, footer drift</td></tr>
+      </tbody></table>
+      <h3>Motion rules</h3>
+      <div class="dd">
+        <div class="do"><b>Do</b><ul><li>Keep the pink ball at the centre of heroes; it breathes when something reaches it.</li><li>Leave a fading trail behind moving lines (10 echoes, opacity .42 × (1 − j/11)²).</li><li>Pin a section below the top bar with the shared gap (<code>P.pinTop()</code>), except How to apply.</li><li>Clamp scroll animations near the end of a page so they always finish.</li><li>Pause scenes off screen and show a still frame under reduced motion.</li></ul></div>
+        <div class="dont"><b>Don't</b><ul><li>Loop with a visible jump; fade out before resetting.</li><li>Move lines in lockstep; give each its own timing.</li><li>Set <code>stroke-opacity</code> in CSS on animated lines; it overrides the animation.</li><li>Let motion sit behind text without a veil.</li></ul></div>
+      </div>
+    </section>
+
+    <!-- 07 · Logo and icons -->
+    <section class="ds-sec" id="brand" data-title="Logo &amp; icons">
+      <header><span class="n">07</span><h2>Logo &amp; icons</h2><p>The full lockup in the open menu and on the closing panel; the pink M when space is tight. Icons are drawn as 1.5px strokes.</p></header>
+      <div class="grid g4 logo-tiles">
+        <div class="tile" style="background:var(--bg-surface)" data-logo="full"></div>
+        <div class="tile" style="background:var(--bg-brand)" data-logo="light"></div>
+        <div class="tile m" style="background:var(--bg-surface)" data-logo="m"></div>
+        <div class="tile" style="background:var(--bg-surface)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--text-primary)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:40px" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+      </div>
+      <table class="t" style="margin-top:16px"><thead><tr><th>Asset</th><th>Rule</th></tr></thead><tbody>
+        <tr><td>Full logo</td><td>24px tall beside the open menu; pink M with teal wordmark on light, white wordmark on teal. Clickable: it opens and closes the menu on wide screens, and its pink deepens to <code>#d6005f</code> on hover.</td></tr>
+        <tr><td>The M</td><td>Collapsed menu and narrow moments, centred over the numbers column.</td></tr>
+        <tr><td>Arrow</td><td>24 × 24 viewBox, 1.5px stroke, round caps. The only icon; it means "go".</td></tr>
+        <tr><td>Footer BG</td><td>From Figma (Footer BG): pink M watermark, dark gradient and striped texture in saturation blend at 50%, under a left veil. Files in <code>assets/footer/</code>.</td></tr>
+      </tbody></table>
+    </section>
+
+    <!-- 08 · Accessibility -->
+    <section class="ds-sec" id="a11y" data-title="Accessibility">
+      <header><span class="n">08</span><h2>Accessibility</h2><p>Built in, not added later. Check these before shipping a change.</p></header>
+      <div class="grid g2">
+        <div class="pr"><b>Contrast</b><p>Body text meets AA on its background (see Colour). Muted grey is for the dark teal only. Pink text is for short labels and numbers, never paragraphs.</p></div>
+        <div class="pr"><b>Reduced motion</b><p>Every animation respects <code>prefers-reduced-motion</code>: heroes and cards show a still frame, scrubbed diagrams show their end state, the footer stops drifting.</p></div>
+        <div class="pr"><b>Decorative art</b><p>Hero, card and background art is <code>aria-hidden="true"</code>. Diagrams that carry meaning get <code>role="img"</code> and a full <code>aria-label</code>.</p></div>
+        <div class="pr"><b>Keyboard and structure</b><p>A skip link to the content, one <code>h1</code> per page, buttons with labels that change with state ("Collapse contents" / "Expand contents"), Escape closes the drawer.</p></div>
+        <div class="pr"><b>Targets</b><p>Menu rows, the caret and the collapsed numbers are 36px; buttons are 44px tall.</p></div>
+        <div class="pr"><b>Links out</b><p>The assessment and wearemagnifico.com open in a new tab with <code>rel="noopener"</code>.</p></div>
+      </div>
+    </section>
+
+    <!-- 09 · Working with the system -->
+    <section class="ds-sec" id="build" data-title="Working with it">
+      <header><span class="n">09</span><h2>Working with it</h2><p>Where things live, so changes stay consistent.</p></header>
+      <table class="t"><thead><tr><th>What</th><th>Where</th></tr></thead><tbody>
+        <tr><td>Tokens and all styles</td><td><code>assets/playbook.css</code> (<code>:root</code> at the top)</td></tr>
+        <tr><td>Page copy and structure</td><td><code>tools/build/content.rb</code>, built by <code>tools/build/build.rb</code></td></tr>
+        <tr><td>Chapter diagrams</td><td><code>tools/build/scripts.js</code></td></tr>
+        <tr><td>Hero and card scenes</td><td><code>assets/motion/</code>; rules in <code>hero-explorations/ANIMATION-RULES.md</code></td></tr>
+        <tr><td>Animation catalogue</td><td><code>animations/index.html</code></td></tr>
+        <tr><td>Cache busting</td><td>The build stamps asset links with a hash of every CSS and JS file, so browsers never mix old and new files.</td></tr>
+      </tbody></table>
+      <p class="note" style="margin-top:16px">Rebuild after changing the generator: <code>ruby -Eutf-8 tools/build/build.rb</code>. Then update this page when a token, size or component changes.</p>
+    </section>
+  </main>
+</div>
+
+<script>
+(() => {
+  const root = getComputedStyle(document.documentElement);
+  const v = (n) => root.getPropertyValue(n).trim();
+
+  // Navigation with a scroll spy
+  const toc = document.getElementById("ds-toc"), secs = [...document.querySelectorAll(".ds-sec")];
+  secs.forEach((s, i) => toc.insertAdjacentHTML("beforeend", `<li><a href="#${s.id}"><span>${String(i + 1).padStart(2, "0")}</span>${s.dataset.title}</a></li>`));
+  const links = [...toc.querySelectorAll("a")];
+  const spy = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) links.forEach((l) => l.classList.toggle("is-on", l.hash === "#" + e.target.id)); }), { rootMargin: "-30% 0px -60% 0px" });
+  secs.forEach((s) => spy.observe(s));
+
+  // Primitives
+  const PRIMS = [["--pink", "Magnifico pink", "Actions, current state, the ball"], ["--pink-hover", "Pink hover", "Button hover"], ["--pink-press", "Pink pressed", "Button pressed"],
+    ["--teal-950", "Teal 950", "Primary text"], ["--teal-900", "Teal 900", "Brand surface, heroes"], ["--teal-800", "Teal 800", "Lines on light diagrams"],
+    ["--slate-100", "Slate 100", "Text and lines on teal"], ["--white", "White", "Cards, surfaces"], ["--canvas", "Canvas", "Page background"],
+    ["--n200", "Neutral 200", "Current menu row"], ["--n300", "Neutral 300", "Muted text on teal"], ["--n700", "Neutral 700", "Body text"],
+    ["--sky", "Sky", "Rare accent in diagrams"], ["--sky-wash", "Sky wash", "Rare accent background"]];
+  document.getElementById("prims").innerHTML = PRIMS.map(([t, n, u]) => `<div class="sw"><div class="chip" style="background:var(${t})"></div><div class="meta"><b>${n}</b><code>${t}</code><span>${v(t).toUpperCase()} · ${u}</span></div></div>`).join("");
+
+  // Semantic tokens
+  const SEM = [["--bg-canvas", "Page background"], ["--bg-surface", "Cards and panels on the canvas"], ["--bg-brand", "Heroes, In the field, closing panel"],
+    ["--text-primary", "Headings and strong text"], ["--text-body", "Body copy and captions on light"], ["--text-emphasis", "Menu and links on light"],
+    ["--text-muted", "Supporting copy on teal only"], ["--text-on-brand", "Text on teal"], ["--hairline", "Rules and dividers on light"], ["--hairline-dark", "Rules on teal"]];
+  document.querySelector("#sem tbody").innerHTML = SEM.map(([t, u]) => `<tr><td><span class="dot" style="background:var(${t})"></span><code>${t}</code></td><td>${v(t)}</td><td>${u}</td></tr>`).join("");
+
+  // Contrast, measured from the live tokens
+  const probe = document.createElement("i"); document.body.appendChild(probe);
+  const rgb = (c) => { probe.style.color = c; return getComputedStyle(probe).color.match(/[\d.]+/g).slice(0, 3).map(Number); };
+  const lum = ([r, g, b]) => [r, g, b].map((x) => { x /= 255; return x <= .03928 ? x / 12.92 : ((x + .055) / 1.055) ** 2.4; }).reduce((s, x, i) => s + x * [.2126, .7152, .0722][i], 0);
+  const ratio = (a, b) => { const [l1, l2] = [lum(rgb(a)), lum(rgb(b))].sort((x, y) => y - x); return (l1 + .05) / (l2 + .05); };
+  const PAIRS = [["var(--text-primary)", "var(--bg-canvas)", "Headings on the page"], ["var(--text-body)", "var(--bg-canvas)", "Body copy on the page"], ["var(--text-body)", "var(--bg-surface)", "Body copy on cards"],
+    ["var(--text-on-brand)", "var(--bg-brand)", "Text on teal"], ["var(--text-muted)", "var(--bg-brand)", "Supporting copy on teal"], ["var(--white)", "var(--pink)", "Button label"],
+    ["var(--pink)", "var(--bg-canvas)", "Pink numbers and labels on the page"], ["var(--text-muted)", "var(--bg-canvas)", "Muted grey on the page (avoid)"]];
+  document.querySelector("#contrast tbody").innerHTML = PAIRS.map(([f, b, u]) => {
+    const r = ratio(f, b), res = r >= 4.5 ? '<span class="pass">AA</span>' : r >= 3 ? '<span class="large">AA large only</span>' : '<span class="fail">Fails</span>';
+    return `<tr><td><span style="display:inline-block;padding:4px 10px;border-radius:4px;background:${b};color:${f};font-weight:500">Aa</span> <code>${f.slice(4, -1)}</code> on <code>${b.slice(4, -1)}</code></td><td>${u}</td><td>${r.toFixed(2)}:1</td><td>${res}</td></tr>`;
+  }).join("");
+  probe.remove();
+
+  // Spacing tokens
+  const SP = [["--gutter-r", 16, "Every outer margin: screen edges, menu, page panel"], ["Menu row", 36, "Rows, caret and collapsed numbers"], ["--bar", 56, "Top bar height"],
+    ["--section-gap", 104, "Between sections (64–104, scales; 56 on phones)"], ["--pad", 80, "Inside panels (24–80, scales)"], ["--radius", 8, "Corner radius for panels and cards"]];
+  document.getElementById("space").innerHTML = SP.map(([t, px, u]) => `<div class="sp-row"><code>${t}</code><i style="width:${Math.min(px, 120) / 120 * 100}%"></i><span><b style="color:var(--text-primary);font-weight:500">${px}px</b> · ${u}</span></div>`).join("");
+
+  // Logo artwork, taken from the playbook's own top bar so it never drifts
+  fetch("../intro/").then((r) => r.text()).then((h) => {
+    const svg = (h.match(/<svg viewBox="0 0 100 18.86"[\s\S]*?<\/svg>/) || [])[0]; if (!svg) return;
+    document.querySelectorAll("[data-logo]").forEach((el) => {
+      const kind = el.dataset.logo;
+      let s = svg;
+      if (kind === "light") s = s.replace('fill="#002A32"', 'fill="#ffffff"');
+      if (kind === "m") s = s.replace('viewBox="0 0 100 18.86"', 'viewBox="0 0 21.7 18.86"').replace(/<g class="logo-word"[\s\S]*?<\/g>/, "");
+      el.insertAdjacentHTML("beforeend", s.replace("<svg ", '<svg role="img" aria-label="Magnifico" '));
+    });
+  });
+})();
+</script>
+</html>
