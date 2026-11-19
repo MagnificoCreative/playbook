@@ -274,14 +274,14 @@
     wrapWords(lead);
     gsap.fromTo($$(".word", lead), { opacity: 0.14 }, {
       opacity: 1, stagger: 0.05, ease: "none",
-      scrollTrigger: { trigger: lead, start: "top 82%", end: "bottom 48%", scrub: true },
+      scrollTrigger: { trigger: lead, start: "clamp(top 82%)", end: "clamp(bottom 48%)", scrub: true },
     });
   });
 
   $$(".people").forEach((p) => {
     gsap.from($$(".people-head > *, .people-text", p), {
       y: 30, opacity: 0, duration: 1.1, stagger: 0.1, ease: "expo.out",
-      scrollTrigger: { trigger: p, start: "top 70%", toggleActions: "play none none reverse" },
+      scrollTrigger: { trigger: p, start: "clamp(top 70%)", toggleActions: "play none none reverse" },
     });
   });
 
@@ -289,7 +289,7 @@
   $$("[data-reveal]").forEach((box) => {
     gsap.from(box.children, {
       y: 30, opacity: 0, duration: 1.1, stagger: 0.08, ease: "expo.out",
-      scrollTrigger: { trigger: box, start: box.dataset.reveal || "top 75%", toggleActions: "play none none reverse" },
+      scrollTrigger: { trigger: box, start: `clamp(${box.dataset.reveal || "top 75%"})`, toggleActions: "play none none reverse" },
     });
   });
 
@@ -327,7 +327,7 @@
       const vp = () => viewport.getBoundingClientRect();
       timelines.forEach((tl, i) => {
         if (i === 0) {
-          ScrollTrigger.create({ trigger: section, start: "top 78%", end: () => `top top+=${barH() + 4}`, scrub: 0.6, animation: tl });
+          ScrollTrigger.create({ trigger: section, start: "clamp(top 78%)", end: () => `clamp(top top+=${barH() + 4})`, scrub: 0.6, animation: tl });
         } else {
           ScrollTrigger.create({
             trigger: cards[i], containerAnimation: travel,
@@ -340,7 +340,7 @@
       return () => { howtoST = null; gsap.set(track, { clearProps: "transform" }); };
     });
     mm.add("(max-width: 767px)", () => {
-      timelines.forEach((tl, i) => ScrollTrigger.create({ trigger: cards[i], start: "top 85%", end: "center 55%", scrub: 0.6, animation: tl }));
+      timelines.forEach((tl, i) => ScrollTrigger.create({ trigger: cards[i], start: "clamp(top 85%)", end: "clamp(center 55%)", scrub: 0.6, animation: tl }));
     });
     ticks.forEach((t) => t.addEventListener("click", () => {
       if (!howtoST) return;
@@ -356,11 +356,11 @@
   if (field) {
     gsap.from(".field-copy > *", {
       y: 30, opacity: 0, duration: 1.1, stagger: 0.08, ease: "expo.out",
-      scrollTrigger: { trigger: field, start: "top 70%", toggleActions: "play none none reverse" },
+      scrollTrigger: { trigger: field, start: "clamp(top 70%)", toggleActions: "play none none reverse" },
     });
     gsap.from(".field-quote > *, .field-aside > *", {
       y: 30, opacity: 0, duration: 1.2, stagger: 0.12, ease: "expo.out",
-      scrollTrigger: { trigger: field, start: "top 55%", toggleActions: "play none none reverse" },
+      scrollTrigger: { trigger: field, start: "clamp(top 55%)", toggleActions: "play none none reverse" },
     });
   }
   $$("[data-count]").forEach((el, i) => {
@@ -370,11 +370,13 @@
     const o = { v: 0 };
     el.textContent = fmt(0);
     ScrollTrigger.create({
-      trigger: el.closest(".stats") || el, start: "top 85%", once: true,
+      trigger: el.closest(".stats") || el, start: "clamp(top 85%)", once: true,
       onEnter: () => gsap.to(o, { v: target, duration: 1.6, delay: (i % 3) * 0.12, ease: "power3.out", onUpdate: () => { el.textContent = fmt(o.v); } }),
     });
   });
 
+  /* Reveals use clamp(): near the end of a page the usual start line can sit below the last scroll position,
+     and content that starts hidden would never appear. clamp() pulls it back to the bottom of the page. */
   /* ───── Pink bullets gather from a loose cluster and land beside each item ───── */
   $$("[data-bullets]").forEach((box) => {
     const dots = $$(".dot", box);
@@ -387,7 +389,7 @@
     });
     gsap.from($$("h3, .li-text", box), {
       y: 16, opacity: 0, duration: 0.9, stagger: 0.04, ease: "expo.out",
-      scrollTrigger: { trigger: box, start: "top 55%", toggleActions: "play none none reverse" },
+      scrollTrigger: { trigger: box, start: "clamp(top 80%)", toggleActions: "play none none reverse" },
     });
   });
 
