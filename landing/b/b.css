@@ -1,0 +1,356 @@
+/* Landing page · version B
+   Layout, spacing, surfaces and interaction from the reference (a white product-gallery system: white and mist
+   bands, 28px shadowless cards, pill controls, a sticky product nav, a highlights carousel, 90px section rhythm).
+   Type families and colour from the Magnifico design system: Syne for display, Inter for reading, IBM Plex Sans
+   for labels; teal ink, magenta as the single accent, deep teal for media stages. */
+
+:root {
+  /* Magnifico colour, in the reference's roles */
+  --canvas: #ffffff;            /* gallery white: hero, story sections, cards */
+  --mist: #f6f6f6;              /* Magnifico canvas, in the alternate-band role */
+  --frost: #fafafc;             /* opened nav surface */
+  --hairline: #dbdbdb;          /* 1px dividers (Magnifico n200) */
+  --control: #e6e6e8;           /* subdued fills, nav edge */
+  --ink: #07171b;               /* Magnifico teal-950: headlines, body, nav */
+  --ink-2: #474646;             /* Magnifico n700: secondary copy, legal */
+  --steel: #86868b;             /* input outlines, inactive dots */
+  --accent: #e6006a;            /* Magnifico pink-action: links and filled pills (white text passes AA) */
+  --accent-hover: #d1005f;
+  --accent-press: #ab004e;
+  --pink: #ff0074;              /* brand pink: the ball, dots, never text */
+  --stage: #002a32;             /* Magnifico teal-900: media stages, like product renders */
+  --stage-ink: #d5def0;         /* Magnifico slate-100 on the stage */
+
+  /* Type: Magnifico families on the reference's scale */
+  --f-display: "Syne", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --f-text: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --f-label: "IBM Plex Sans", "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  /* Space and shape (reference) */
+  --section-gap: 90px;
+  --element-gap: 20px;
+  --card-pad: 28px;
+  --r-card: 28px;
+  --r-nav: 20px;
+  --r-link: 10px;
+  --r-pill: 9999px;
+  --ring: 0 0 0 1px var(--control);
+  --ring-strong: 0 0 0 1px var(--steel);
+  --wrap: 1068px;               /* a narrow, centred gallery column */
+  --wrap-wide: 1260px;
+  --pad: max(22px, env(safe-area-inset-left, 0px));
+  --ease: cubic-bezier(.28, .11, .32, 1);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-padding-top: 72px; }
+body {
+  margin: 0; background: var(--canvas); color: var(--ink);
+  font: 400 17px/1.47 var(--f-text); letter-spacing: -0.374px;
+  -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; overflow-x: clip;
+}
+h1, h2, h3, p, ol, ul, dl, dd { margin: 0; }
+ol, ul { padding: 0; list-style: none; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; letter-spacing: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
+[hidden] { display: none !important; }
+.skip { position: fixed; left: 16px; top: 8px; z-index: 100; background: var(--accent); color: #fff; padding: 8px 16px; border-radius: var(--r-pill); transform: translateY(-200%); transition: transform .2s var(--ease); }
+.skip:focus { transform: none; }
+
+.wrap { width: 100%; max-width: calc(var(--wrap) + 2 * var(--pad)); margin-inline: auto; padding-inline: var(--pad); }
+
+/* ───────── Type roles ───────── */
+/* Eyebrows follow the Magnifico system: Inter 300 at 12px, sentence case, no tracking. Plex with tracking is only for numbers. */
+.kicker { font: 300 12px/1.4 var(--f-text); letter-spacing: 0; color: var(--ink-2); }
+.num { font-family: var(--f-label); font-weight: 500; letter-spacing: .16em; color: var(--accent); margin-right: 10px; }
+.hero-title { font: 600 clamp(48px, 7vw, 80px)/1.05 var(--f-display); letter-spacing: -0.015em; color: var(--ink); text-wrap: balance; }
+.feature-title { font: 400 clamp(32px, 4vw, 48px)/1.08 var(--f-display); letter-spacing: -0.01em; color: var(--ink); text-wrap: balance; }
+.hero-lead { font: 300 clamp(19px, 1.8vw, 24px)/1.38 var(--f-text); letter-spacing: -0.01em; color: var(--ink); }
+.body-l { font: 300 clamp(17px, 1.6vw, 21px)/1.43 var(--f-text); letter-spacing: -0.2px; color: var(--ink-2); max-width: 46ch; }
+.text-link { color: var(--accent); font-weight: 400; border-radius: var(--r-link); }
+.text-link:hover { text-decoration: underline; text-underline-offset: .18em; }
+.text-link span { display: inline-block; transition: transform .3s var(--ease); }
+.text-link:hover span { transform: translateX(3px); }
+em { font-style: normal; color: var(--accent); }
+
+/* ───────── Pills ───────── */
+.pill { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border-radius: var(--r-pill); font: 400 14px/1.29 var(--f-text); letter-spacing: -0.224px; white-space: nowrap; transition: background-color .25s var(--ease), color .25s var(--ease), box-shadow .25s var(--ease); }
+.pill-s { padding: 6px 14px; font-size: 12px; line-height: 1.33; letter-spacing: -0.12px; }
+.pill-fill { background: var(--accent); color: #fff; }
+.pill-fill:hover { background: var(--accent-hover); }
+.pill-fill:active { background: var(--accent-press); }
+.pill-line { box-shadow: var(--ring-strong); color: var(--ink); }
+.pill-line:hover { background: var(--ink); color: #fff; box-shadow: 0 0 0 1px var(--ink); }
+
+/* ───────── Global bar ───────── */
+.gnav { height: 44px; background: var(--canvas); position: relative; z-index: 51; }
+.gnav-in { max-width: calc(var(--wrap-wide) + 2 * var(--pad)); height: 100%; display: flex; align-items: center; justify-content: space-between; }
+.gnav-logo svg { display: block; height: 17px; width: auto; }
+.gnav-link { font: 400 12px/1 var(--f-text); letter-spacing: -0.12px; color: rgba(7, 23, 27, .8); }
+.gnav-link:hover { color: var(--ink); }
+
+/* ───────── Product nav ───────── */
+.pnav { position: sticky; top: 0; z-index: 50; height: 64px; background: rgba(255, 255, 255, .72); backdrop-filter: saturate(1.8) blur(20px); -webkit-backdrop-filter: saturate(1.8) blur(20px); box-shadow: 0 1px 0 var(--control); transition: background-color .3s var(--ease); }
+.pnav-in { max-width: calc(var(--wrap-wide) + 2 * var(--pad)); height: 100%; display: flex; align-items: center; gap: 24px; }
+.pnav-logo { flex: none; display: block; border-radius: 4px; }
+.pnav-logo svg { display: block; height: 26px; width: auto; } /* the title is gone, so the logo takes its room */
+.pnav-links { display: flex; gap: 24px; margin-left: auto; }
+.pnav-links a { font: 400 12px/1.33 var(--f-text); letter-spacing: -0.12px; color: rgba(7, 23, 27, .8); }
+.pnav-links a:hover, .pnav-links a.is-on { color: var(--ink); }
+.pnav-links a.is-on { font-weight: 500; }
+.pnav .pill { margin-left: 4px; flex: none; }
+.pnav.is-done .pill { display: none; }
+
+/* ───────── Sections ───────── */
+.band { padding-block: var(--section-gap); background: var(--canvas); }
+.band-mist { background: var(--mist); }
+.band-head { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--element-gap); flex-wrap: wrap; margin-bottom: 40px; max-width: calc(var(--wrap-wide) + 2 * var(--pad)); }
+
+/* ───────── Hero ───────── */
+.hero { padding-block: clamp(48px, 7vh, 76px) var(--section-gap); text-align: center; }
+/* Full bleed: the scene fills the hero behind the copy; the copy sits a touch above centre */
+.hero-fx { position: relative; isolation: isolate; overflow: hidden; display: grid; place-items: center; min-height: calc(100svh - 64px); padding-block: 48px 72px; background: var(--canvas); }
+.hero-canvas { position: absolute; inset: 0; z-index: -1; width: 100%; height: 100%; display: block; }
+.hero-fx .hero-text { margin-top: -4vh; }
+.hero-text { display: flex; flex-direction: column; align-items: center; gap: var(--element-gap); }
+.hero-title br { display: none; }
+@media (min-width: 640px) { .hero-title br { display: inline; } }
+.hero-lead { max-width: 36ch; text-wrap: balance; }
+.hero-for { font: 600 12px/1.33 var(--f-text); letter-spacing: -0.12px; color: var(--accent); margin-top: -4px; } /* the reference's bare launch label, in pink */
+
+.capsule { position: relative; z-index: 2; margin: 40px auto 0; max-width: 980px; background: var(--canvas); border-radius: var(--r-card); box-shadow: var(--ring); padding: 22px var(--card-pad) 18px; text-align: left; }
+.capsule-head { margin-bottom: 14px; }
+.capsule-title { font: 600 17px/1.24 var(--f-text); letter-spacing: -0.374px; color: var(--ink); }
+.capsule-title span:not(.nm) { font-weight: 400; color: var(--ink-2); }
+.hero-ctas { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 12px; }
+.pill-l { padding: 12px 24px; font-size: 17px; line-height: 1.24; letter-spacing: -0.374px; }
+
+.stage { position: relative; overflow: hidden; background: var(--stage); }
+.stage > svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+/* Scene paint (the playbook's hero language) */
+.stage .ln, .ch-media .ln { fill: none; stroke: var(--stage-ink); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.stage .gd, .ch-media .gd { fill: none; stroke: var(--stage-ink); stroke-opacity: .05; stroke-width: 1; }
+.stage .ball, .ch-media .ball { fill: var(--pink); }
+.stage .dot, .ch-media .dot { fill: var(--stage-ink); }
+.stage .pnl, .ch-media .pnl { fill: var(--stage); stroke: var(--stage-ink); stroke-opacity: .35; stroke-width: 1.5; }
+.stage .fill, .ch-media .fill { fill: var(--stage); }
+.stage .ghost, .ch-media .ghost { fill: none; stroke: var(--pink); stroke-width: 2; stroke-dasharray: 4 5; }
+.stage .echo .ball, .stage .echo .gd, .stage .echo .glow,
+.ch-media .echo .ball, .ch-media .echo .gd, .ch-media .echo .glow { display: none; }
+
+/* ───────── Forms (HubSpot embed v2 markup, css: "") ───────── */
+.form { min-height: 48px; }
+.form .hs-form { display: grid; gap: 12px; align-items: start; }
+.form-row .hs-form { grid-template-columns: repeat(3, minmax(0, 1fr)) auto; }
+.form-stack .hs-form { grid-template-columns: minmax(0, 1fr); }
+.form fieldset { display: contents; max-width: none !important; border: 0; margin: 0; padding: 0; }
+.form .hs-form-field { position: relative; display: flex; flex-direction: column; gap: 6px; width: auto !important; float: none !important; min-width: 0; }
+.form .hs-form-field > label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; } /* placeholders carry the labels visually, like the reference's search pill */
+.form-stack .hs-form-field > label { position: static; width: auto; height: auto; clip: auto; overflow: visible; padding-left: 20px; font: 400 12px/1.33 var(--f-text); letter-spacing: -0.12px; color: var(--ink-2); }
+.form .hs-form-required { color: var(--accent); margin-left: 2px; }
+.form .input { margin: 0 !important; }
+.form .hs-input {
+  width: 100% !important; height: 48px; padding: 0 20px; border: 0; border-radius: 980px;
+  background: var(--canvas); box-shadow: var(--ring-strong);
+  font: 400 17px/1.2 var(--f-text); letter-spacing: -0.374px; color: var(--ink);
+  -webkit-appearance: none; appearance: none; transition: box-shadow .2s var(--ease);
+}
+.form .hs-input::placeholder { color: var(--steel); }
+.form .hs-input:hover { box-shadow: 0 0 0 1px var(--ink-2); }
+.form .hs-input:focus { outline: none; box-shadow: 0 0 0 2px var(--accent), 0 0 0 6px rgba(230, 0, 106, .12); }
+.form .hs-input.invalid.error { box-shadow: 0 0 0 1.5px #c4005a; }
+.form .hs-error-msgs { margin: 0; padding: 0 0 0 20px; list-style: none; }
+.form .hs-error-msg, .form .hs-error-msgs label { font: 400 12px/1.33 var(--f-text); color: #c4005a; }
+.form .hs_error_rollup, .form .hs-richtext, .form .legal-consent-container { grid-column: 1 / -1; font-size: 12px; line-height: 1.33; color: var(--ink-2); }
+.form .hs_submit .actions { margin: 0; padding: 0; }
+.form-stack .hs_submit { margin-top: 8px; }
+.form .hs-button {
+  height: 48px; padding: 0 26px; width: 100%; border: 0; border-radius: var(--r-pill); cursor: pointer;
+  background: var(--accent); color: #fff; font: 400 17px/1 var(--f-text); letter-spacing: -0.374px; white-space: nowrap;
+  -webkit-appearance: none; appearance: none; transition: background-color .25s var(--ease);
+}
+.form .hs-button:hover { background: var(--accent-hover); }
+.form .hs-button:active { background: var(--accent-press); }
+.form .hs-button[disabled] { opacity: .6; cursor: progress; }
+.form .submitted-message { display: none; }
+.fine { margin-top: 12px; font: 400 12px/1.33 var(--f-text); letter-spacing: -0.12px; color: var(--ink-2); }
+.preview-tag { grid-column: 1 / -1; justify-self: start; font: 400 12px/1 var(--f-text); letter-spacing: 0; padding: 5px 8px; border-radius: 4px; border: 1px dashed currentColor; color: #c4005a; }
+.form-loading { display: grid; grid-template-columns: repeat(3, 1fr) 160px; gap: 12px; }
+.form-stack .form-loading { grid-template-columns: 1fr; }
+.form-loading i { height: 48px; border-radius: 980px; background: var(--mist); animation: shimmer 1.4s ease-in-out infinite; }
+@keyframes shimmer { 50% { opacity: .5; } }
+
+.done { display: flex; align-items: center; gap: 18px; outline: none; }
+.done-ball { position: relative; flex: none; width: 18px; height: 18px; border-radius: 50%; background: var(--pink); }
+.done-ball::before, .done-ball::after { content: ""; position: absolute; inset: 0; border-radius: 50%; border: 1.5px solid var(--pink); animation: ring 2.4s var(--ease) infinite; }
+.done-ball::after { animation-delay: 1.2s; }
+@keyframes ring { from { transform: scale(1); opacity: .7; } to { transform: scale(3.6); opacity: 0; } }
+.done-msg { font-size: 17px; color: var(--ink-2); margin-top: 2px; }
+
+/* ───────── The problem: pinned travel ─────────
+   The playbook's "How to apply it" pattern: the panel pins under the nav and vertical scroll moves the cards
+   sideways; a 01 / 03 counter and ticks follow along. Text-led cards, so they're narrow, like the playbook's
+   cards without illustrations; the last one is the dark close and is wider. Phones stack the cards. */
+.travel { padding-block: 0; }
+.travel-panel { min-height: calc(100svh - 64px); display: flex; flex-direction: column; gap: clamp(24px, 4vh, 40px); padding-block: clamp(40px, 7vh, 72px); overflow: hidden; }
+.travel-head { max-width: calc(var(--wrap-wide) + 2 * var(--pad)); display: flex; align-items: flex-end; justify-content: space-between; gap: var(--element-gap); flex-wrap: wrap; }
+.meter { display: flex; align-items: center; gap: 20px; }
+.meter-count { font: 500 12px/1 var(--f-label); letter-spacing: .16em; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.meter-count b { color: var(--accent); font-weight: 500; }
+.ticks { display: flex; gap: 6px; }
+.tick { position: relative; width: 28px; height: 24px; }
+.tick::before { content: ""; position: absolute; left: 0; right: 0; top: 11px; height: 2px; border-radius: 2px; background: var(--hairline); transition: background-color .3s var(--ease); }
+.tick:hover::before { background: var(--steel); }
+.tick.is-active::before { background: var(--pink); }
+.tick-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.travel-viewport { --side: max(var(--pad), calc((100vw - var(--wrap-wide)) / 2)); flex: 1; min-height: 0; display: flex; padding-inline: var(--side); }
+.travel-track { display: flex; gap: 24px; will-change: transform; }
+/* Cards copy the playbook's text-led How to apply cards (.card.card--text): 8px radius, mist card on a white band,
+   label in Syne 20, title in Syne 400 32/1.2, body in Inter 16/1.45, meta on top and copy at the foot. */
+.tcard {
+  flex: 0 0 auto; width: clamp(400px, 44vw, 640px);
+  display: flex; flex-direction: column; justify-content: space-between; gap: clamp(24px, 4vh, 48px);
+  padding: clamp(28px, 4.5vw, 80px); border-radius: 8px; background: var(--mist);
+}
+.tcard-label { font: 400 20px/24px var(--f-display); letter-spacing: -0.01em; color: var(--stage); }
+.tcard-copy { display: flex; flex-direction: column; gap: 24px; max-width: 34em; }
+.tcard-title { font: 400 32px/1.2 var(--f-display); letter-spacing: -0.01em; color: var(--ink); }
+.tcard-body { font: 300 16px/1.45 var(--f-text); letter-spacing: 0; color: var(--ink-2); }
+.tcard-body b { font-weight: 500; color: var(--ink); }
+.tcard-dark { background: var(--stage); }
+.tcard-dark .tcard-label { color: var(--stage-ink); }
+.tcard-dark .tcard-title { color: #fff; }
+.tcard-dark em { font-style: normal; color: var(--pink); }
+
+/* ───────── What's inside ───────── */
+.editorial-head { display: flex; flex-direction: column; gap: var(--element-gap); margin-bottom: 56px; }
+.chapters { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--element-gap); max-width: none; }
+/* What's inside: a full-width hairline grid (option 05D). No card fills: the cells sit on the section grey,
+   split by 1px hairlines (two vertical, one horizontal), and the grid runs edge to edge across the browser,
+   so the only side spacing is each cell's 40px padding. Step label, headline and body share one left edge. */
+#inside { container-type: inline-size; }   /* 100cqw = the page width inside the scrollbar */
+.chapters { width: 100cqw; margin-inline: calc(50% - 50cqw); gap: 0 !important; }
+.ch { --cell-pad: 40px; border: 0 solid var(--hairline); }
+.ch:not(:nth-child(3n)) { border-right-width: 1px; }
+.ch:nth-child(-n+3) { border-bottom-width: 1px; }
+.ch-card { position: relative; display: flex; flex-direction: column; gap: 6px; height: 100%; padding: var(--cell-pad); }
+.ch-media { --ink-line: color-mix(in srgb, var(--stage) 50%, var(--mist)); position: relative; aspect-ratio: 4 / 3; overflow: hidden; margin-bottom: 8px;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 14%, #000 86%, transparent), linear-gradient(#000 70%, transparent); -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(to right, transparent, #000 14%, #000 86%, transparent), linear-gradient(#000 70%, transparent); mask-composite: intersect; }
+.ch-media > svg { position: absolute; inset: 0; width: 100%; height: 100%; transform: scale(1.35); }
+/* Light paint (ANIMATION-RULES, 2026-11-06), lines at 50%: teal mixed halfway into the grey; the ball stays full strength */
+.ch-media .ln { stroke: var(--ink-line); }
+.ch-media .gd { stroke: var(--stage); stroke-opacity: .07; }
+.ch-media .dot { fill: var(--ink-line); }
+.ch-media .pnl { fill: var(--mist); stroke: var(--ink-line); }
+.ch-media .fill { fill: var(--mist); }
+.ch-num { position: absolute; top: var(--cell-pad); left: var(--cell-pad); z-index: 2; margin: 0; font: 300 12px/1.4 var(--f-text); letter-spacing: 0; color: var(--ink-2); }
+.ch-num .num { margin-right: 8px; }
+.ch h3 { font: 400 24px/1.17 var(--f-display); letter-spacing: -0.005em; color: var(--ink); }
+.ch-text { font-size: 14px; line-height: 1.43; letter-spacing: -0.224px; color: var(--ink-2); margin-top: 4px; }
+/* What's inside, hover to reveal (option 06):  At rest: animation + step label only. On hover or keyboard focus the cell
+   inverts to the dark stage, the scene swaps to light lines, and the headline and body rise in over the
+   animation's faded foot. Touch screens have no hover, so they show the copy at rest. */
+.ch { outline: none; transition: background-color .5s var(--ease); }
+.ch-card { padding: var(--cell-pad); }
+.ch-media { margin: 0; }
+.ch-media .ln, .ch-media .pnl { transition: stroke .5s var(--ease), fill .5s var(--ease); }
+.ch-media .dot, .ch-media .fill { transition: fill .5s var(--ease); }
+.ch-num { transition: color .5s var(--ease); }
+.ch h3, .ch-text { position: relative; z-index: 2; }
+.ch h3 { position: absolute; left: var(--cell-pad); right: var(--cell-pad); bottom: calc(var(--cell-pad) + 46px); }
+.ch-text { position: absolute; left: var(--cell-pad); right: var(--cell-pad); bottom: var(--cell-pad); margin: 0; min-height: 40px; }
+.ch h3, .ch-text { opacity: 0; transform: translateY(12px); transition: opacity .35s var(--ease), transform .45s var(--ease), color .5s var(--ease); }
+/* the inverted state */
+.ch:hover, .ch:focus-visible { background: var(--stage); }
+.ch:hover .ch-media, .ch:focus-visible .ch-media { --ink-line: color-mix(in srgb, var(--stage-ink) 20%, var(--stage)); }
+.ch:hover .ch-media .gd, .ch:focus-visible .ch-media .gd { stroke: var(--stage-ink); stroke-opacity: .05; }
+.ch:hover .ch-media .pnl, .ch:focus-visible .ch-media .pnl,
+.ch:hover .ch-media .fill, .ch:focus-visible .ch-media .fill { fill: var(--stage); }
+.ch:hover .ch-num, .ch:focus-visible .ch-num { color: var(--stage-ink); }
+.ch:hover h3, .ch:focus-visible h3 { color: #fff; }
+.ch:hover .ch-text, .ch:focus-visible .ch-text { color: var(--stage-ink); }
+.ch:hover h3, .ch:focus-visible h3,
+.ch:hover .ch-text, .ch:focus-visible .ch-text { opacity: 1; transform: none; transition: opacity .45s var(--ease) .08s, transform .55s var(--ease) .08s, color .5s var(--ease); }
+.ch:hover .ch-text, .ch:focus-visible .ch-text { transition-delay: .16s; }
+@media (hover: none) {
+  .ch h3, .ch-text { position: static; opacity: 1; transform: none; }
+  .ch-media { margin-bottom: 8px; }
+}
+@media (prefers-reduced-motion: reduce) { .ch h3, .ch-text { transform: none !important; } }
+
+.editorial { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 48px; align-items: center; margin-top: calc(var(--section-gap) + 20px); }
+.editorial-copy { display: flex; flex-direction: column; gap: var(--element-gap); }
+.specs { display: flex; flex-direction: column; margin-top: 12px; }
+.specs div { padding: 18px 0; border-top: 1px solid var(--hairline); }
+.specs dt { font: 600 17px/1.24 var(--f-text); letter-spacing: -0.374px; color: var(--ink); }
+.specs dd { margin-top: 6px; font-size: 17px; color: var(--ink-2); }
+.editorial-stage { aspect-ratio: 1; border-radius: var(--r-card); margin-right: calc(-1 * max(0px, (100vw - var(--wrap)) / 2 - var(--pad))); } /* bleeds off the right edge, like an oversized render */
+
+/* ───────── Who ───────── */
+.who { display: flex; flex-direction: column; align-items: center; gap: 28px; text-align: center; }
+.who-text { font: 600 clamp(28px, 3.6vw, 44px)/1.14 var(--f-display); letter-spacing: -0.01em; max-width: 24ch; text-wrap: balance; }
+.tags { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+.tags li { padding: 7px 16px; border-radius: var(--r-pill); box-shadow: var(--ring-strong); font-size: 14px; letter-spacing: -0.224px; color: var(--ink); background: var(--canvas); }
+
+/* ───────── Get ───────── */
+.get { display: flex; flex-direction: column; align-items: center; gap: var(--element-gap); text-align: center; }
+.get-title { font-size: clamp(44px, 6vw, 72px); }
+.card { width: 100%; max-width: 480px; margin-top: 20px; padding: var(--card-pad); border-radius: var(--r-card); background: var(--mist); text-align: left; }
+.card .done-msg { font-size: 17px; }
+.assess { margin-top: 28px; font-size: 17px; color: var(--ink-2); max-width: 60ch; }
+
+/* ───────── Footer ───────── */
+.foot { background: var(--mist); border-top: 1px solid var(--hairline); }
+.foot-in { max-width: calc(var(--wrap-wide) + 2 * var(--pad)); display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 20px; font-size: 12px; letter-spacing: -0.12px; color: var(--ink-2); }
+.foot-logo svg { display: block; height: 15px; width: auto; }
+
+/* ───────── Responsive ───────── */
+@media (max-width: 1068px) {
+  .chapters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ch { border-width: 0 !important; }
+  .ch:nth-child(odd) { border-right-width: 1px !important; }
+  .ch:nth-child(-n+4) { border-bottom-width: 1px !important; }
+  .editorial { grid-template-columns: minmax(0, 1fr); }
+  .editorial-stage { margin-right: 0; aspect-ratio: 16 / 10; }
+}
+@media (max-width: 860px) {
+  .form-row .hs-form { grid-template-columns: minmax(0, 1fr); }
+  .form-loading { grid-template-columns: 1fr; }
+  .pnav-links { display: none; }
+  .pnav .pill { margin-left: auto; }
+}
+@media (max-width: 734px) {
+  :root { --section-gap: 64px; --card-pad: 22px; }
+  .hero { padding-top: 36px; }
+  .capsule { margin-top: 32px; padding: 20px; }
+  .capsule-title span:not(.nm) { display: block; margin-top: 2px; }
+  .hero-fx { min-height: calc(100svh - 56px); }
+  .pnav-logo svg { height: 22px; }
+  .pnav { height: 56px; }
+  .chapters { grid-template-columns: minmax(0, 1fr); }
+  .ch { --cell-pad: 24px; border-width: 0 !important; }
+  .ch:not(:last-child) { border-bottom-width: 1px !important; }
+  .foot-in { flex-direction: column; align-items: flex-start; }
+}
+@media (max-width: 1100px) { .tcard { width: clamp(380px, 60vw, 600px); } }
+/* Phones: the cards stack and nothing pins */
+@media (max-width: 767px) {
+  .travel-panel { min-height: 0; padding-block: var(--section-gap); }
+  .travel-viewport { padding-inline: var(--pad); }
+  .travel-track { flex-direction: column; gap: 16px; width: 100%; }
+  .tcard { width: 100%; padding: 28px 24px 32px; }
+}
+/* Reduced motion, wider screens: no pinning; the row scrolls sideways on its own, snapping card by card */
+@media (prefers-reduced-motion: reduce) and (min-width: 768px) {
+  .travel-viewport { overflow-x: auto; scroll-snap-type: x mandatory; }
+  .tcard { scroll-snap-align: start; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .done-ball::before, .done-ball::after, .form-loading i { animation: none; }
+  * { transition-duration: .01s !important; }
+}
+.pnav .pill { transition: opacity .3s var(--ease), background-color .25s var(--ease); }
+.pnav.is-at-form .pill { opacity: 0; pointer-events: none; }

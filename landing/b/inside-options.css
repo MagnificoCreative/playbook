@@ -1,0 +1,120 @@
+/* What's inside: card options. Loads after b.css and only overrides the chapter cards. */
+body { background: #fff; }
+.opt-top { padding: 56px 0 8px; }
+.opt-jump { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+.opt-jump .pill { height: 36px; padding: 0 16px; box-shadow: inset 0 0 0 1px var(--hairline); color: var(--ink); }
+.opt { padding: 64px 0; border-top: 1px solid var(--hairline); margin-top: 48px; }
+.opt-head { display: flex; flex-direction: column; gap: 8px; margin-bottom: 28px; max-width: 60ch; }
+.opt-note { font-size: 15px; line-height: 1.45; color: var(--ink-2); }
+.opt .ch-text { padding-bottom: 0; }
+
+/* ── Shared: full bleed. The media runs to the card's edges and its corners follow the card. ── */
+.opt .ch-card { padding: 0 0 var(--card-pad); overflow: hidden; isolation: isolate; }
+.opt .ch-media { border-radius: 0; margin-bottom: 22px; }
+.opt .ch-num, .opt .ch h3, .opt .ch-text { padding-inline: var(--card-pad); }
+
+/* ── Light paint (01, 02): the playbook's light-card rule. Teal lines at the same opacities, guides at .07,
+      fills match the card so shapes knock out cleanly; the ball, glow and trail stay as they are. ── */
+.o1 .ch-media, .o2 .ch-media { background: transparent; }
+.o1 .ch-media .ln, .o2 .ch-media .ln { stroke: var(--stage); }
+.o1 .ch-media .gd, .o2 .ch-media .gd { stroke: var(--stage); stroke-opacity: .07; }
+.o1 .ch-media .dot, .o2 .ch-media .dot { fill: var(--stage); }
+.o1 .ch-media .pnl, .o2 .ch-media .pnl { fill: var(--mist); stroke: var(--stage); }
+.o1 .ch-media .fill, .o2 .ch-media .fill { fill: var(--mist); }
+
+/* 01: the scene's lower edge dissolves into the card, so there's no line between picture and copy */
+.o1 .ch-media { -webkit-mask-image: linear-gradient(#000 72%, transparent); mask-image: linear-gradient(#000 72%, transparent); margin-bottom: 8px; }
+
+/* 02: the scene is the whole card. It's drawn larger, centred higher, and its lines keep running faintly
+      behind the copy (fading to 22%) instead of stopping above it. */
+.o2 .ch-card { position: relative; padding-top: 64%; }
+.o2 .ch-media { position: absolute; inset: 0; aspect-ratio: auto; margin: 0; z-index: -1;
+  -webkit-mask-image: linear-gradient(#000 30%, rgba(0,0,0,.22) 62%); mask-image: linear-gradient(#000 30%, rgba(0,0,0,.22) 62%); }
+.o2 .ch-media > svg { inset: -36% -20% auto -20%; width: 140%; height: auto; aspect-ratio: 1; transform: none; }
+
+/* 03: full bleed on the dark stage, for comparison */
+
+/* 04: white cards on a light grey section; the animation sits on white, edge to edge, faded at the foot like 01 */
+.opt.o4 { background: var(--mist); border-top: 0; margin-top: 48px; padding-block: 64px 80px; }
+.o4 .ch-card { background: #fff; }
+.o4 .ch-media { background: transparent; -webkit-mask-image: linear-gradient(#000 72%, transparent); mask-image: linear-gradient(#000 72%, transparent); margin-bottom: 8px; }
+.o4 .ch-media .ln { stroke: var(--stage); }
+.o4 .ch-media .gd { stroke: var(--stage); stroke-opacity: .07; }
+.o4 .ch-media .dot { fill: var(--stage); }
+.o4 .ch-media .pnl { fill: #fff; stroke: var(--stage); }
+.o4 .ch-media .fill { fill: #fff; }
+
+/* Step label, top left: dark on the light options, light on the dark one */
+.opt .ch-num { top: 20px; left: var(--card-pad); }
+.o1 .ch-num, .o2 .ch-num, .o4 .ch-num { color: var(--ink-2); }
+
+/* 05: hairline grid. No card fill: cells sit on the section grey, split by 1px hairlines (two vertical, one
+   horizontal). --cell-pad sets the padding all around (36 / 44 / 52 = current 28 + 8 / 16 / 24). */
+.opt.o5 { background: var(--mist); border-top: 0; margin-top: 0; padding-block: 64px 80px; }
+.opt.o5 + .opt.o5 { border-top: 1px solid var(--hairline); }
+.o5 .chapters { gap: 0; }
+.o5 .ch { border-color: var(--hairline); border-style: solid; border-width: 0; }
+.o5 .ch:not(:nth-child(3n)) { border-right-width: 1px; }
+.o5 .ch:nth-child(-n+3) { border-bottom-width: 1px; }
+.o5 .ch-card { background: transparent; border-radius: 0; padding: var(--cell-pad); overflow: visible; }
+.o5 .ch-num { top: var(--cell-pad); left: var(--cell-pad); color: var(--ink-2); }
+.o5 .ch h3, .o5 .ch-text { padding-inline: 0; }
+.o5 .ch-media { --ink-line: color-mix(in srgb, var(--stage) 50%, var(--mist)); background: transparent; margin: 0 0 8px;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 14%, #000 86%, transparent), linear-gradient(#000 70%, transparent);
+  -webkit-mask-composite: source-in; mask-image: linear-gradient(to right, transparent, #000 14%, #000 86%, transparent), linear-gradient(#000 70%, transparent); mask-composite: intersect; }
+.o5 .ch-media .ln { stroke: var(--ink-line); }
+.o5 .ch-media .gd { stroke: var(--stage); stroke-opacity: .07; }
+.o5 .ch-media .dot { fill: var(--ink-line); }
+.o5 .ch-media .pnl { fill: var(--mist); stroke: var(--ink-line); }
+.o5 .ch-media .fill { fill: var(--mist); }
+@media (max-width: 1068px) {
+  .o5 .ch { border-width: 0 !important; }
+  .o5 .ch:nth-child(odd) { border-right-width: 1px !important; }
+  .o5 .ch:nth-child(-n+4) { border-bottom-width: 1px !important; }
+}
+@media (max-width: 734px) {
+  .o5 .ch { border-width: 0 !important; }
+  .o5 .ch:not(:last-child) { border-bottom-width: 1px !important; }
+}
+
+/* 05, full width: the grid breaks out of the page container and runs edge to edge across the browser.
+   The only side spacing left is each cell's own padding. */
+html { overflow-x: clip; }
+.opt.o5 { container-type: inline-size; }   /* the section spans the page, so 100cqw is the width inside the scrollbar */
+.o5 .chapters { width: 100cqw; margin-inline: calc(50% - 50cqw); }
+
+/* Step labels line up with the headline and body: no inline padding, only the cell's own inset */
+.opt .ch-num { padding: 0; }
+
+/* 06: hover to reveal. Built on 05D. At rest: animation + step label only. On hover or keyboard focus the cell
+   inverts to the dark stage, the scene swaps to light lines, and the headline and body rise in over the
+   animation's faded foot. Touch screens have no hover, so they show the copy at rest. */
+.o6 .ch { outline: none; transition: background-color .5s var(--ease); }
+.o6 .ch-card { padding: var(--cell-pad); }
+.o6 .ch-media { margin: 0; }
+.o6 .ch-media .ln, .o6 .ch-media .pnl { transition: stroke .5s var(--ease), fill .5s var(--ease); }
+.o6 .ch-media .dot, .o6 .ch-media .fill { transition: fill .5s var(--ease); }
+.o6 .ch-num { transition: color .5s var(--ease); }
+.o6 .ch h3, .o6 .ch-text { position: relative; z-index: 2; }
+.o6 .ch-copy-wrap { display: contents; }
+.o6 .ch h3 { position: absolute; left: var(--cell-pad); right: var(--cell-pad); bottom: calc(var(--cell-pad) + 46px); }
+.o6 .ch-text { position: absolute; left: var(--cell-pad); right: var(--cell-pad); bottom: var(--cell-pad); margin: 0; min-height: 40px; }
+.o6 .ch h3, .o6 .ch-text { opacity: 0; transform: translateY(12px); transition: opacity .35s var(--ease), transform .45s var(--ease), color .5s var(--ease); }
+.o6 .ch-text { transition-delay: 0s; }
+/* the inverted state */
+.o6 .ch:hover, .o6 .ch:focus-visible { background: var(--stage); }
+.o6 .ch:hover .ch-media, .o6 .ch:focus-visible .ch-media { --ink-line: color-mix(in srgb, var(--stage-ink) 20%, var(--stage)); }
+.o6 .ch:hover .ch-media .gd, .o6 .ch:focus-visible .ch-media .gd { stroke: var(--stage-ink); stroke-opacity: .05; }
+.o6 .ch:hover .ch-media .pnl, .o6 .ch:focus-visible .ch-media .pnl,
+.o6 .ch:hover .ch-media .fill, .o6 .ch:focus-visible .ch-media .fill { fill: var(--stage); }
+.o6 .ch:hover .ch-num, .o6 .ch:focus-visible .ch-num { color: var(--stage-ink); }
+.o6 .ch:hover h3, .o6 .ch:focus-visible h3 { color: #fff; }
+.o6 .ch:hover .ch-text, .o6 .ch:focus-visible .ch-text { color: var(--stage-ink); }
+.o6 .ch:hover h3, .o6 .ch:focus-visible h3,
+.o6 .ch:hover .ch-text, .o6 .ch:focus-visible .ch-text { opacity: 1; transform: none; transition: opacity .45s var(--ease) .08s, transform .55s var(--ease) .08s, color .5s var(--ease); }
+.o6 .ch:hover .ch-text, .o6 .ch:focus-visible .ch-text { transition-delay: .16s; }
+@media (hover: none) {
+  .o6 .ch h3, .o6 .ch-text { position: static; opacity: 1; transform: none; }
+  .o6 .ch-media { margin-bottom: 8px; }
+}
+@media (prefers-reduced-motion: reduce) { .o6 .ch h3, .o6 .ch-text { transform: none !important; } }
