@@ -27,10 +27,11 @@
   --f-label: "IBM Plex Sans", "Inter", ui-sans-serif, system-ui, sans-serif;
 
   /* Space and shape (reference) */
-  --section-gap: 90px;
+  --section-gap: 100px;         /* spacing rule: every section has 100px above and below its content */
+  --content-gap: 60px;          /* spacing rule: 60px between a section's heading lockup and the content under it */
   --element-gap: 20px;
   --card-pad: 28px;
-  --r-card: 28px;
+  --r-card: 8px;                /* one card radius: problem cards, the Also inside render, the form card (the playbook's --radius) */
   --r-nav: 20px;
   --r-link: 10px;
   --r-pill: 9999px;
@@ -194,7 +195,11 @@ em { font-style: normal; color: var(--accent); }
    sideways; a 01 / 03 counter and ticks follow along. Text-led cards, so they're narrow, like the playbook's
    cards without illustrations; the last one is the dark close and is wider. Phones stack the cards. */
 .travel { padding-block: 0; }
-.travel-panel { min-height: calc(100svh - 64px); display: flex; flex-direction: column; gap: clamp(24px, 4vh, 40px); padding-block: clamp(40px, 7vh, 72px); overflow: hidden; }
+.travel-panel { min-height: calc(100svh - 64px); display: flex; flex-direction: column; gap: 0; padding-block: var(--section-gap); overflow: hidden; }
+.travel-head { margin-bottom: var(--content-gap); }
+.travel .meter { margin-top: 24px; }   /* the pager belongs to the cards, so it sits close under them */
+/* The pinned panel must fit the screen: on short screens its 100px top and bottom give way first (never below 32px) */
+@media (min-width: 768px) { .travel-panel { padding-block: clamp(32px, calc((100svh - 592px) / 2), var(--section-gap)); } }
 .travel-head { max-width: none; display: flex; flex-direction: column; align-items: center; gap: 20px; text-align: center; }   /* centred title, the counter sits under it */
 .meter { max-width: none; display: flex; align-items: center; justify-content: space-between; gap: 20px; }   /* under the cards: count on the left, ticks on the right */
 .meter-count { font: 500 12px/1 var(--f-label); letter-spacing: .16em; color: var(--ink-2); font-variant-numeric: tabular-nums; }
@@ -212,7 +217,7 @@ em { font-style: normal; color: var(--accent); }
 .tcard {
   flex: 0 0 auto; width: clamp(400px, 44vw, 640px);
   display: flex; flex-direction: column; justify-content: space-between; gap: clamp(24px, 4vh, 48px);
-  padding: 60px; border-radius: 8px; background: var(--canvas);
+  padding: 60px; border-radius: var(--r-card); background: var(--canvas);
 }
 .tcard-label { font: 400 20px/24px var(--f-display); letter-spacing: -0.01em; color: var(--stage); }
 .tcard-copy { display: flex; flex-direction: column; gap: 24px; max-width: 34em; }
@@ -225,7 +230,7 @@ em { font-style: normal; color: var(--accent); }
 .tcard-dark em { font-style: normal; color: var(--pink); }
 
 /* ───────── What's inside ───────── */
-.editorial-head { display: flex; flex-direction: column; align-items: center; gap: var(--element-gap); margin-bottom: 56px; text-align: center; }
+.editorial-head { display: flex; flex-direction: column; align-items: center; gap: var(--element-gap); margin-bottom: var(--content-gap); text-align: center; }
 .editorial-head .body-l { text-wrap: balance; }
 .chapters { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--element-gap); max-width: none; }
 /* What's inside: a full-width hairline grid (option 05D). No card fills: the cells sit on the section grey,
@@ -309,8 +314,6 @@ em { font-style: normal; color: var(--accent); }
 /* ───────── Who ───────── */
 .who { display: flex; flex-direction: column; align-items: center; gap: 28px; text-align: center; }
 .who-text { font: 600 clamp(28px, 3.6vw, 44px)/1.14 var(--f-display); letter-spacing: -0.01em; max-width: 24ch; text-wrap: balance; }
-.tags { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
-.tags li { padding: 7px 16px; border-radius: var(--r-pill); box-shadow: var(--ring-strong); font-size: 14px; letter-spacing: -0.224px; color: var(--ink); background: var(--canvas); }
 
 /* ───────── Get ───────── */
 .get { display: flex; flex-direction: column; align-items: center; gap: var(--element-gap); text-align: center; }
@@ -318,6 +321,33 @@ em { font-style: normal; color: var(--accent); }
 .card { width: 100%; max-width: 480px; margin-top: 20px; padding: var(--card-pad); border-radius: var(--r-card); background: var(--mist); text-align: left; }
 .card .done-msg { font-size: 17px; }
 .assess { margin-top: 28px; font-size: 17px; color: var(--ink-2); max-width: 60ch; }
+
+/* Get the playbook on the playbook's closing-panel background (assets/playbook.css › .cta-bg, Figma Footer BG option 03 · Parallax):
+   a 4:3 stage covers the section — brand teal, the pink M watermark, a dark gradient from the right, and the striped
+   texture in saturation blend twice (slow behind, faster and fainter in front). The copy is centred, so a soft veil sits only behind the headline. */
+.band-dark { position: relative; isolation: isolate; overflow: hidden; background: var(--stage); color: var(--stage-ink); }
+.band-dark > .wrap { position: relative; z-index: 1; }
+.cta-bg { position: absolute; inset: 0; z-index: 0; container-type: size; pointer-events: none; }
+.cta-stage { position: absolute; left: 50%; top: 50%; width: max(100cqw, 133.334cqh); aspect-ratio: 4 / 3; transform: translate(-50%, -50%); isolation: isolate; overflow: hidden; background: var(--stage); }
+.cta-wm { position: absolute; left: -33.25%; top: -4.58%; width: 124.75%; height: 109.08%; background: url(../../assets/footer/watermark.svg) center / 100% 100% no-repeat; animation: cta-sway 30s ease-in-out infinite alternate; }
+.cta-grad { position: absolute; inset: 0; background: linear-gradient(270deg, rgba(0, 42, 50, .76) 0%, rgba(0, 42, 50, 0) 86%); }
+.cta-tex { position: absolute; left: -22.27%; top: 50%; width: 132.8%; aspect-ratio: 4 / 3; transform: translateY(-50%); mix-blend-mode: saturation; opacity: .5; overflow: hidden; }
+.cta-tex.is-front { opacity: .28; }
+.cta-strip { position: absolute; inset: 0 auto 0 0; width: 400%; display: flex; transform: translateX(-50%); animation: cta-drift 120s linear infinite; will-change: transform; }
+.cta-tex.is-front .cta-strip { animation-duration: 55s; }
+.cta-strip i { flex: 1 0 25%; background: url(../../assets/footer/texture.jpg) center / 100% 100%; }
+.cta-strip i:nth-child(even) { background-image: url(../../assets/footer/texture-flip.jpg); }
+.cta-tex.is-front .cta-strip i { background-size: 100% 140%; }
+.cta-veil { position: absolute; inset: 0; z-index: 0; pointer-events: none; background: radial-gradient(60% 34% at 50% 22%, rgba(0, 42, 50, .55) 0%, rgba(0, 42, 50, 0) 100%); }   /* only behind the headline, so the colour keeps its full strength everywhere else */
+@keyframes cta-drift { from { transform: translateX(-50%); } to { transform: translateX(0); } }
+@keyframes cta-sway { from { transform: translateX(-1.5%); } to { transform: translateX(1.5%); } }
+@media (prefers-reduced-motion: reduce) { .cta-wm, .cta-strip { animation: none; } }
+/* Copy on the dark: white headline, slate copy; the form card turns white so it reads as the one light thing */
+.band-dark .kicker, .band-dark .hero-lead, .band-dark .assess { color: var(--stage-ink); }
+.band-dark .get-title { color: #fff; }
+.band-dark .assess .text-link { color: #fff; }
+.band-dark .assess .text-link span { color: var(--pink); }
+.band-dark .card { background: var(--canvas); box-shadow: 0 24px 60px rgba(0, 0, 0, .25); }
 
 /* ───────── Footer ───────── */
 .foot { background: var(--mist); border-top: 1px solid var(--hairline); }
