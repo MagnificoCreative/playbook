@@ -31,7 +31,7 @@
   --content-gap: 60px;          /* spacing rule: 60px between a section's heading lockup and the content under it */
   --element-gap: 20px;
   --card-pad: 28px;
-  --r-card: 8px;                /* one card radius: problem cards, the Also inside render, the form card (the playbook's --radius) */
+  --r-card: 8px;                /* one card radius: the form card (the playbook's --radius) */
   --r-nav: 20px;
   --r-link: 10px;
   --r-pill: 9999px;
@@ -190,33 +190,20 @@ em { font-style: normal; color: var(--accent); }
 @keyframes ring { from { transform: scale(1); opacity: .7; } to { transform: scale(3.6); opacity: 0; } }
 .done-msg { font-size: 17px; color: var(--ink-2); margin-top: 2px; }
 
-/* ───────── The problem: three cards ─────────
-   Built like the What's inside grid: the row runs edge to edge with no gutters, so the cards touch and each
-   card's 60px padding makes the page margin. White, then the section grey, then the dark close.
-   Label at the top, copy at the foot. Below 1100px the cards stack. */
-.problem-head { display: flex; flex-direction: column; align-items: center; text-align: center; margin-bottom: var(--content-gap); }
-.problem-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.tcard {
-  display: flex; flex-direction: column; justify-content: space-between; gap: 48px;
-  min-height: clamp(440px, 36vw, 560px); padding: 60px; background: var(--canvas);
-}
-.tcard:nth-child(2) { background: var(--mist); }
-.tcard-label { font: 400 20px/24px var(--f-display); letter-spacing: -0.01em; color: var(--stage); }
-.tcard-copy { display: flex; flex-direction: column; gap: 24px; max-width: 34em; }
-.tcard-title { font: 400 32px/1.2 var(--f-display); letter-spacing: -0.01em; color: var(--ink); }
-.tcard-body { font: 300 16px/1.45 var(--f-text); letter-spacing: 0; color: var(--ink-2); }
-.tcard-body b { font-weight: 500; color: var(--ink); }
-.tcard-dark { background: var(--stage); }
-.tcard-dark .tcard-label { color: var(--stage-ink); }
-.tcard-dark .tcard-title { color: #fff; }
-.tcard-dark em { font-style: normal; color: var(--pink); }
-@media (max-width: 1099px) {
-  .problem-row { grid-template-columns: minmax(0, 1fr); }
-  .tcard { min-height: 0; padding: 60px var(--pad); gap: 32px; }
-}
-@media (max-width: 734px) {
-  .tcard { padding-block: 40px; }
-  .tcard-title { font-size: 26px; }
+/* ───────── Split sections: The problem and Also inside ─────────
+   Half image, half copy, like two cards side by side with no gap. The animation fills its half edge to edge
+   (no margins, no radius); the copy half has 60px padding all round and stacks a kicker, headline and hairline list.
+   The problem has the image on the left, Also inside on the right. Below 1069px the image sits on top, then the copy. */
+.split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.also { background: var(--mist); }
+.split-stage { min-height: 560px; }
+.split-copy { display: flex; flex-direction: column; justify-content: center; gap: var(--element-gap); padding: 60px; }
+.split-copy .specs { margin-top: 12px; }
+.split-copy .specs > div:first-child { border-top: 0; }   /* hairlines only between the points, none above the first */
+@media (max-width: 1068px) {
+  .split { grid-template-columns: minmax(0, 1fr); }
+  .split-stage { order: -1; min-height: 0; aspect-ratio: 16 / 10; }
+  .split-copy { padding: 60px var(--pad); }
 }
 
 /* ───────── What's inside ───────── */
@@ -226,7 +213,7 @@ em { font-style: normal; color: var(--accent); }
 /* What's inside: a full-width hairline grid (option 05D). No card fills: the cells sit on the section grey,
    split by 1px hairlines (two vertical, one horizontal), and the grid runs edge to edge across the browser,
    so the only side spacing is each cell's 40px padding. Step label, headline and body share one left edge. */
-#inside { container-type: inline-size; overflow-x: clip; }   /* the editorial render bleeds off the right edge; clip it here so the page never scrolls sideways */   /* 100cqw = the page width inside the scrollbar */
+#inside { container-type: inline-size; overflow-x: clip; padding-bottom: 0; }   /* no bottom space: the grid runs straight into Also inside */   /* 100cqw = the page width inside the scrollbar; clip so the full-width grid never scrolls the page sideways */
 #inside .chapters{ width: 100cqw; margin-inline: calc(50% - 50cqw); gap: 0 !important; }
 #inside .ch{ --cell-pad: 60px; border: 0 solid var(--hairline); }
 #inside .ch:not(:nth-child(3n)){ border-right-width: 1px; }
@@ -286,6 +273,12 @@ em { font-style: normal; color: var(--accent); }
   #inside .ch-card{ grid-template-rows: auto auto auto; }
   #inside .ch-media{ grid-row: 1; }
 }
+/* With a mouse the headline and body show on hover as one lockup, centred in the card both ways */
+@media (hover: hover) {
+  #inside .ch-card{ grid-template-rows: 1fr auto auto 1fr; }
+  #inside .ch h3{ grid-row: 2; }
+  #inside .ch-text{ grid-row: 3; align-self: start; }
+}
 /* Centred: the step label across the top, the copy rises in at the bottom, and the ball, glow and trail fade out on hover */
 #inside .ch-num{ left: var(--cell-pad); right: var(--cell-pad); text-align: center; }
 #inside .ch h3, #inside .ch-text{ text-align: center; justify-self: center; max-width: 30em; }
@@ -293,13 +286,10 @@ em { font-style: normal; color: var(--accent); }
 #inside .ch:hover .ch-media :is(.ball, .glow, .ghost),
 #inside .ch:focus-visible .ch-media :is(.ball, .glow, .ghost){ opacity: 0 !important; }
 
-.editorial { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 48px; align-items: center; margin-top: calc(var(--section-gap) + 20px); }
-.editorial-copy { display: flex; flex-direction: column; gap: var(--element-gap); }
 .specs { display: flex; flex-direction: column; margin-top: 12px; }
 .specs div { padding: 18px 0; border-top: 1px solid var(--hairline); }
 .specs dt { font: 600 17px/1.24 var(--f-text); letter-spacing: -0.374px; color: var(--ink); }
 .specs dd { margin-top: 6px; font-size: 17px; color: var(--ink-2); }
-.editorial-stage { aspect-ratio: 1; border-radius: var(--r-card); margin-right: calc(-1 * var(--pad)); } /* bleeds off the right edge, like an oversized render */
 
 /* ───────── Who ───────── */
 .who { display: flex; flex-direction: column; align-items: center; gap: 28px; text-align: center; }
@@ -350,8 +340,6 @@ em { font-style: normal; color: var(--accent); }
   #inside .ch { border-width: 0 !important; }
   #inside .ch:nth-child(odd) { border-right-width: 1px !important; }
   #inside .ch:nth-child(-n+4) { border-bottom-width: 1px !important; }
-  .editorial { grid-template-columns: minmax(0, 1fr); }
-  .editorial-stage { margin-right: 0; aspect-ratio: 16 / 10; }
 }
 @media (max-width: 860px) {
   .form-row .hs-form { grid-template-columns: minmax(0, 1fr); }

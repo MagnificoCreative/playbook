@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500&family=Syne:wght@400;500;600&family=Inter:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap">
-<link rel="stylesheet" href="b.css?v=37">
+<link rel="stylesheet" href="b.css?v=44">
 </head>
 <body>
 
@@ -67,34 +67,18 @@
   </div>
 </section>
 
-<!-- ───────── The problem: three cards, edge to edge, no gutters (like the What's inside grid) ───────── -->
-<section class="band band-mist problem" id="highlights" aria-labelledby="t-hl">
-  <div class="wrap problem-head">
-    <h2 class="feature-title" id="t-hl">The problem, in three parts.</h2>
+<!-- ───────── The problem: split in two, the Agreement animation on the left, the copy on the right ───────── -->
+<section class="band-mist split problem" id="highlights" aria-labelledby="t-hl">
+  <div class="stage split-stage" aria-hidden="true"><svg viewBox="0 0 600 600" preserveAspectRatio="xMidYMid slice" data-scene="LP"></svg></div>
+  <div class="split-copy">
+    <p class="kicker">The problem</p>
+    <h2 class="feature-title" id="t-hl">The numbers are on the screen, and nobody agrees on them.</h2>
+    <dl class="specs">
+      <div><dt>You know this meeting</dt><dd>One team’s figure doesn’t match another’s. Someone has a spreadsheet that tells a different story. Most of the hour goes to reconciling the numbers.</dd></div>
+      <div><dt>One screen isn’t one truth</dt><dd>A single pane of glass puts all your data on one screen. A single source of truth means everyone agrees what each number means, where it comes from, and who owns it.</dd></div>
+      <div><dt>Why it keeps happening</dt><dd>You can have the first without the second, so a new dashboard just shows the disagreement more efficiently.</dd></div>
+    </dl>
   </div>
-
-  <ol class="problem-row">
-    <li class="tcard">
-      <p class="tcard-label">You know this meeting</p>
-      <div class="tcard-copy">
-        <h3 class="tcard-title">The numbers are on the screen, and nobody agrees on them.</h3>
-        <p class="tcard-body">One team’s figure doesn’t match another’s. Someone has a spreadsheet that tells a different story. Most of the hour goes to reconciling the numbers — very little to deciding what to do about them.</p>
-      </div>
-    </li>
-    <li class="tcard">
-      <p class="tcard-label">One screen isn’t one truth</p>
-      <div class="tcard-copy">
-        <h3 class="tcard-title">A better dashboard rarely fixes it.</h3>
-        <p class="tcard-body">The real problem sits underneath it. <b>A single pane of glass</b> puts all your data on one screen. <b>A single source of truth</b> means everyone agrees what each number means, where it comes from, and who owns it.</p>
-      </div>
-    </li>
-    <li class="tcard tcard-dark">
-      <p class="tcard-label">Why it keeps happening</p>
-      <div class="tcard-copy">
-        <h3 class="tcard-title">You can have the first without the second — and a new dashboard just shows <em>the disagreement more efficiently.</em></h3>
-      </div>
-    </li>
-  </ol>
 </section>
 
 <!-- ───────── What's inside ───────── -->
@@ -123,30 +107,29 @@
         <div class="ch-media"><svg viewBox="0 0 600 600" preserveAspectRatio="xMidYMid slice" data-scene="05" aria-hidden="true"></svg></div>
         <p class="ch-num"><span class="num">05</span>Roadmap</p><h3>Design around decisions</h3><p class="ch-text">Start where friction shows up every day, and design the path from signal to action.</p></div></li>
       <li class="ch" tabindex="0"><div class="ch-card">
-        <div class="ch-media"><svg viewBox="0 0 600 600" preserveAspectRatio="xMidYMid slice" data-scene="06" aria-hidden="true"></svg></div>
+        <div class="ch-media"><svg viewBox="0 0 600 600" preserveAspectRatio="xMidYMid slice" data-scene="06t" aria-hidden="true"></svg></div>
         <p class="ch-num"><span class="num">06</span>Build with confidence</p><h3>Test before you build</h3><p class="ch-text">A prototype is the cheapest place to be wrong. Test it with the people who will use it.</p></div></li>
     </ol>
 
-    <!-- Editorial block: copy left, the image enters from the right -->
-    <div class="editorial">
-      <div class="editorial-copy">
-        <p class="kicker">Also inside</p>
-        <h2 class="feature-title">From the first interview to a delivered platform.</h2>
-        <dl class="specs">
-          <div><dt>Apply it</dt><dd>A practical way to apply each step inside your own organization.</dd></div>
-          <div><dt>A real case study</dt><dd>An oil &amp; gas company that went through this exact process, from the first stakeholder interviews to a delivered platform.</dd></div>
-          <div><dt>Where trust breaks down</dt><dd>Where operational trust actually breaks down between source and decision — and how to find it in your own org.</dd></div>
-        </dl>
-      </div>
-      <div class="stage editorial-stage" aria-hidden="true">
-        <svg viewBox="0 0 600 600" preserveAspectRatio="xMidYMid slice" data-scene="07"></svg>
-      </div>
-    </div>
   </div>
 </section>
 
+<!-- ───────── Also inside: split in two, the copy on the left, the True north animation on the right ───────── -->
+<section class="split also" aria-labelledby="t-also">
+  <div class="split-copy">
+    <p class="kicker">Also inside</p>
+    <h2 class="feature-title" id="t-also">From the first interview to a delivered platform.</h2>
+    <dl class="specs">
+      <div><dt>Apply it</dt><dd>A practical way to apply each step inside your own organization.</dd></div>
+      <div><dt>A real case study</dt><dd>An oil &amp; gas company that went through this exact process, from the first stakeholder interviews to a delivered platform.</dd></div>
+      <div><dt>Where trust breaks down</dt><dd>Where operational trust actually breaks down between source and decision — and how to find it in your own org.</dd></div>
+    </dl>
+  </div>
+  <div class="stage split-stage" aria-hidden="true"><svg viewBox="0 0 600 600" preserveAspectRatio="xMidYMid slice" data-scene="07"></svg></div>
+</section>
+
 <!-- ───────── Who it's for ───────── -->
-<section class="band band-mist" id="who" aria-labelledby="t-who">
+<section class="band" id="who" aria-labelledby="t-who">
   <div class="wrap who">
     <p class="kicker" id="t-who">Who it’s for</p>
     <p class="who-text">Operations, data, and engineering leaders at oil &amp; gas and renewables companies who are tired of dashboard projects that <em>don’t settle the argument.</em></p>
@@ -216,9 +199,10 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-<script src="../../assets/motion/hero-scenes.js"></script>
+<script src="../../assets/motion/hero-scenes.js?v=2"></script>
+<script src="../scene-agreement.js?v=1"></script>
 <script src="hero-fx.js?v=2"></script>
 <script src="../hubspot-config.js?v=1"></script>
-<script src="b.js?v=11"></script>
+<script src="b.js?v=14"></script>
 </body>
 </html>

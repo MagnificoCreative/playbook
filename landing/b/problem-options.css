@@ -1,0 +1,25 @@
+/* Problem section options: image left (bleeding off the left edge), copy right, stacked like Also inside. */
+html { overflow-x: clip; }
+.po-top { padding: 56px 0 40px; }
+.po-jump { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+.po-jump .pill { height: 36px; padding: 0 16px; box-shadow: inset 0 0 0 1px var(--hairline); color: var(--ink); }
+.po-label { display: flex; flex-direction: column; gap: 6px; padding-block: 28px; border-top: 1px solid var(--hairline); background: var(--canvas); }
+.po-label .opt-note { font-size: 14px; color: var(--ink-2); max-width: 70ch; }
+
+/* The section itself: what would replace the problem section on the page */
+.po { overflow-x: clip; }
+.po-split { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: 80px; align-items: center; }
+.po-stage { aspect-ratio: 5 / 4; border-radius: var(--r-card); margin-left: calc(-1 * var(--pad)); border-top-left-radius: 0; border-bottom-left-radius: 0; }
+.po-copy { display: flex; flex-direction: column; gap: var(--element-gap); }
+.po-copy .body-l { max-width: 40ch; }
+.po-copy .specs { margin-top: 12px; }
+/* A closing line: the point the whole section lands on */
+.po-close { margin-top: 12px; padding-top: 24px; border-top: 1px solid var(--hairline); font: 400 24px/1.25 var(--f-display); letter-spacing: -0.005em; color: var(--ink); text-wrap: balance; }
+.po-close em { font-style: normal; color: var(--accent); }
+.po-paras { display: flex; flex-direction: column; gap: 16px; }
+.po-paras b { font-weight: 500; color: var(--ink); }
+
+@media (max-width: 1068px) {
+  .po-split { grid-template-columns: minmax(0, 1fr); gap: var(--content-gap); }
+  .po-stage { margin-left: 0; border-radius: var(--r-card); aspect-ratio: 16 / 10; }
+}

@@ -200,9 +200,8 @@
     };
   };
 
-  S["06c"] = svg => { // Wind tunnel
+  const windTunnel = ys => svg => { // Wind tunnel: dashed streamlines bend around the ball
     const g = el("g", { mask: radialMask(svg, 150, 280) }, svg), A = 34;
-    const ys = [-150, -120, -92, -66, -44, -24, 24, 44, 66, 92, 120, 150];
     const st = ys.map(y0 => {
       const pts = [];
       for (let x = 20; x <= 580; x += 8) {
@@ -220,6 +219,8 @@
       set(b, { cx: C + .8 * Math.sin(t * 31) * (gust - 1), r: B });
     };
   };
+  S["06c"] = windTunnel([-150, -120, -92, -66, -44, -24, 24, 44, 66, 92, 120, 150]);
+  S["06t"] = windTunnel([-120, -92, -66, -44, -24, 24, 44, 66, 92, 120]);   // landing B card: the outermost pair dropped so the top line clears the label
 
   S["07h"] = svg => { // True north: a compass rose with a needle and a heading
     const RING = 118, toXY = (a, r) => [C + r * Math.cos(a), C + r * Math.sin(a)];
@@ -263,7 +264,7 @@
   /* ═════════ Trail: the radar echo, as a brand motif ═════════
      Each option is drawn again a few times, slightly in the past, underneath itself.
      Echo copies of anything that isn't moving are hidden, so still lines don't get brighter. */
-  const LAG = { "01": .035, "02c": .035, "03b": .04, "03d": .06, "04b": .06, "05d": .035, "06a": .04, "06c": .03, "07d": .03, "07e": .028, "07f": .035, "07g": .03, "07h": .028 };
+  const LAG = { "01": .035, "02c": .035, "03b": .04, "03d": .06, "04b": .06, "05d": .035, "06a": .04, "06c": .03, "06t": .03, "07d": .03, "07e": .028, "07f": .035, "07g": .03, "07h": .028 };
   const GEO = ["d", "x1", "y1", "x2", "y2", "cx", "cy", "r", "rx", "ry", "x", "y", "width", "height", "points", "transform", "stroke-dashoffset"];
   const NUM = /-?\d*\.?\d+(?:e-?\d+)?/g;
   const nums = e => { let s = ""; for (const a of GEO) { const v = e.getAttribute(a); if (v != null) s += v + " "; } return s ? (s.match(NUM) || []).map(Number) : null; };
