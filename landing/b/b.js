@@ -19,9 +19,9 @@
     const tick = (now) => { if (!vis) return; t += Math.min(0.05, (now - last) / 1000); last = now; draw(t); requestAnimationFrame(tick); };
     new IntersectionObserver(([e]) => { const was = vis; vis = e.isIntersecting; if (vis && !was) { last = performance.now(); requestAnimationFrame(tick); } }).observe(svg);
   };
-  /* The hero: option 04 "Agreement → contours" at 50% line opacity, full bleed behind the copy */
+  /* The hero: the contours (wave) scene only, at 50% line opacity, full bleed behind the copy */
   const heroEl = $(".hero-fx");
-  if (heroEl && window.HeroFX) window.HeroFX.mount(heroEl, { canvas: $("#hero-canvas"), copy: $(".hero-fx .hero-text"), scene: "shift", lines: 0.5 });
+  if (heroEl && window.HeroFX) window.HeroFX.mount(heroEl, { canvas: $("#hero-canvas"), copy: $(".hero-fx .hero-text"), scene: "contours", lines: 0.5 });
   $$("[data-scene]").forEach((svg, i) => runScene(svg, svg.dataset.scene, { t0: 0.6 * i }));
 
   /* ═════════ Nav: section spy, form shortcuts ═════════ */
@@ -44,15 +44,13 @@
     else window.addEventListener("scrollend", focus, { once: true });
   });
 
-  /* ═════════ Reveals: quiet fades; the editorial render enters from the side ═════════ */
+  /* ═════════ Reveals: quiet fades that play once and always finish ═════════ */
   if (gsap && ST && !reduce) {
     gsap.from(".hero-text > *", { opacity: 0, y: 18, duration: 1.1, stagger: 0.08, ease: "power3.out" });
     gsap.from("#hero-canvas", { opacity: 0, duration: 1.6, ease: "power2.out" });
-    const up = ".problem-head, .tcard-label, .tcard-title, .tcard-body, .editorial-head, .ch, .editorial-copy, .who > *, .get > *";
+    const up = ".split-copy > *, .editorial-head, .ch, .who > *, .get > *";
     gsap.set(up, { opacity: 0, y: 30 });
     ST.batch(up, { start: "top 90%", once: true, onEnter: (els) => gsap.to(els, { opacity: 1, y: 0, duration: 1, stagger: 0.07, ease: "power3.out", overwrite: true }) });
-    // The render slides in once and always finishes (it used to follow the scroll, so stopping mid-way left it half faded)
-    gsap.fromTo(".editorial-stage", { xPercent: 12, opacity: 0 }, { xPercent: 0, opacity: 1, duration: 1.4, ease: "power3.out", scrollTrigger: { trigger: ".editorial-stage", start: "clamp(top 92%)", once: true } });
   }
 
   /* ═════════ The form ═════════

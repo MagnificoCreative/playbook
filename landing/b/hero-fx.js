@@ -1,4 +1,4 @@
-/* Landing B · full-bleed light hero. Used by landing/b/index.html (scene "shift", lines .5) and by
+/* Landing B · full-bleed light hero. Used by landing/b/index.html (scene "contours", lines .5) and by
    landing/b/hero-options.html, which compares all four scenes.
    Full-bleed hero scenes on one canvas. Each scene returns line segments with stable indices every frame; the
    engine keeps the last ten snapshots and draws them underneath as the radar trail (opacity .42 × (1 − j/11)²,
