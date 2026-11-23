@@ -1,7 +1,7 @@
-/* What's inside: card options. Loads after b.css and only overrides the chapter cards. */
+/* What's inside: card options. Loads after landing.css and only overrides the chapter cards. */
 body { background: #fff; }
 
-/* Base card for every option (landing B's own chapter styles are scoped to #inside, so this page sets its own) */
+/* Base card for every option (the landing page's own chapter styles are scoped to #inside, so this page sets its own) */
 .opt .ch-card { position: relative; display: flex; flex-direction: column; gap: 6px; height: 100%; border-radius: 8px; background: var(--mist); }
 .opt .ch-media { position: relative; aspect-ratio: 4 / 3; overflow: hidden; background: var(--stage); }
 .opt .ch-media > svg { position: absolute; inset: 0; width: 100%; height: 100%; transform: scale(1.35); }

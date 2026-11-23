@@ -2,14 +2,17 @@
 
 The gated front door to the playbook. It turns traffic into HubSpot contacts by offering the playbook for a name, work email and company. Copy: `assets/references/Playbook Landing Page Copy.pdf`.
 
-Files: `index.html`, `landing.css` (page styles, on top of `assets/playbook.css`), `landing.js` (scenes, demo, form). The hero scene “Agreement” lives in `landing.js` and follows `hero-explorations/ANIMATION-RULES.md`; the chapter tiles reuse the shipped chapter heroes from `assets/motion/hero-scenes.js`.
+Files:
 
-## Two versions
+- `index.html`, `landing.css`, `landing.js`: the page, its styles and its runtime (scenes, nav, reveals, form).
+- `hero-fx.js`: the full-bleed hero, running the contours (wave) scene behind the copy.
+- `scene-agreement.js`: the "Agreement" animation in the problem section.
+- `hubspot-config.js`: the HubSpot form IDs.
+- The chapter animations come from `assets/motion/hero-scenes.js`, shared with the playbook. All motion follows `hero-explorations/ANIMATION-RULES.md`.
 
-- **A · `landing/`**: the playbook's own look. A deep teal hero with the form on it, then full-height sections.
-- **B · `landing/b/`**: a white product-gallery layout taken from a Refero style reference (Apple's iPhone page), set in Magnifico's type (Syne, Inter, IBM Plex Sans) and colour (teal ink, magenta accent, teal media stages). It has a centred hero with a pill-shaped form capsule, a sticky product nav, a highlights carousel with the gauge demo, 28px shadowless cards, and 90px section rhythm.
+The page is a white layout set in Magnifico's type (Syne, Inter, IBM Plex Sans) and colour (teal ink, magenta accent, teal media stages). Sections use 100px top and bottom spacing and 60px from a heading to its content, except the two split sections (The problem, Also inside), where each half is edge to edge and the copy half has 60px padding all round.
 
-Both versions share `hubspot-config.js` (form IDs) and `scene-agreement.js` (the hero animation).
+Design comparison pages, not linked from the page: `hero-options.html`, `inside-options.html`, `problem-options.html`.
 
 ## Going live: three things to set up
 
@@ -17,9 +20,9 @@ Both versions share `hubspot-config.js` (form IDs) and `scene-agreement.js` (the
 
 In HubSpot, create (or pick) a form with three fields: **First name**, **Email** and **Company**, all required. In the form’s options, turn on *Block free email providers* so it only takes work emails.
 
-Then open the form’s *Share → Embed code* and copy `portalId`, `formId` and `region` into `landing/hubspot-config.js` (both landing versions read it). That’s all: the page loads HubSpot’s native embed (v2) into both form spots, with HubSpot’s own CSS switched off so it picks up the page styles. Submissions go straight to HubSpot as contacts.
+Then open the form’s *Share → Embed code* and copy `portalId`, `formId` and `region` into `landing/hubspot-config.js`. That’s all: the page loads HubSpot’s native embed (v2) into the form, with HubSpot’s own CSS switched off so it picks up the page styles. Submissions go straight to HubSpot as contacts.
 
-Until the IDs are set, the page shows a **preview form** with the same markup and styling, marked “Preview form · not connected to HubSpot”. It validates but sends nothing.
+Until the IDs are set, the page shows a **preview form** with the same markup and styling. It looks finished, with no label saying it isn't connected, but it only validates and sends nothing, so set the IDs before you share the page.
 
 ### 2. Route contacts into “Magnifico Business Development”
 
