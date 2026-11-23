@@ -1,4 +1,4 @@
-/* Landing page · version B runtime: hero, chapter scenes, the pinned problem travel, nav, reveals, and the HubSpot form.
+/* Landing page · version B runtime: hero, chapter scenes, nav, reveals, and the HubSpot form.
    Needs assets/motion/hero-scenes.js, hero-fx.js and ../hubspot-config.js first; GSAP is optional. */
 (() => {
   const HUBSPOT = Object.assign({ portalId: "", formId: "", region: "na1", submitText: "Send me the playbook" }, window.LP_HUBSPOT || {});
@@ -24,71 +24,6 @@
   if (heroEl && window.HeroFX) window.HeroFX.mount(heroEl, { canvas: $("#hero-canvas"), copy: $(".hero-fx .hero-text"), scene: "shift", lines: 0.5 });
   $$("[data-scene]").forEach((svg, i) => runScene(svg, svg.dataset.scene, { t0: 0.6 * i }));
 
-  /* ═════════ The problem: pinned horizontal travel (the playbook's "How to apply it") ═════════
-     Wide screens: the panel pins under the nav and vertical scroll moves the track sideways by exactly its overflow;
-     the counter and ticks follow the card in view, and ticks jump to a card. Each card's copy rises in as it
-     arrives. Phones: the cards stack and reveal as they scroll up. Reduced motion: no pin, a snapping row. */
-  (() => {
-    const section = $("#highlights"); if (!section) return;
-    const viewport = $(".travel-viewport", section), track = $(".travel-track", section);
-    const cards = $$(".tcard", track), ticks = $$(".tick", section), cur = $("#meter-cur");
-    const navH = () => $("#pnav").offsetHeight || 64;
-    let st = null, last = 0;
-    const setMeter = (i) => {
-      if (i === last) return; last = i;
-      cur.textContent = String(i + 1).padStart(2, "0");
-      ticks.forEach((t, j) => t.classList.toggle("is-active", j === i));
-    };
-    const pad = () => parseFloat(getComputedStyle(viewport).paddingLeft) || 0;
-    const dist = () => Math.max(0, track.scrollWidth - (viewport.clientWidth - 2 * pad()));
-    const go = (i) => {
-      if (st) {
-        const total = Math.max(1, dist()), x = Math.min(cards[i].offsetLeft - cards[0].offsetLeft, total);
-        window.scrollTo({ top: st.start + (x / total) * (st.end - st.start), behavior: reduce ? "auto" : "smooth" });
-      } else if (viewport.scrollWidth > viewport.clientWidth) {
-        viewport.scrollTo({ left: cards[i].offsetLeft - pad(), behavior: reduce ? "auto" : "smooth" });
-      } else cards[i].scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" });
-    };
-    ticks.forEach((t) => t.addEventListener("click", () => go(+t.dataset.go)));
-    if (!gsap || !ST || reduce) {
-      viewport.addEventListener("scroll", () => {   // the snapping row still moves the counter
-        let idx = 0; cards.forEach((c, i) => { if (c.offsetLeft - pad() <= viewport.scrollLeft + c.offsetWidth * .5) idx = i; }); setMeter(idx);
-      }, { passive: true });
-      return;
-    }
-    /* Each card's copy plays in once when the card arrives and always runs to the end: never tied to the scroll
-       position, so stopping mid-scroll can't leave it half faded. */
-    const reveal = cards.map((c) => gsap.timeline({ paused: true })
-      .from($$(".tcard-label, .tcard-title, .tcard-body", c), { y: 28, opacity: 0, duration: .9, stagger: .08, ease: "power3.out" }));
-    const play = (tl) => () => tl.play();
-    const mm = gsap.matchMedia();
-    mm.add("(min-width: 768px)", () => {
-      const travel = gsap.to(track, {
-        x: () => -dist(), ease: "none",
-        scrollTrigger: {
-          trigger: section, start: () => `top top+=${navH()}`, end: () => `+=${Math.max(dist(), innerHeight * .6)}`,
-          pin: true, scrub: true, anticipatePin: 1, invalidateOnRefresh: true,
-          onUpdate: (s) => {
-            const x = s.progress * dist(); let idx = 0;
-            cards.forEach((c, i) => { if (c.offsetLeft - cards[0].offsetLeft <= x + c.offsetWidth * .5) idx = i; });
-            setMeter(s.progress > .985 ? cards.length - 1 : idx);
-          },
-        },
-      });
-      st = travel.scrollTrigger;
-      const vp = () => viewport.getBoundingClientRect();
-      reveal.forEach((tl, i) => {
-        const fully = cards[i].offsetLeft - cards[0].offsetLeft < viewport.clientWidth * .92 - pad();   // already showing when the section arrives: plays in with the first card
-        if (fully) ST.create({ trigger: section, start: "clamp(top 78%)", once: true, onEnter: play(tl) });
-        else ST.create({ trigger: cards[i], containerAnimation: travel, start: () => `left ${vp().right - vp().width * .08}px`, once: true, onEnter: play(tl) });
-      });
-      return () => { st = null; gsap.set(track, { clearProps: "transform" }); reveal.forEach((tl) => tl.progress(1)); };
-    });
-    mm.add("(max-width: 767px)", () => {
-      reveal.forEach((tl, i) => ST.create({ trigger: cards[i], start: "clamp(top 85%)", once: true, onEnter: play(tl) }));
-    });
-  })();
-
   /* ═════════ Nav: section spy, form shortcuts ═════════ */
   const pnav = $("#pnav");
   const links = $$('.pnav-links a[href^="#"]'); // in-page links only; the assessment link leaves the page
@@ -113,7 +48,7 @@
   if (gsap && ST && !reduce) {
     gsap.from(".hero-text > *", { opacity: 0, y: 18, duration: 1.1, stagger: 0.08, ease: "power3.out" });
     gsap.from("#hero-canvas", { opacity: 0, duration: 1.6, ease: "power2.out" });
-    const up = ".travel-head, .editorial-head, .ch, .editorial-copy, .who > *, .get > *";
+    const up = ".problem-head, .tcard-label, .tcard-title, .tcard-body, .editorial-head, .ch, .editorial-copy, .who > *, .get > *";
     gsap.set(up, { opacity: 0, y: 30 });
     ST.batch(up, { start: "top 90%", once: true, onEnter: (els) => gsap.to(els, { opacity: 1, y: 0, duration: 1, stagger: 0.07, ease: "power3.out", overwrite: true }) });
     // The render slides in once and always finishes (it used to follow the scroll, so stopping mid-way left it half faded)
