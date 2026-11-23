@@ -43,7 +43,7 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; scroll-padding-top: 72px; }
+html { -webkit-text-size-adjust: 100%; scroll-padding-top: 72px; overflow-x: clip; }   /* on html too: body alone doesn't stop the page panning sideways */
 body {
   margin: 0; background: var(--canvas); color: var(--ink);
   font: 400 17px/1.47 var(--f-text); letter-spacing: -0.374px;
@@ -231,7 +231,7 @@ em { font-style: normal; color: var(--accent); }
 /* What's inside: a full-width hairline grid (option 05D). No card fills: the cells sit on the section grey,
    split by 1px hairlines (two vertical, one horizontal), and the grid runs edge to edge across the browser,
    so the only side spacing is each cell's 40px padding. Step label, headline and body share one left edge. */
-#inside { container-type: inline-size; }   /* 100cqw = the page width inside the scrollbar */
+#inside { container-type: inline-size; overflow-x: clip; }   /* the editorial render bleeds off the right edge; clip it here so the page never scrolls sideways */   /* 100cqw = the page width inside the scrollbar */
 #inside .chapters{ width: 100cqw; margin-inline: calc(50% - 50cqw); gap: 0 !important; }
 #inside .ch{ --cell-pad: 60px; border: 0 solid var(--hairline); }
 #inside .ch:not(:nth-child(3n)){ border-right-width: 1px; }
