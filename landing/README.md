@@ -10,7 +10,7 @@ Files:
 - `hubspot-config.js`: the HubSpot form IDs.
 - The chapter animations come from `assets/motion/hero-scenes.js`, shared with the playbook. All motion follows `hero-explorations/ANIMATION-RULES.md`.
 
-The page is a white layout set in Magnifico's type (Syne, Inter, IBM Plex Sans) and colour (teal ink, magenta accent, teal media stages). Sections use 100px top and bottom spacing and 60px from a heading to its content, except the two split sections (The problem, Also inside), where each half is edge to edge and the copy half has 60px padding all round.
+The page is a white layout set in Magnifico's type (Syne, Inter, IBM Plex Sans) and colour (teal ink, magenta accent, teal media stages). Sections use 100px top and bottom spacing and 60px from a heading to its content, except the two split sections (The problem, In the field), where each half is edge to edge and the copy half has 60px padding all round.
 
 Design comparison pages, not linked from the page: `hero-options.html`, `inside-options.html`, `problem-options.html`.
 

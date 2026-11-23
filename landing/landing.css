@@ -193,10 +193,10 @@ em { font-style: normal; color: var(--accent); }
 @keyframes ring { from { transform: scale(1); opacity: .7; } to { transform: scale(3.6); opacity: 0; } }
 .done-msg { font-size: 17px; color: var(--ink-2); margin-top: 2px; }
 
-/* ───────── Split sections: The problem and Also inside ─────────
+/* ───────── Split sections: The problem and In the field ─────────
    Half image, half copy, like two cards side by side with no gap. The animation fills its half edge to edge
    (no margins, no radius); the copy half has 60px padding all round and stacks a kicker, headline and hairline list.
-   The problem has the image on the left, Also inside on the right. Below 1069px the image sits on top, then the copy. */
+   The problem has the image on the left, In the field on the right. Below 1069px the image sits on top, then the copy. */
 .split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
 .also { background: var(--mist); }
 .split-stage { min-height: 560px; }
@@ -216,7 +216,7 @@ em { font-style: normal; color: var(--accent); }
 /* What's inside: a full-width hairline grid (option 05D). No card fills: the cells sit on the section grey,
    split by 1px hairlines (two vertical, one horizontal), and the grid runs edge to edge across the browser,
    so the only side spacing is each cell's 40px padding. Step label, headline and body share one left edge. */
-#inside { container-type: inline-size; overflow-x: clip; padding-bottom: 0; }   /* no bottom space: the grid runs straight into Also inside */   /* 100cqw = the page width inside the scrollbar; clip so the full-width grid never scrolls the page sideways */
+#inside { container-type: inline-size; overflow-x: clip; padding-bottom: 0; }   /* no bottom space: the grid runs straight into In the field */   /* 100cqw = the page width inside the scrollbar; clip so the full-width grid never scrolls the page sideways */
 #inside .chapters{ width: 100cqw; margin-inline: calc(50% - 50cqw); gap: 0 !important; }
 #inside .ch{ --cell-pad: 60px; border: 0 solid var(--hairline); }
 #inside .ch:not(:nth-child(3n)){ border-right-width: 1px; }
