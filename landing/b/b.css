@@ -38,7 +38,7 @@
   --ring-strong: 0 0 0 1px var(--steel);
   --wrap: 1068px;               /* a narrow, centred gallery column */
   --wrap-wide: 1260px;
-  --pad: max(22px, env(safe-area-inset-left, 0px));
+  --pad: max(60px, env(safe-area-inset-left, 0px));   /* one left edge for the whole page: 60px */
   --ease: cubic-bezier(.28, .11, .32, 1);
 }
 
@@ -58,7 +58,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .skip { position: fixed; left: 16px; top: 8px; z-index: 100; background: var(--accent); color: #fff; padding: 8px 16px; border-radius: var(--r-pill); transform: translateY(-200%); transition: transform .2s var(--ease); }
 .skip:focus { transform: none; }
 
-.wrap { width: 100%; max-width: calc(var(--wrap) + 2 * var(--pad)); margin-inline: auto; padding-inline: var(--pad); }
+.wrap { width: 100%; max-width: none; margin-inline: auto; padding-inline: var(--pad); }
 
 /* ───────── Type roles ───────── */
 /* Eyebrows follow the Magnifico system: Inter 300 at 12px, sentence case, no tracking. Plex with tracking is only for numbers. */
@@ -85,14 +85,14 @@ em { font-style: normal; color: var(--accent); }
 
 /* ───────── Global bar ───────── */
 .gnav { height: 44px; background: var(--canvas); position: relative; z-index: 51; }
-.gnav-in { max-width: calc(var(--wrap-wide) + 2 * var(--pad)); height: 100%; display: flex; align-items: center; justify-content: space-between; }
+.gnav-in { max-width: none; height: 100%; display: flex; align-items: center; justify-content: space-between; }
 .gnav-logo svg { display: block; height: 17px; width: auto; }
 .gnav-link { font: 400 12px/1 var(--f-text); letter-spacing: -0.12px; color: rgba(7, 23, 27, .8); }
 .gnav-link:hover { color: var(--ink); }
 
 /* ───────── Product nav ───────── */
-.pnav { position: sticky; top: 0; z-index: 50; height: 64px; background: rgba(255, 255, 255, .72); backdrop-filter: saturate(1.8) blur(20px); -webkit-backdrop-filter: saturate(1.8) blur(20px); box-shadow: 0 1px 0 var(--control); transition: background-color .3s var(--ease); }
-.pnav-in { max-width: calc(var(--wrap-wide) + 2 * var(--pad)); height: 100%; display: flex; align-items: center; gap: 24px; }
+.pnav { position: sticky; top: 0; z-index: 50; height: 64px; background: rgba(255, 255, 255, .72); backdrop-filter: saturate(1.8) blur(20px); -webkit-backdrop-filter: saturate(1.8) blur(20px); transition: background-color .3s var(--ease); }
+.pnav-in { max-width: none; height: 100%; display: flex; align-items: center; gap: 24px; }
 .pnav-logo { flex: none; display: block; border-radius: 4px; }
 .pnav-logo svg { display: block; height: 26px; width: auto; } /* the title is gone, so the logo takes its room */
 .pnav-links { display: flex; gap: 24px; margin-left: auto; }
@@ -105,7 +105,7 @@ em { font-style: normal; color: var(--accent); }
 /* ───────── Sections ───────── */
 .band { padding-block: var(--section-gap); background: var(--canvas); }
 .band-mist { background: var(--mist); }
-.band-head { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--element-gap); flex-wrap: wrap; margin-bottom: 40px; max-width: calc(var(--wrap-wide) + 2 * var(--pad)); }
+.band-head { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--element-gap); flex-wrap: wrap; margin-bottom: 40px; max-width: none; }
 
 /* ───────── Hero ───────── */
 .hero { padding-block: clamp(48px, 7vh, 76px) var(--section-gap); text-align: center; }
@@ -195,8 +195,8 @@ em { font-style: normal; color: var(--accent); }
    cards without illustrations; the last one is the dark close and is wider. Phones stack the cards. */
 .travel { padding-block: 0; }
 .travel-panel { min-height: calc(100svh - 64px); display: flex; flex-direction: column; gap: clamp(24px, 4vh, 40px); padding-block: clamp(40px, 7vh, 72px); overflow: hidden; }
-.travel-head { max-width: calc(var(--wrap-wide) + 2 * var(--pad)); display: flex; align-items: flex-end; justify-content: space-between; gap: var(--element-gap); flex-wrap: wrap; }
-.meter { display: flex; align-items: center; gap: 20px; }
+.travel-head { max-width: none; display: flex; flex-direction: column; align-items: center; gap: 20px; text-align: center; }   /* centred title, the counter sits under it */
+.meter { max-width: none; display: flex; align-items: center; justify-content: space-between; gap: 20px; }   /* under the cards: count on the left, ticks on the right */
 .meter-count { font: 500 12px/1 var(--f-label); letter-spacing: .16em; color: var(--ink-2); font-variant-numeric: tabular-nums; }
 .meter-count b { color: var(--accent); font-weight: 500; }
 .ticks { display: flex; gap: 6px; }
@@ -205,14 +205,14 @@ em { font-style: normal; color: var(--accent); }
 .tick:hover::before { background: var(--steel); }
 .tick.is-active::before { background: var(--pink); }
 .tick-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-.travel-viewport { --side: max(var(--pad), calc((100vw - var(--wrap-wide)) / 2)); flex: 1; min-height: 0; display: flex; padding-inline: var(--side); }
+.travel-viewport { --side: var(--pad); flex: 1; min-height: 0; display: flex; padding-inline: var(--side); }
 .travel-track { display: flex; gap: 24px; will-change: transform; }
 /* Cards copy the playbook's text-led How to apply cards (.card.card--text): 8px radius, mist card on a white band,
    label in Syne 20, title in Syne 400 32/1.2, body in Inter 16/1.45, meta on top and copy at the foot. */
 .tcard {
   flex: 0 0 auto; width: clamp(400px, 44vw, 640px);
   display: flex; flex-direction: column; justify-content: space-between; gap: clamp(24px, 4vh, 48px);
-  padding: clamp(28px, 4.5vw, 80px); border-radius: 8px; background: var(--mist);
+  padding: 60px; border-radius: 8px; background: var(--canvas);
 }
 .tcard-label { font: 400 20px/24px var(--f-display); letter-spacing: -0.01em; color: var(--stage); }
 .tcard-copy { display: flex; flex-direction: column; gap: 24px; max-width: 34em; }
@@ -225,61 +225,78 @@ em { font-style: normal; color: var(--accent); }
 .tcard-dark em { font-style: normal; color: var(--pink); }
 
 /* ───────── What's inside ───────── */
-.editorial-head { display: flex; flex-direction: column; gap: var(--element-gap); margin-bottom: 56px; }
+.editorial-head { display: flex; flex-direction: column; align-items: center; gap: var(--element-gap); margin-bottom: 56px; text-align: center; }
+.editorial-head .body-l { text-wrap: balance; }
 .chapters { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--element-gap); max-width: none; }
 /* What's inside: a full-width hairline grid (option 05D). No card fills: the cells sit on the section grey,
    split by 1px hairlines (two vertical, one horizontal), and the grid runs edge to edge across the browser,
    so the only side spacing is each cell's 40px padding. Step label, headline and body share one left edge. */
 #inside { container-type: inline-size; }   /* 100cqw = the page width inside the scrollbar */
-.chapters { width: 100cqw; margin-inline: calc(50% - 50cqw); gap: 0 !important; }
-.ch { --cell-pad: 40px; border: 0 solid var(--hairline); }
-.ch:not(:nth-child(3n)) { border-right-width: 1px; }
-.ch:nth-child(-n+3) { border-bottom-width: 1px; }
-.ch-card { position: relative; display: flex; flex-direction: column; gap: 6px; height: 100%; padding: var(--cell-pad); }
-.ch-media { --ink-line: color-mix(in srgb, var(--stage) 50%, var(--mist)); position: relative; aspect-ratio: 4 / 3; overflow: hidden; margin-bottom: 8px;
+#inside .chapters{ width: 100cqw; margin-inline: calc(50% - 50cqw); gap: 0 !important; }
+#inside .ch{ --cell-pad: 60px; border: 0 solid var(--hairline); }
+#inside .ch:not(:nth-child(3n)){ border-right-width: 1px; }
+#inside .ch:nth-child(-n+3){ border-bottom-width: 1px; }
+#inside .ch-card{ position: relative; display: flex; flex-direction: column; gap: 6px; height: 100%; padding: var(--cell-pad); }
+#inside .ch-media{ --ink-line: color-mix(in srgb, var(--stage) 50%, var(--canvas)); position: relative; aspect-ratio: 4 / 3; overflow: hidden; margin-bottom: 8px;
   -webkit-mask-image: linear-gradient(to right, transparent, #000 14%, #000 86%, transparent), linear-gradient(#000 70%, transparent); -webkit-mask-composite: source-in;
   mask-image: linear-gradient(to right, transparent, #000 14%, #000 86%, transparent), linear-gradient(#000 70%, transparent); mask-composite: intersect; }
-.ch-media > svg { position: absolute; inset: 0; width: 100%; height: 100%; transform: scale(1.35); }
+#inside .ch-media > svg{ position: absolute; inset: 0; width: 100%; height: 100%; transform: scale(1.35); }
 /* Light paint (ANIMATION-RULES, 2026-11-06), lines at 50%: teal mixed halfway into the grey; the ball stays full strength */
-.ch-media .ln { stroke: var(--ink-line); }
-.ch-media .gd { stroke: var(--stage); stroke-opacity: .07; }
-.ch-media .dot { fill: var(--ink-line); }
-.ch-media .pnl { fill: var(--mist); stroke: var(--ink-line); }
-.ch-media .fill { fill: var(--mist); }
-.ch-num { position: absolute; top: var(--cell-pad); left: var(--cell-pad); z-index: 2; margin: 0; font: 300 12px/1.4 var(--f-text); letter-spacing: 0; color: var(--ink-2); }
-.ch-num .num { margin-right: 8px; }
-.ch h3 { font: 400 24px/1.17 var(--f-display); letter-spacing: -0.005em; color: var(--ink); }
-.ch-text { font-size: 14px; line-height: 1.43; letter-spacing: -0.224px; color: var(--ink-2); margin-top: 4px; }
+#inside .ch-media .ln{ stroke: var(--ink-line); }
+#inside .ch-media .gd{ stroke: var(--stage); stroke-opacity: .07; }
+#inside .ch-media .dot{ fill: var(--ink-line); }
+#inside .ch-media .pnl{ fill: var(--canvas); stroke: var(--ink-line); }
+#inside .ch-media .fill{ fill: var(--canvas); }
+#inside .ch-num{ position: absolute; top: var(--cell-pad); left: var(--cell-pad); z-index: 2; margin: 0; font: 300 12px/1.4 var(--f-text); letter-spacing: 0; color: var(--ink-2); }
+#inside .ch-num .num{ margin-right: 8px; }
+#inside .ch h3{ font: 400 24px/1.17 var(--f-display); letter-spacing: -0.005em; color: var(--ink); }
+#inside .ch-text{ font-size: 14px; line-height: 1.43; letter-spacing: -0.224px; color: var(--ink-2); margin-top: 4px; }
 /* What's inside, hover to reveal (option 06):  At rest: animation + step label only. On hover or keyboard focus the cell
    inverts to the dark stage, the scene swaps to light lines, and the headline and body rise in over the
    animation's faded foot. Touch screens have no hover, so they show the copy at rest. */
-.ch { outline: none; transition: background-color .5s var(--ease); }
-.ch-card { padding: var(--cell-pad); }
-.ch-media { margin: 0; }
-.ch-media .ln, .ch-media .pnl { transition: stroke .5s var(--ease), fill .5s var(--ease); }
-.ch-media .dot, .ch-media .fill { transition: fill .5s var(--ease); }
-.ch-num { transition: color .5s var(--ease); }
-.ch h3, .ch-text { position: relative; z-index: 2; }
-.ch h3 { position: absolute; left: var(--cell-pad); right: var(--cell-pad); bottom: calc(var(--cell-pad) + 46px); }
-.ch-text { position: absolute; left: var(--cell-pad); right: var(--cell-pad); bottom: var(--cell-pad); margin: 0; min-height: 40px; }
-.ch h3, .ch-text { opacity: 0; transform: translateY(12px); transition: opacity .35s var(--ease), transform .45s var(--ease), color .5s var(--ease); }
+#inside .ch{ outline: none; transition: background-color .5s var(--ease); }
+#inside .ch-card{ padding: var(--cell-pad); }
+#inside .ch-media{ margin: 0; }
+#inside .ch-media .ln, #inside .ch-media .pnl{ transition: stroke .5s var(--ease), fill .5s var(--ease); }
+#inside .ch-media .dot, #inside .ch-media .fill{ transition: fill .5s var(--ease); }
+#inside .ch-num{ transition: color .5s var(--ease); }
+#inside .ch h3, #inside .ch-text{ position: relative; z-index: 2; }
+#inside .ch h3{ position: absolute; left: var(--cell-pad); right: var(--cell-pad); bottom: calc(var(--cell-pad) + 46px); }
+#inside .ch-text{ position: absolute; left: var(--cell-pad); right: var(--cell-pad); bottom: var(--cell-pad); margin: 0; min-height: 40px; }
+#inside .ch h3, #inside .ch-text{ opacity: 0; transform: translateY(12px); transition: opacity .35s var(--ease), transform .45s var(--ease), color .5s var(--ease); }
 /* the inverted state */
-.ch:hover, .ch:focus-visible { background: var(--stage); }
-.ch:hover .ch-media, .ch:focus-visible .ch-media { --ink-line: color-mix(in srgb, var(--stage-ink) 20%, var(--stage)); }
-.ch:hover .ch-media .gd, .ch:focus-visible .ch-media .gd { stroke: var(--stage-ink); stroke-opacity: .05; }
-.ch:hover .ch-media .pnl, .ch:focus-visible .ch-media .pnl,
-.ch:hover .ch-media .fill, .ch:focus-visible .ch-media .fill { fill: var(--stage); }
-.ch:hover .ch-num, .ch:focus-visible .ch-num { color: var(--stage-ink); }
-.ch:hover h3, .ch:focus-visible h3 { color: #fff; }
-.ch:hover .ch-text, .ch:focus-visible .ch-text { color: var(--stage-ink); }
-.ch:hover h3, .ch:focus-visible h3,
-.ch:hover .ch-text, .ch:focus-visible .ch-text { opacity: 1; transform: none; transition: opacity .45s var(--ease) .08s, transform .55s var(--ease) .08s, color .5s var(--ease); }
-.ch:hover .ch-text, .ch:focus-visible .ch-text { transition-delay: .16s; }
+#inside .ch:hover, #inside .ch:focus-visible{ background: var(--stage); }
+#inside .ch:hover .ch-media, #inside .ch:focus-visible .ch-media{ --ink-line: color-mix(in srgb, var(--stage-ink) 20%, var(--stage)); }
+#inside .ch:hover .ch-media .gd, #inside .ch:focus-visible .ch-media .gd{ stroke: var(--stage-ink); stroke-opacity: .05; }
+#inside .ch:hover .ch-media .pnl, #inside .ch:focus-visible .ch-media .pnl,
+#inside .ch:hover .ch-media .fill, #inside .ch:focus-visible .ch-media .fill{ fill: var(--stage); }
+#inside .ch:hover .ch-num, #inside .ch:focus-visible .ch-num{ color: var(--stage-ink); }
+#inside .ch:hover h3, #inside .ch:focus-visible h3{ color: #fff; }
+#inside .ch:hover .ch-text, #inside .ch:focus-visible .ch-text{ color: var(--stage-ink); }
+#inside .ch:hover h3, #inside .ch:focus-visible h3,
+#inside .ch:hover .ch-text, #inside .ch:focus-visible .ch-text{ opacity: 1; transform: none; transition: opacity .45s var(--ease) .08s, transform .55s var(--ease) .08s, color .5s var(--ease); }
+#inside .ch:hover .ch-text, #inside .ch:focus-visible .ch-text{ transition-delay: .16s; }
 @media (hover: none) {
-  .ch h3, .ch-text { position: static; opacity: 1; transform: none; }
-  .ch-media { margin-bottom: 8px; }
+  #inside .ch h3, #inside .ch-text{ position: static; opacity: 1; transform: none; }
+  #inside .ch-media{ margin-bottom: 8px; }
 }
-@media (prefers-reduced-motion: reduce) { .ch h3, .ch-text { transform: none !important; } }
+@media (prefers-reduced-motion: reduce) { #inside .ch h3, #inside .ch-text{ transform: none !important; } }
+/* headline and body stack in flow at the bottom of the cell, over the scene, so wrapping never collides */
+#inside .ch-card{ display: grid; grid-template-rows: 1fr auto auto; row-gap: 0; }
+#inside .ch-media{ grid-row: 1 / -1; grid-column: 1; }
+#inside .ch h3, #inside .ch-text{ position: relative; inset: auto; grid-column: 1; align-self: end; }
+#inside .ch h3{ grid-row: 2; margin: 0 0 8px; }
+#inside .ch-text{ grid-row: 3; min-height: 0; }
+@media (hover: none) {
+  #inside .ch-card{ grid-template-rows: auto auto auto; }
+  #inside .ch-media{ grid-row: 1; }
+}
+/* Centred: the step label across the top, the copy rises in at the bottom, and the ball, glow and trail fade out on hover */
+#inside .ch-num{ left: var(--cell-pad); right: var(--cell-pad); text-align: center; }
+#inside .ch h3, #inside .ch-text{ text-align: center; justify-self: center; max-width: 30em; }
+#inside .ch-media .ball, #inside .ch-media .glow, #inside .ch-media .ghost{ transition: opacity .35s var(--ease); }
+#inside .ch:hover .ch-media :is(.ball, .glow, .ghost),
+#inside .ch:focus-visible .ch-media :is(.ball, .glow, .ghost){ opacity: 0 !important; }
 
 .editorial { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 48px; align-items: center; margin-top: calc(var(--section-gap) + 20px); }
 .editorial-copy { display: flex; flex-direction: column; gap: var(--element-gap); }
@@ -287,7 +304,7 @@ em { font-style: normal; color: var(--accent); }
 .specs div { padding: 18px 0; border-top: 1px solid var(--hairline); }
 .specs dt { font: 600 17px/1.24 var(--f-text); letter-spacing: -0.374px; color: var(--ink); }
 .specs dd { margin-top: 6px; font-size: 17px; color: var(--ink-2); }
-.editorial-stage { aspect-ratio: 1; border-radius: var(--r-card); margin-right: calc(-1 * max(0px, (100vw - var(--wrap)) / 2 - var(--pad))); } /* bleeds off the right edge, like an oversized render */
+.editorial-stage { aspect-ratio: 1; border-radius: var(--r-card); margin-right: calc(-1 * var(--pad)); } /* bleeds off the right edge, like an oversized render */
 
 /* ───────── Who ───────── */
 .who { display: flex; flex-direction: column; align-items: center; gap: 28px; text-align: center; }
@@ -304,15 +321,15 @@ em { font-style: normal; color: var(--accent); }
 
 /* ───────── Footer ───────── */
 .foot { background: var(--mist); border-top: 1px solid var(--hairline); }
-.foot-in { max-width: calc(var(--wrap-wide) + 2 * var(--pad)); display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 20px; font-size: 12px; letter-spacing: -0.12px; color: var(--ink-2); }
+.foot-in { max-width: none; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 20px; font-size: 12px; letter-spacing: -0.12px; color: var(--ink-2); }
 .foot-logo svg { display: block; height: 15px; width: auto; }
 
 /* ───────── Responsive ───────── */
 @media (max-width: 1068px) {
   .chapters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .ch { border-width: 0 !important; }
-  .ch:nth-child(odd) { border-right-width: 1px !important; }
-  .ch:nth-child(-n+4) { border-bottom-width: 1px !important; }
+  #inside .ch { border-width: 0 !important; }
+  #inside .ch:nth-child(odd) { border-right-width: 1px !important; }
+  #inside .ch:nth-child(-n+4) { border-bottom-width: 1px !important; }
   .editorial { grid-template-columns: minmax(0, 1fr); }
   .editorial-stage { margin-right: 0; aspect-ratio: 16 / 10; }
 }
@@ -323,7 +340,7 @@ em { font-style: normal; color: var(--accent); }
   .pnav .pill { margin-left: auto; }
 }
 @media (max-width: 734px) {
-  :root { --section-gap: 64px; --card-pad: 22px; }
+  :root { --section-gap: 64px; --card-pad: 22px; --pad: max(24px, env(safe-area-inset-left, 0px)); }
   .hero { padding-top: 36px; }
   .capsule { margin-top: 32px; padding: 20px; }
   .capsule-title span:not(.nm) { display: block; margin-top: 2px; }
@@ -331,8 +348,8 @@ em { font-style: normal; color: var(--accent); }
   .pnav-logo svg { height: 22px; }
   .pnav { height: 56px; }
   .chapters { grid-template-columns: minmax(0, 1fr); }
-  .ch { --cell-pad: 24px; border-width: 0 !important; }
-  .ch:not(:last-child) { border-bottom-width: 1px !important; }
+  #inside .ch { --cell-pad: 24px; border-width: 0 !important; }
+  #inside .ch:not(:last-child) { border-bottom-width: 1px !important; }
   .foot-in { flex-direction: column; align-items: flex-start; }
 }
 @media (max-width: 1100px) { .tcard { width: clamp(380px, 60vw, 600px); } }

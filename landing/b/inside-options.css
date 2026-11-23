@@ -1,5 +1,12 @@
 /* What's inside: card options. Loads after b.css and only overrides the chapter cards. */
 body { background: #fff; }
+
+/* Base card for every option (landing B's own chapter styles are scoped to #inside, so this page sets its own) */
+.opt .ch-card { position: relative; display: flex; flex-direction: column; gap: 6px; height: 100%; border-radius: 8px; background: var(--mist); }
+.opt .ch-media { position: relative; aspect-ratio: 4 / 3; overflow: hidden; background: var(--stage); }
+.opt .ch-media > svg { position: absolute; inset: 0; width: 100%; height: 100%; transform: scale(1.35); }
+.opt .ch-num { position: absolute; top: 20px; left: var(--card-pad); z-index: 2; margin: 0; font: 300 12px/1.4 var(--f-text); letter-spacing: 0; color: var(--stage-ink); }
+.opt .ch-num .num { margin-right: 8px; }
 .opt-top { padding: 56px 0 8px; }
 .opt-jump { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
 .opt-jump .pill { height: 36px; padding: 0 16px; box-shadow: inset 0 0 0 1px var(--hairline); color: var(--ink); }
@@ -118,3 +125,38 @@ html { overflow-x: clip; }
   .o6 .ch-media { margin-bottom: 8px; }
 }
 @media (prefers-reduced-motion: reduce) { .o6 .ch h3, .o6 .ch-text { transform: none !important; } }
+
+/* 06 / 06B: headline and body stack in flow at the bottom of the cell, over the scene, so wrapping never collides */
+.o6 .ch-card { display: grid; grid-template-rows: 1fr auto auto; row-gap: 0; }
+.o6 .ch-media { grid-row: 1 / -1; grid-column: 1; }
+.o6 .ch h3, .o6 .ch-text { position: relative; inset: auto; grid-column: 1; align-self: end; }
+.o6 .ch h3 { grid-row: 2; margin: 0 0 8px; }
+.o6 .ch-text { grid-row: 3; min-height: 0; }
+@media (hover: none) {
+  .o6 .ch-card { grid-template-rows: auto auto auto; }
+  .o6 .ch-media { grid-row: 1; }
+}
+
+/* 06C: 06B centred — the label across the top, and the copy that rises in on hover */
+.o6c .ch-num { left: var(--cell-pad); right: var(--cell-pad); text-align: center; }
+.o6c .ch h3, .o6c .ch-text { text-align: center; justify-self: center; max-width: 30em; }
+
+/* 06D: 06C inverted — the label at the bottom, the copy rises in at the top */
+.o6d .ch-num { top: auto; bottom: var(--cell-pad); }
+.o6d .ch-card { grid-template-rows: auto auto 1fr; }
+.o6d .ch h3 { grid-row: 1; align-self: start; }
+.o6d .ch-text { grid-row: 2; align-self: start; }
+.o6d .ch h3, .o6d .ch-text { transform: translateY(-12px); }
+.o6d .ch:hover h3, .o6d .ch:focus-visible h3,
+.o6d .ch:hover .ch-text, .o6d .ch:focus-visible .ch-text { transform: none; }
+@media (hover: none) {
+  .o6d .ch-card { grid-template-rows: auto auto auto; padding-bottom: calc(var(--cell-pad) + 28px); }
+  .o6d .ch h3, .o6d .ch-text { transform: none; }
+  .o6d .ch-media { grid-row: 3; }
+}
+@media (prefers-reduced-motion: reduce) { .o6d .ch h3, .o6d .ch-text { transform: none !important; } }
+
+/* 06E: 06D, and on hover the ball, its glow and its trail fade out, leaving only the lines */
+.o6e .ch-media .ball, .o6e .ch-media .glow, .o6e .ch-media .ghost { transition: opacity .35s var(--ease); }
+.o6e .ch:hover .ch-media :is(.ball, .glow, .ghost),
+.o6e .ch:focus-visible .ch-media :is(.ball, .glow, .ghost) { opacity: 0 !important; }
