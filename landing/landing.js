@@ -1,12 +1,11 @@
 /* Landing page runtime: hero, chapter scenes, nav, reveals, and the HubSpot form.
-   Needs assets/motion/hero-scenes.js, hero-fx.js and hubspot-config.js first; GSAP is optional. */
+   Needs assets/motion/hero-scenes.js, hero-fx.js and hubspot-config.js first; GSAP is optional (without it, everything simply shows). */
 (() => {
   const HUBSPOT = Object.assign({ portalId: "", formId: "", region: "na1", submitText: "Send me the playbook" }, window.LP_HUBSPOT || {});
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const gsap = window.gsap, ST = window.ScrollTrigger;
-  if (gsap && ST) gsap.registerPlugin(ST);
+  const gsap = window.gsap;
   const yr = $("#yr"); if (yr) yr.textContent = new Date().getFullYear();
 
   /* ═════════ Scenes: each runs on its own clock while on screen ═════════ */
@@ -34,24 +33,51 @@
   secs.forEach((s) => s && spy.observe(s));
   new IntersectionObserver(([e]) => pnav.classList.toggle("is-at-form", e.isIntersecting), { threshold: 0.25 }).observe($("#get"));
 
+  let focusT = 0;
   document.addEventListener("click", (e) => {
     const a = e.target.closest("[data-goto-form]"); if (!a) return;
     e.preventDefault();
     const get = $("#get");
     get.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
-    const focus = () => { const i = $('#cta-form-card .fstate:not([hidden]) input:not([type="hidden"]):not([type="submit"])'); if (i) i.focus({ preventScroll: true }); };
-    if (reduce || !("onscrollend" in window)) setTimeout(focus, reduce ? 0 : 800);
-    else window.addEventListener("scrollend", focus, { once: true });
+    /* Focus the first field once the scroll lands. Not on touch screens: the keyboard would jump the page.
+       One pending focus at a time, dropped after 1.5s, so a scroll that never ends can't fire it later. */
+    if (matchMedia("(hover: none)").matches) return;
+    const focus = () => { clearTimeout(focusT); window.removeEventListener("scrollend", focus); const i = $('#cta-form-card .fstate:not([hidden]) input:not([type="hidden"]):not([type="submit"])'); if (i) i.focus({ preventScroll: true }); };
+    clearTimeout(focusT);
+    if ("onscrollend" in window && !reduce) { window.addEventListener("scrollend", focus, { once: true }); focusT = setTimeout(() => window.removeEventListener("scrollend", focus), 1500); }
+    else focusT = setTimeout(focus, reduce ? 0 : 800);
   });
 
-  /* ═════════ Reveals: quiet fades that play once and always finish ═════════ */
-  if (gsap && ST && !reduce) {
-    gsap.from(".hero-text > *", { opacity: 0, y: 18, duration: 1.1, stagger: 0.08, ease: "power3.out" });
-    gsap.from("#hero-canvas", { opacity: 0, duration: 1.6, ease: "power2.out" });
-    const up = ".split-copy > *, .editorial-head, .ch, .who > *, .get > *";
+  /* ═════════ Reveals: quiet fades that play once and always finish ═════════
+     The page head hides these before first paint (html.rv-wait); GSAP fades them in as they come up the screen. */
+  const root = document.documentElement;
+  const up = ".split-copy > *, .editorial-head, .ch, .who > *, .get > *";
+  if (gsap && !reduce && root.classList.contains("rv-wait")) {
+    window.LP_REVEALS = true;
+    gsap.set(".hero-text > *", { opacity: 0, y: 18 });
+    gsap.set("#hero-canvas", { opacity: 0 });
     gsap.set(up, { opacity: 0, y: 30 });
-    ST.batch(up, { start: "top 90%", once: true, onEnter: (els) => gsap.to(els, { opacity: 1, y: 0, duration: 1, stagger: 0.07, ease: "power3.out", overwrite: true }) });
-  }
+    root.classList.remove("rv-wait");                       // GSAP's inline styles hold the hidden state from here
+    gsap.to(".hero-text > *", { opacity: 1, y: 0, duration: 1.1, stagger: 0.08, ease: "power3.out" });
+    gsap.to("#hero-canvas", { opacity: 1, duration: 1.6, ease: "power2.out" });
+    /* Measured live on every scroll frame (20 elements, cheap), so a jump past a section or a late layout shift
+       can't leave anything hidden: whatever has reached 90% down the screen, or is already above it, shows. */
+    let waiting = $$(up), pending = 0;
+    const check = () => {
+      pending = 0;
+      const line = innerHeight * 0.9, now = [];
+      waiting = waiting.filter((el) => (el.getBoundingClientRect().top < line ? (now.push(el), false) : true));
+      if (!now.length) return;
+      const past = now.filter((el) => el.getBoundingClientRect().bottom <= 0);
+      if (past.length) gsap.set(past, { opacity: 1, y: 0, overwrite: true });
+      const inView = now.filter((el) => !past.includes(el));
+      if (inView.length) gsap.to(inView, { opacity: 1, y: 0, duration: 1, stagger: 0.07, ease: "power3.out", overwrite: true });
+      if (!waiting.length) ["scroll", "resize", "load"].forEach((ev) => window.removeEventListener(ev, queue));
+    };
+    const queue = () => { if (!pending) pending = requestAnimationFrame(check); };
+    ["scroll", "resize", "load"].forEach((ev) => window.addEventListener(ev, queue, { passive: true }));
+    check();
+  } else root.classList.remove("rv-wait");
 
   /* ═════════ The form ═════════
      Live: HubSpot's native embed (v2) with its CSS off, rendered into each [data-hs-target]; submissions go
