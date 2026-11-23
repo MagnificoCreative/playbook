@@ -1,4 +1,4 @@
-/* Landing hero scene "Agreement", registered as HeroScenes.LP. Shared by landing/ and landing/b/.
+/* Landing hero scene "Agreement", registered as HeroScenes.LP. Used by the problem section's image.
    Needs assets/motion/hero-scenes.js first. */
 (() => {
   /* ═════════ Hero scene · "Agreement" ═════════

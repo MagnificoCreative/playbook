@@ -1,4 +1,4 @@
-/* HubSpot form settings, shared by both landing versions (landing/ and landing/b/).
+/* HubSpot form settings for the landing page (landing/index.html).
    Paste the IDs of the native HubSpot form here (HubSpot › Marketing › Forms › your form › Share › Embed code).
    Until portalId and formId are both set, the pages show a preview form that submits nowhere. */
 window.LP_HUBSPOT = {
