@@ -48,31 +48,67 @@
     else focusT = setTimeout(focus, reduce ? 0 : 800);
   });
 
-  /* ═════════ Reveals: quiet fades that play once and always finish ═════════
-     The page head hides these before first paint (html.rv-wait); GSAP fades them in as they come up the screen. */
+  /* ═════════ Type: the playbook's effects (assets/playbook.js) ═════════
+     Headline: each word rises out of a mask (yPercent 110 → 0, expo.out 1.2s, 0.08s apart).
+     Headings and text: rise 30px and fade in (expo.out 1.1s, 0.08s apart), once, as each block comes up the screen.
+     Lead paragraphs [data-words]: the words come into focus as you read, tied to scroll (opacity .14 → 1).
+     The page head hides all of this before first paint (html.rv-wait); the chapter cards and the form card only fade. */
   const root = document.documentElement;
-  const up = ".split-copy > *, .editorial-head, .ch, .who > *, .get > *";
+  const TEXT = ".split-copy > :not([data-words]), .editorial-head > :not([data-words]), .who > :not([data-words]), .get > :not(.card)";
+  const up = TEXT + ", .ch, .get > .card";
+  const wrapWords = (node, make) => {
+    Array.from(node.childNodes).forEach((n) => {
+      if (n.nodeType === 3) {
+        const frag = document.createDocumentFragment();
+        n.textContent.split(/(\s+)/).forEach((part) => {
+          if (!part) return;
+          frag.appendChild(/^\s+$/.test(part) ? document.createTextNode(part) : make(part));
+        });
+        n.replaceWith(frag);
+      } else if (n.nodeType === 1 && n.tagName !== "BR") wrapWords(n, make);
+    });
+  };
   if (gsap && !reduce && root.classList.contains("rv-wait")) {
     window.LP_REVEALS = true;
-    gsap.set(".hero-text > *", { opacity: 0, y: 18 });
+    const h1 = $(".hero-title");
+    if (h1) wrapWords(h1, (w) => { const o = document.createElement("span"); o.className = "w"; o.innerHTML = "<span></span>"; o.firstChild.textContent = w; return o; });
+    gsap.set(".hero-title .w > span", { yPercent: 110 });
+    gsap.set(".hero-text > :not(.hero-title)", { opacity: 0, y: 20 });
     gsap.set("#hero-canvas", { opacity: 0 });
-    gsap.set(up, { opacity: 0, y: 30 });
+    gsap.set(up, { opacity: 0 });
+    gsap.set(TEXT, { y: 30 });
+    const leads = $$("[data-words]");
+    leads.forEach((el) => wrapWords(el, (w) => { const sp = document.createElement("span"); sp.className = "word"; sp.textContent = w; return sp; }));
     root.classList.remove("rv-wait");                       // GSAP's inline styles hold the hidden state from here
-    gsap.to(".hero-text > *", { opacity: 1, y: 0, duration: 1.1, stagger: 0.08, ease: "power3.out" });
-    gsap.to("#hero-canvas", { opacity: 1, duration: 1.6, ease: "power2.out" });
-    /* Measured live on every scroll frame (20 elements, cheap), so a jump past a section or a late layout shift
-       can't leave anything hidden: whatever has reached 90% down the screen, or is already above it, shows. */
+    gsap.timeline({ defaults: { ease: "expo.out" } })
+      .to(".hero-text .kicker", { opacity: 1, y: 0, duration: 1 }, 0.1)
+      .to(".hero-title .w > span", { yPercent: 0, duration: 1.2, stagger: 0.08 }, 0.15)
+      .to(".hero-text > :not(.hero-title):not(.kicker)", { opacity: 1, y: 0, duration: 1.1, stagger: 0.08 }, 0.55)
+      .to("#hero-canvas", { opacity: 1, duration: 1.8 }, 0.2);
+
+    /* Leads: word i lights over its own stretch of the read, from the lead's top at 82% of the screen to its bottom at 48% */
+    const focus = () => leads.forEach((el) => {
+      const r = el.getBoundingClientRect(), words = el._w || (el._w = $$(".word", el));
+      const start = innerHeight * 0.82 - r.top, span = Math.max(1, r.height + innerHeight * 0.34);
+      const T = 1 + 0.05 * (words.length - 1), p = Math.min(1, Math.max(0, start / span)) * T;
+      words.forEach((w, i) => { w.style.opacity = (0.14 + 0.86 * Math.min(1, Math.max(0, p - i * 0.05))).toFixed(3); });
+    });
+
+    /* Reveals are measured live on every scroll frame, so a jump past a section or a late layout shift can't leave
+       anything hidden: whatever has reached 75% down the screen, or is already above it, shows (at the very bottom, anything on screen). */
     let waiting = $$(up), pending = 0;
     const check = () => {
       pending = 0;
-      const line = innerHeight * 0.9, now = [];
+      focus();
+      if (!waiting.length) return;
+      const atEnd = scrollY + innerHeight >= root.scrollHeight - 2;   // at the bottom, whatever is on screen shows (the last lines never reach 75%)
+      const line = atEnd ? innerHeight : innerHeight * 0.75, now = [];
       waiting = waiting.filter((el) => (el.getBoundingClientRect().top < line ? (now.push(el), false) : true));
       if (!now.length) return;
       const past = now.filter((el) => el.getBoundingClientRect().bottom <= 0);
       if (past.length) gsap.set(past, { opacity: 1, y: 0, overwrite: true });
       const inView = now.filter((el) => !past.includes(el));
-      if (inView.length) gsap.to(inView, { opacity: 1, y: 0, duration: 1, stagger: 0.07, ease: "power3.out", overwrite: true });
-      if (!waiting.length) ["scroll", "resize", "load"].forEach((ev) => window.removeEventListener(ev, queue));
+      if (inView.length) gsap.to(inView, { opacity: 1, y: 0, duration: 1.1, stagger: 0.08, ease: "expo.out", overwrite: true });
     };
     const queue = () => { if (!pending) pending = requestAnimationFrame(check); };
     ["scroll", "resize", "load"].forEach((ev) => window.addEventListener(ev, queue, { passive: true }));

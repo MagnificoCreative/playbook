@@ -53,10 +53,16 @@ body {
 h1, h2, h3, p, ol, ul, dl, dd { margin: 0; }
 ol, ul { padding: 0; list-style: none; }
 a { color: inherit; text-decoration: none; }
-/* Reveals: hidden before first paint while html.rv-wait is on (set in the page head); landing.js fades them in */
-.rv-wait :is(.hero-text > *, .split-copy > *, .editorial-head, .ch, .who > *, .get > *) { opacity: 0; transform: translateY(30px); }
-.rv-wait .hero-text > * { transform: translateY(18px); }
+/* Type reveals, the playbook's effects: hidden before first paint while html.rv-wait is on (set in the page head);
+   landing.js wraps the headline's words and brings everything in */
+.rv-wait :is(.hero-text > *, .split-copy > :not([data-words]), .editorial-head > :not([data-words]), .ch, .who > :not([data-words]), .get > *) { opacity: 0; }
+.rv-wait :is(.split-copy > :not([data-words]), .editorial-head > :not([data-words]), .who > :not([data-words]), .get > :not(.card)) { transform: translateY(30px); }
+.rv-wait .hero-text > :not(.hero-title) { transform: translateY(20px); }
 .rv-wait #hero-canvas { opacity: 0; }
+.rv-wait [data-words] { opacity: .14; }
+/* The headline's word masks (playbook.css › .display .w) */
+.hero-title .w { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: .08em; margin-bottom: -.08em; }
+.hero-title .w > span { display: inline-block; }
 button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; letter-spacing: inherit; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
 [hidden] { display: none !important; }
