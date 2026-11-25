@@ -20,7 +20,11 @@ Design comparison pages, not linked from the page: `hero-options.html`, `inside-
 
 The form is connected to the HubSpot form whose IDs are in `landing/hubspot-config.js`. It has three required fields, **First name** (`firstname`), **Email** (`email`) and **Company** (`company`), with *Block free email providers* turned on.
 
-That form was made in HubSpot's new forms editor, whose embed is an iframe the page can't style and which doesn't work with HubSpot's classic `hbspt.forms.create` embed. So the page keeps its own form and posts each submission to HubSpot's Forms Submission API (`api.hsforms.com/submissions/v3/integration/submit/{portalId}/{formId}`), which needs no key. HubSpot creates or updates the contact, runs the form's notifications and follow-up email, and returns the form's redirect, which the page then opens. HubSpot's errors are shown under the fields (for example, a free email address).
+That form was made in HubSpot's new forms editor, whose embed is an iframe the page can't style and which doesn't work with HubSpot's classic `hbspt.forms.create` embed. So the page keeps its own form and posts each submission to `/api/submit` (`netlify/functions/submit.mjs`), which sends it on to HubSpot's Forms Submission API. HubSpot creates or updates the contact and runs the form's follow-up email. When HubSpot accepts the submission, the function replies with the playbook's access link and the page opens it. HubSpot's errors are shown under the fields (for example, a free email address).
+
+The HubSpot form IDs are in two places: `landing/hubspot-config.js` (which turns the live form on) and `netlify/functions/submit.mjs` (where submissions go; the environment variables `HUBSPOT_PORTAL_ID` and `HUBSPOT_FORM_ID` override it). Keep them the same.
+
+HubSpot only accepts submissions from domains on its list (Settings › Tracking & Analytics › Tracking code › Advanced tracking): keep `playbook.wearemagnifico.com` and `magnifico-playbook.netlify.app` on it, or submissions land in the form's Spam tab and create no contact.
 
 If you change the form in HubSpot, keep the same three fields with the same internal names: a field the page doesn't send, or one it sends that the form doesn't have, can make HubSpot reject the submission. If you add a field, add it to the page too.
 
@@ -34,18 +38,18 @@ A form submission creates or updates a **contact**. Contacts don’t sit in pipe
 
 On Netlify, `playbook.wearemagnifico.com` opens on this landing page (`netlify.toml`), and the playbook's pages (`/intro/`, the steps, *Where to start*) only open for someone with the access cookie. Anyone else who goes straight to a chapter lands back here. The gate is `netlify/edge-functions/playbook-gate.ts`.
 
-The cookie comes from the **access link**, which only HubSpot hands out:
+The cookie comes from the **access link**, which only a form submission hands out:
 
 ```
 https://playbook.wearemagnifico.com/intro/?access=<key>
 ```
 
-`<key>` is the value of the Netlify environment variable `PLAYBOOK_ACCESS_KEY` (Site configuration › Environment variables): any long random string. Opening the link sets the cookie for a year and shows the Introduction at its plain address. Until the variable is set, every chapter goes back to the landing page. Changing the key locks out everyone holding the old link or cookie, so update HubSpot at the same time.
+`<key>` is the value of the Netlify environment variable `PLAYBOOK_ACCESS_KEY` (Site configuration › Environment variables): any long random string. Opening the link sets the cookie for a year and shows the Introduction at its plain address. Until the variable is set, every chapter goes back to the landing page. Changing the key locks out everyone holding the old link or cookie, so update the HubSpot follow-up email at the same time.
 
-Put the access link in two places in HubSpot:
+How readers get the access link:
 
-- **Instant access:** the form’s *After submit → Redirect to another page*. HubSpot returns the link with the submission; the page shows “Opening the playbook now” and opens it.
-- **Inbox:** a follow-up email from the form (or the workflow above), so they can come back from any device. If no redirect is set, the page tells the reader to check their inbox.
+- **Instant access:** handled by the site, not HubSpot. After a successful submission, `/api/submit` returns the access link (built from `PLAYBOOK_ACCESS_KEY` and the address the page is on), and the page shows “Opening the playbook now” and opens it. HubSpot's own *Redirect* setting isn't needed.
+- **Inbox:** a follow-up email from the form’s workflow, with the access link as its button, so they can come back from any device. This is the one place the link lives in HubSpot: update it when the domain or the key changes.
 
 The page never contains the key. It is a soft gate: someone who passes the link on lets the next person in, which is fine for a lead magnet. The team gets in the same way, by opening the access link once in each browser.
 

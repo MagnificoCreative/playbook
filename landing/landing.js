@@ -117,13 +117,12 @@
 
   /* ═════════ The form ═════════
      The page's own form, in HubSpot's markup so the page styles it. Live (portalId and formId set): a valid
-     submission is posted to HubSpot's Forms Submission API, which works with forms from HubSpot's new forms
-     editor and creates or updates the contact. Preview (IDs not set): the same form, validated, sending nowhere.
-     The playbook's address is never on this page: HubSpot returns the form's redirect after a submission,
-     or its follow-up email delivers it. */
+     submission goes to /api/submit (netlify/functions/submit.mjs), which sends it to the HubSpot form, so the
+     contact is created or updated, and replies with the playbook's access link. Preview (IDs not set): the same
+     form, validated, sending nowhere. The access link is never on this page: only a successful submission gets it. */
   const targets = $$("[data-hs-target]");
   const live = !!(HUBSPOT.portalId && HUBSPOT.formId);
-  const ENDPOINT = `https://api.hsforms.com/submissions/v3/integration/submit/${encodeURIComponent(HUBSPOT.portalId)}/${encodeURIComponent(HUBSPOT.formId)}`;
+  const ENDPOINT = "/api/submit"; // netlify/functions/submit.mjs, which passes it on to the HubSpot form and returns the access link
   const FIELDS = ["firstname", "email", "company"];
   const FREE = /@(gmail|googlemail|yahoo|ymail|hotmail|outlook|live|msn|icloud|me|mac|aol|proton|protonmail|gmx|mail|zoho|yandex)\.[a-z.]+$/i;
 
@@ -140,9 +139,9 @@
     if (active) $('[data-state="done"]', active).focus({ preventScroll: true });
   };
 
-  /* Sends the three fields to HubSpot, with the visitor's HubSpot cookie (set by the tracking code, if the page
-     has it) so the submission joins their page views. Resolves with HubSpot's reply ({ redirectUri } or
-     { inlineMessage }); rejects with HubSpot's error body, or with a network error. */
+  /* Sends the three fields on to HubSpot, with the visitor's HubSpot cookie (set by the tracking code, if the page
+     has it) so the submission joins their page views. Resolves with the reply ({ redirectUri } with the access link,
+     or HubSpot's { inlineMessage }); rejects with HubSpot's error body, or with a network error. */
   const cookie = (n) => { const m = document.cookie.match(new RegExp("(?:^|; )" + n + "=([^;]*)")); return m ? decodeURIComponent(m[1]) : ""; };
   const send = async (form) => {
     const context = { pageUri: location.href, pageName: document.title };
