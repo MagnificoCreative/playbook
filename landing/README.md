@@ -16,13 +16,15 @@ Design comparison pages, not linked from the page: `hero-options.html`, `inside-
 
 ## Going live: three things to set up
 
-### 1. Connect the HubSpot form
+### 1. Connect the HubSpot form (done)
 
-In HubSpot, create (or pick) a form with three fields: **First name**, **Email** and **Company**, all required. In the form’s options, turn on *Block free email providers* so it only takes work emails.
+The form is connected to the HubSpot form whose IDs are in `landing/hubspot-config.js`. It has three required fields, **First name** (`firstname`), **Email** (`email`) and **Company** (`company`), with *Block free email providers* turned on.
 
-Then open the form’s *Share → Embed code* and copy `portalId`, `formId` and `region` into `landing/hubspot-config.js`. That’s all: the page loads HubSpot’s native embed (v2) into the form, with HubSpot’s own CSS switched off so it picks up the page styles. Submissions go straight to HubSpot as contacts.
+That form was made in HubSpot's new forms editor, whose embed is an iframe the page can't style and which doesn't work with HubSpot's classic `hbspt.forms.create` embed. So the page keeps its own form and posts each submission to HubSpot's Forms Submission API (`api.hsforms.com/submissions/v3/integration/submit/{portalId}/{formId}`), which needs no key. HubSpot creates or updates the contact, runs the form's notifications and follow-up email, and returns the form's redirect, which the page then opens. HubSpot's errors are shown under the fields (for example, a free email address).
 
-Until the IDs are set, the page shows a **preview form** with the same markup and styling. It looks finished, with no label saying it isn't connected, but it only validates and sends nothing, so set the IDs before you share the page.
+If you change the form in HubSpot, keep the same three fields with the same internal names: a field the page doesn't send, or one it sends that the form doesn't have, can make HubSpot reject the submission. If you add a field, add it to the page too.
+
+Clear `portalId` or `formId` to go back to the **preview form**, which looks the same but only validates and sends nothing.
 
 ### 2. Route contacts into “Magnifico Business Development”
 
@@ -30,14 +32,22 @@ A form submission creates or updates a **contact**. Contacts don’t sit in pipe
 
 ### 3. Deliver the playbook, keep it gated
 
-The page never contains the playbook’s address. Delivery happens in HubSpot:
+On Netlify, `playbook.wearemagnifico.com` opens on this landing page (`netlify.toml`), and the playbook's pages (`/intro/`, the steps, *Where to start*) only open for someone with the access cookie. Anyone else who goes straight to a chapter lands back here. The gate is `netlify/edge-functions/playbook-gate.ts`.
 
-- **Instant access:** set the form’s *After submit → Redirect to another page* to the playbook URL. The page shows “Opening the playbook now” and HubSpot takes the reader there.
-- **Inbox:** send a follow-up email from the form (or the workflow above) with the link. If no redirect is set, the page tells the reader to check their inbox.
+The cookie comes from the **access link**, which only HubSpot hands out:
 
-Do both: the redirect gives instant access, and the email gives them a link to come back to.
+```
+https://playbook.wearemagnifico.com/intro/?access=<key>
+```
 
-**Important:** the playbook itself is still public at its current address, so anyone who has the link can skip the form. To really gate it, move the playbook to a new, unlisted address that only HubSpot hands out (and point the old address at this page), or put the playbook behind a password or token at the host.
+`<key>` is the value of the Netlify environment variable `PLAYBOOK_ACCESS_KEY` (Site configuration › Environment variables): any long random string. Opening the link sets the cookie for a year and shows the Introduction at its plain address. Until the variable is set, every chapter goes back to the landing page. Changing the key locks out everyone holding the old link or cookie, so update HubSpot at the same time.
+
+Put the access link in two places in HubSpot:
+
+- **Instant access:** the form’s *After submit → Redirect to another page*. HubSpot returns the link with the submission; the page shows “Opening the playbook now” and opens it.
+- **Inbox:** a follow-up email from the form (or the workflow above), so they can come back from any device. If no redirect is set, the page tells the reader to check their inbox.
+
+The page never contains the key. It is a soft gate: someone who passes the link on lets the next person in, which is fine for a lead magnet. The team gets in the same way, by opening the access link once in each browser.
 
 ## Other links
 

@@ -1,0 +1,55 @@
+# Netlify settings for playbook.wearemagnifico.com.
+# The site is plain static files, committed already built (tools/build/build.rb runs locally), so there is no build step.
+#
+#   /                  the landing page (landing/index.html), with the form
+#   /landing/          sent to /, so the landing page has one address
+#   /intro/ and on     the playbook, behind the gate in netlify/edge-functions/playbook-gate.ts
+#
+# The gate needs the environment variable PLAYBOOK_ACCESS_KEY (Site configuration › Environment variables).
+
+[build]
+  publish = "."
+
+[[redirects]]
+  from = "/"
+  to = "/landing/index.html"
+  status = 200
+  force = true
+
+# The landing page's own files, for when it is served at /: it loads them by relative paths.
+[[redirects]]
+  from = "/landing.css"
+  to = "/landing/landing.css"
+  status = 200
+
+[[redirects]]
+  from = "/landing.js"
+  to = "/landing/landing.js"
+  status = 200
+
+[[redirects]]
+  from = "/hubspot-config.js"
+  to = "/landing/hubspot-config.js"
+  status = 200
+
+[[redirects]]
+  from = "/hero-fx.js"
+  to = "/landing/hero-fx.js"
+  status = 200
+
+[[redirects]]
+  from = "/scene-agreement.js"
+  to = "/landing/scene-agreement.js"
+  status = 200
+
+[[redirects]]
+  from = "/landing"
+  to = "/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/landing/"
+  to = "/"
+  status = 301
+  force = true
