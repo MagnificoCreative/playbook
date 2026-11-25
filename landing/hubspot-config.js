@@ -1,9 +1,10 @@
 /* HubSpot form settings for the landing page (landing/index.html).
-   Paste the IDs of the native HubSpot form here (HubSpot › Marketing › Forms › your form › Share › Embed code).
-   Until portalId and formId are both set, the pages show a preview form that submits nowhere. */
+   The IDs of the playbook lead-magnet form in HubSpot (HubSpot › Marketing › Forms › the form › Share › Get embed code).
+   The page keeps its own form and posts each submission to this HubSpot form, so the form in HubSpot must have
+   exactly these fields: firstname, email and company. Clear portalId or formId to go back to the preview form, which sends nothing. */
 window.LP_HUBSPOT = {
-  portalId: "",        // e.g. "12345678"
-  formId: "",          // e.g. "a1b2c3d4-…"
-  region: "na1",       // "na1" or "eu1", as in the embed code
+  portalId: "52269566",
+  formId: "b27c8b3f-e3f3-492f-81bb-10bc44404d4a",
+  region: "na1",       // as in the embed code; kept for reference
   submitText: "Send me the playbook",
 };

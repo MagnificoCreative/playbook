@@ -1,4 +1,4 @@
-/* Landing page runtime: hero, chapter scenes, nav, reveals, and the HubSpot form.
+/* Landing page runtime: hero, chapter scenes, nav, reveals, and the form (sent to HubSpot).
    Needs assets/motion/hero-scenes.js, hero-fx.js and hubspot-config.js first; GSAP is optional (without it, everything simply shows). */
 (() => {
   const HUBSPOT = Object.assign({ portalId: "", formId: "", region: "na1", submitText: "Send me the playbook" }, window.LP_HUBSPOT || {});
@@ -116,13 +116,16 @@
   } else root.classList.remove("rv-wait");
 
   /* ═════════ The form ═════════
-     Live: HubSpot's native embed (v2) with its CSS off, rendered into each [data-hs-target]; submissions go
-     straight to HubSpot. Preview: the same markup, validated, submitting nowhere. The playbook's address is never
-     on this page: HubSpot's redirect or follow-up email delivers it. */
+     The page's own form, in HubSpot's markup so the page styles it. Live (portalId and formId set): a valid
+     submission is posted to HubSpot's Forms Submission API, which works with forms from HubSpot's new forms
+     editor and creates or updates the contact. Preview (IDs not set): the same form, validated, sending nowhere.
+     The playbook's address is never on this page: HubSpot returns the form's redirect after a submission,
+     or its follow-up email delivers it. */
   const targets = $$("[data-hs-target]");
   const live = !!(HUBSPOT.portalId && HUBSPOT.formId);
+  const ENDPOINT = `https://api.hsforms.com/submissions/v3/integration/submit/${encodeURIComponent(HUBSPOT.portalId)}/${encodeURIComponent(HUBSPOT.formId)}`;
+  const FIELDS = ["firstname", "email", "company"];
   const FREE = /@(gmail|googlemail|yahoo|ymail|hotmail|outlook|live|msn|icloud|me|mac|aol|proton|protonmail|gmx|mail|zoho|yandex)\.[a-z.]+$/i;
-  targets.forEach((t) => { t.innerHTML = '<div class="form-loading" aria-hidden="true"><i></i><i></i><i></i><i></i></div>'; });
 
   const done = (name, redirecting) => {
     pnav.classList.add("is-done");
@@ -137,11 +140,28 @@
     if (active) $('[data-state="done"]', active).focus({ preventScroll: true });
   };
 
+  /* Sends the three fields to HubSpot, with the visitor's HubSpot cookie (set by the tracking code, if the page
+     has it) so the submission joins their page views. Resolves with HubSpot's reply ({ redirectUri } or
+     { inlineMessage }); rejects with HubSpot's error body, or with a network error. */
+  const cookie = (n) => { const m = document.cookie.match(new RegExp("(?:^|; )" + n + "=([^;]*)")); return m ? decodeURIComponent(m[1]) : ""; };
+  const send = async (form) => {
+    const context = { pageUri: location.href, pageName: document.title };
+    const hutk = cookie("hubspotutk"); if (hutk) context.hutk = hutk;
+    const res = await fetch(ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ fields: FIELDS.map((name) => ({ objectTypeId: "0-1", name, value: form.elements[name].value.trim() })), context }),
+    });
+    const body = await res.json().catch(() => ({}));
+    if (!res.ok) throw body;
+    return body;
+  };
+
   const field = (id, name, label, type, auto, ph) =>
     `<fieldset class="form-columns-1"><div class="hs_${name} hs-${name} field hs-form-field"><label for="${name}-${id}">${label}<span class="hs-form-required">*</span></label>` +
     `<div class="input"><input id="${name}-${id}" name="${name}" type="${type}" class="hs-input" autocomplete="${auto}" placeholder="${ph}" required></div></div></fieldset>`;
 
-  const preview = (t) => {
+  const mount = (t) => {
     const row = t.classList.contains("form-row");
     t.innerHTML = `<form class="hs-form" novalidate>` +
       field(t.id, "firstname", "First name", "text", "given-name", row ? "First name" : "Alex") +
@@ -156,6 +176,10 @@
       input.classList.toggle("invalid", !!msg); input.classList.toggle("error", !!msg); input.setAttribute("aria-invalid", msg ? "true" : "false");
       if (msg) wrap.insertAdjacentHTML("beforeend", `<ul class="hs-error-msgs" role="alert"><li><label class="hs-error-msg">${msg}</label></li></ul>`);
     };
+    const formErr = (msg) => {
+      form.querySelector(".hs_error_rollup")?.remove();
+      if (msg) form.insertAdjacentHTML("beforeend", `<div class="hs_error_rollup"><ul class="hs-error-msgs" role="alert"><li><label class="hs-error-msg">${msg}</label></li></ul></div>`);
+    };
     const check = (i) => {
       const v = i.value.trim();
       if (!v) return err(i, "Please complete this required field."), false;
@@ -163,37 +187,44 @@
       if (i.type === "email" && FREE.test(v)) return err(i, "Please enter your work email address."), false;
       return err(i, ""), true;
     };
+    /* HubSpot names the field in each error ("Error in 'fields.email'. …") and gives a type such as BLOCKED_EMAIL
+       (a free email provider) or INVALID_EMAIL. Field errors go under their field; anything else goes under the button. */
+    const showErrors = (body) => {
+      const errs = (body && Array.isArray(body.errors)) ? body.errors : [];
+      let first = null;
+      errs.forEach((x) => {
+        const m = /fields\.([\w-]+)/.exec(x.message || ""), input = m && FIELDS.includes(m[1]) ? form.elements[m[1]] : null;
+        if (!input) return;
+        err(input, x.errorType === "BLOCKED_EMAIL" ? "Please enter your work email address." :
+          x.errorType === "INVALID_EMAIL" ? "Email must be formatted correctly." :
+          x.errorType === "REQUIRED_FIELD" ? "Please complete this required field." : "Please check this field.");
+        first = first || input;
+      });
+      if (first) first.focus();
+      else formErr("Something went wrong sending the form. Please try again in a moment.");
+      if (errs.length) console.warn("HubSpot form submission:", errs);
+    };
     $$(".hs-input", form).forEach((i) => i.addEventListener("blur", () => { if (i.value) check(i); }));
-    form.addEventListener("submit", (e) => {
+    let sending = false;
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
+      if (sending) return;
+      formErr("");
       const bad = $$(".hs-input", form).filter((i) => !check(i));
       if (bad.length) { bad[0].focus(); return; }
-      const btn = $(".hs-button", form); btn.disabled = true; btn.value = "Sending…";
-      setTimeout(() => done(form.firstname.value.trim(), false), 700);
+      const btn = $(".hs-button", form), name = form.elements.firstname.value.trim();
+      sending = true; btn.disabled = true; btn.value = "Sending…";
+      if (!live) { setTimeout(() => done(name, false), 700); return; }
+      try {
+        const reply = await send(form);
+        done(name, !!reply.redirectUri);
+        if (reply.redirectUri) setTimeout(() => { location.href = reply.redirectUri; }, 1500);
+      } catch (body) {
+        sending = false; btn.disabled = false; btn.value = HUBSPOT.submitText;
+        showErrors(body);
+      }
     });
   };
 
-  const mountHubSpot = () => targets.forEach((t) => {
-    t.innerHTML = "";
-    const row = t.classList.contains("form-row");
-    window.hbspt.forms.create({
-      region: HUBSPOT.region, portalId: HUBSPOT.portalId, formId: HUBSPOT.formId, target: "#" + t.id,
-      css: "", cssRequired: "", submitText: HUBSPOT.submitText,
-      onFormReady: () => {
-        const ph = row ? { firstname: "First name", email: "Work email", company: "Company" } : { firstname: "Alex", email: "alex@company.com", company: "Company name" };
-        $$(".hs-input", t).forEach((i) => { if (!i.placeholder && ph[i.name]) i.placeholder = ph[i.name]; });
-      },
-      onFormSubmitted: (form, data) => {
-        const vals = (data && data.submissionValues) || {};
-        done(String(vals.firstname || ($('[name="firstname"]', t) || {}).value || "").trim(), !!(data && data.redirectUrl));
-      },
-    });
-  });
-
-  if (!live) { targets.forEach(preview); return; }
-  const s = document.createElement("script");
-  s.src = "https://js.hsforms.net/forms/embed/v2.js"; s.charset = "utf-8"; s.async = true;
-  s.onload = () => (window.hbspt ? mountHubSpot() : s.onerror());
-  s.onerror = () => targets.forEach((t) => { t.innerHTML = '<p class="fine" role="alert">The form couldn’t load. A content blocker may be stopping it: allow this page and reload.</p>'; });
-  document.head.appendChild(s);
+  targets.forEach(mount);
 })();

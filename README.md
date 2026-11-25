@@ -21,8 +21,10 @@ Every chapter shares one stylesheet (`assets/playbook.css`) and one runtime (`as
 
 ## Viewing it locally
 
-Open `index.html` (it goes to the Introduction) or any chapter folder in a browser,
-or serve the repo from any static server. The only network requests are Google Fonts and the
+Open `landing/index.html` (the landing page) or any chapter folder in a browser, or serve the
+repo from any static server.
+On Netlify, `/` is the landing page and the chapters sit behind the access gate: see
+[`landing/README.md`](landing/README.md). The only network requests are Google Fonts and the
 pinned animation libraries on public CDNs.
 
 ## How a chapter is built
